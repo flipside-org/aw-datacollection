@@ -95,7 +95,7 @@ class Survey_entity extends Entity {
   );
   
   /**
-   * Survey constructor
+   * Survey entity constructor
    * 
    * @param array
    *   Survey data to construct the survey.
@@ -122,7 +122,7 @@ class Survey_entity extends Entity {
    * Passing settings allows detachment form codeigniter easing
    * testing.
    * About dependency injection:
-   * http://www.potstuck.com/2009/01/08/php-dependency-injection/   * 
+   * http://www.potstuck.com/2009/01/08/php-dependency-injection/
    */
   
   /**
