@@ -36,6 +36,17 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+
+/*
+|--------------------------------------------------------------------------
+| Custom defined constants
+|--------------------------------------------------------------------------
+|
+| These constants where manually defined and have nothing to
+| do with codeigniter.
+|
+*/
+
 define('ENTITIES_DIR', APPPATH . "entities/");
 
 /* End of file constants.php */

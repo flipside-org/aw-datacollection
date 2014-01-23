@@ -14,7 +14,8 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://dev/airwolf2.0/aw-datacollection/';
+//$config['base_url']	= 'http://dev/airwolf2.0/aw-datacollection/';
+$config['base_url']	= 'http://192.168.99.10/work/aw-datacollection/';
 
 /*
 |--------------------------------------------------------------------------
@@ -224,7 +225,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = '';
+$config['encryption_key'] = 'T1H4e6&&E87nc#3r4y$Pti%%on';
 
 /*
 |--------------------------------------------------------------------------
@@ -357,6 +358,21 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
+
+/*
+|--------------------------------------------------------------------------
+| Custom defined Configuration
+|--------------------------------------------------------------------------
+|
+| This configuration is specific to this projects and has nothing
+| to do with codeigniter.
+|
+*/
+$config['aw_mongo_counter_collection'] = 'counters';
+
+$config['aw_survey_files_location'] = './files/surveys/';
+
+$config['aw_pyxform_lib'] = './application/third_party/pyxform/';
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

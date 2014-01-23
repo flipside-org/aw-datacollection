@@ -52,7 +52,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('mongo_db', 'krumo');
+$autoload['libraries'] = array('mongo_db', 'krumo', 'session');
 
 
 /*
@@ -64,7 +64,7 @@ $autoload['libraries'] = array('mongo_db', 'krumo');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url', 'mongo_counter', 'entities_loader');
+$autoload['helper'] = array('url', 'mongo_counter', 'entities_loader', 'general_utils', 'status_msg');
 
 
 /*
