@@ -1,5 +1,20 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+/**
+ * CodeIgniter MongoDB Active Record Library
+ *
+ * @category  Library
+ * @package   CodeIgniter
+ * @author    Alex Bilbie <alex@alexbilbie.com>
+ *            Daniel da Silva <daniel.silva@flipside.org>
+ * @copyright 2012 Alex Bilbie.
+ * @link      https://github.com/alexbilbie/MongoQB
+ * 
+ * NOTE:s
+ * Alex Bilbie stopped supporting mongodb as a library for codeigniter.
+ * The links above points to a library that is framework agnostic.
+ * For it to work with codeigniter some changes were needed like loading
+ * settings from the config file.
+ */
 class Mongo_db
 {
     /**
@@ -1651,4 +1666,8 @@ class Mongo_db
         }
     }
 }
-    
+
+// ------------------------------------------------------------------------
+
+/* End of file Mongo_db.php */
+/* Location: ./application/libraries/mongo_db.php */
