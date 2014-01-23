@@ -1,6 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
+// Load entity base class.
 require_once ENTITIES_DIR . 'entity.php';
 
 /**
@@ -18,5 +19,5 @@ if ( ! function_exists('load_entity')) {
 
 // ------------------------------------------------------------------------
 
-/* End of file mongo_counter.php */
-/* Location: ./application/helpers/mongo_counter.php */
+/* End of file entities_loader_helper.php */
+/* Location: ./application/helpers/entities_loader_helper.php */
