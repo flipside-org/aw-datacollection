@@ -14,7 +14,8 @@ class Fixtures extends CI_Controller {
 		    $this->_fix_surveys();
 		  }
       
-      print "Done fixing data.";
+      print "<p>Done fixing data.</p>";
+      print anchor('surveys', 'Suvey List');
 		}
 	}
   
@@ -37,19 +38,51 @@ class Fixtures extends CI_Controller {
         'title' => 'Meteor usage',
         'status' => 1,
         
+        'files' => array(
+          'xls' => "survey_1_xls.xls",
+          'xml'=> "survey_1_xml.xml",
+          
+          'last_conversion' => array(
+            'date' => 1390493562,
+            'warnings' => NULL
+          )
+        ),
+        
         'created' => Mongo_db::date()
+        
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Handlebars vs something else',
         'status' => 1,
         
-        'created' => Mongo_db::date()
+        'files' => array(
+          'xls' => NULL,
+          'xml'=> NULL,
+          
+          'last_conversion' => array(
+            'date' => NULL,
+            'warnings' => NULL
+          )
+        ),
+        
+        'created' => Mongo_db::date(),
+        
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Cat ladies around the neighborhood',
         'status' => 2,
+        
+        'files' => array(
+          'xls' => NULL,
+          'xml'=> NULL,
+          
+          'last_conversion' => array(
+            'date' => NULL,
+            'warnings' => NULL
+          )
+        ),
         
         'created' => Mongo_db::date()
       ),
@@ -58,6 +91,16 @@ class Fixtures extends CI_Controller {
         'title' => 'Knowledge of html',
         'status' => 2,
         
+        'files' => array(
+          'xls' => NULL,
+          'xml'=> NULL,
+          
+          'last_conversion' => array(
+            'date' => NULL,
+            'warnings' => NULL
+          )
+        ),
+        
         'created' => Mongo_db::date()
       ),
       array(
@@ -65,12 +108,32 @@ class Fixtures extends CI_Controller {
         'title' => 'Running out of titles',
         'status' => 3,
         
+        'files' => array(
+          'xls' => NULL,
+          'xml'=> NULL,
+          
+          'last_conversion' => array(
+            'date' => NULL,
+            'warnings' => NULL
+          )
+        ),
+        
         'created' => Mongo_db::date()
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Another survey',
         'status' => 99,
+        
+        'files' => array(
+          'xls' => NULL,
+          'xml'=> NULL,
+          
+          'last_conversion' => array(
+            'date' => NULL,
+            'warnings' => NULL
+          )
+        ),
         
         'created' => Mongo_db::date()
       ),
