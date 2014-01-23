@@ -32,6 +32,10 @@ class Fixtures extends CI_Controller {
    * Sets up demo surveys.
    */
   private function _fix_surveys() {
+    // Copy files for survey : Meteor usage
+    copy('resources/valid_survey/survey_1_xls.xls', 'files/surveys/survey_1_xls.xls');
+    copy('resources/valid_survey/survey_1_xml.xml', 'files/surveys/survey_1_xml.xml');
+    
     $this->mongo_db->batchInsert('surveys', array(
       array(
         'sid' => increment_counter('survey_sid'),
