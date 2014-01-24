@@ -24,6 +24,20 @@ class Survey_entity extends Entity {
    */
   
   /**
+   * Mongo Id.
+   * @var int
+   * @access public
+   */
+  public $_id = NULL;
+  
+  /**
+   * Creation Date.
+   * @var date
+   * @access public
+   */
+  public $created = NULL;
+  
+  /**
    * Survey Id.
    * @var int
    * @access public
@@ -107,7 +121,7 @@ class Survey_entity extends Entity {
     // Data will come from the database or it will be sanitized before.
     // We can assume its safe to initialize like this.
     foreach ($survey as $key => $value) {
-      if (!isset($this->{$key})) {
+      if (!property_exists($this, $key)) {
         // Trying to set a key that doesn't exist in the survey.
         throw new Exception("Invalid field for the survey: $key");
       }
