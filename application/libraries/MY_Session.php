@@ -607,7 +607,7 @@ class MY_Session extends CI_Session {
 			{
 				$this->CI->mongo_db
 					->whereLt('last_activity', $expire)
-					->delete_all($this->_config['sess_collection_name']);
+					->deleteAll($this->_config['sess_collection_name']);
 			}
 			elseif ($this->sess_table_name != '')
 			{
