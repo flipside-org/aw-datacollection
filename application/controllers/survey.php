@@ -21,7 +21,7 @@ class Survey extends CI_Controller {
    * Controller index.
    */
 	public function index() {
-		print 'Index function of Survey controller';
+		redirect('surveys', 'location', 301);
 	}
   
   /**
@@ -33,7 +33,8 @@ class Survey extends CI_Controller {
     $surveys = $this->survey_model->get_all();
     
     $this->load->view('base/html_start');
-    $this->load->view('survey_list', array('surveys' => $surveys));
+    $this->load->view('navigation');
+    $this->load->view('surveys/survey_list', array('surveys' => $surveys));
     $this->load->view('base/html_end');
     
   }
@@ -45,15 +46,18 @@ class Survey extends CI_Controller {
    */
   public function survey_by_id($sid){
     $survey = $this->survey_model->get($sid);
+    
     $messages = Status_msg::get();
     $data = array(
       'survey' => $survey,
-      'messages' => $messages,
+      //'messages' => $messages,
+      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE)
     );
     
     if ($survey) {
       $this->load->view('base/html_start');
-      $this->load->view('survey_page', $data);
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_page', $data);
       $this->load->view('base/html_end');
     }
     else {
@@ -117,7 +121,8 @@ class Survey extends CI_Controller {
     // If no data submitted show the form.
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
-      $this->load->view('survey_form', array('survey' => $survey));
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_form', array('survey' => $survey));
       $this->load->view('base/html_end');
     }
     else {

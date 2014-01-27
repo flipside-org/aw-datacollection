@@ -7,7 +7,9 @@ class Index extends CI_Controller {
   }
 
 	public function index() {
-		print 'welcome to Airwolf';
+		$this->load->view('base/html_start');
+    $this->load->view('navigation');
+    $this->load->view('base/html_end');
 	}
 }
 
