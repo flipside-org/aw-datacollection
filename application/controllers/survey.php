@@ -129,11 +129,7 @@ class Survey extends CI_Controller {
           $survey_data['status'] = $this->input->post('survey_status');
           
           // Construct survey.
-          $new_survey = new Survey_entity($survey_data);
-          // Set config.
-          // TODO: Consider moving to builer.
-          // Check comments on $settings var inside Survey_entity for more
-          $new_survey->set_file_location($this->config->item('aw_survey_files_location'));
+          $new_survey = Survey_entity::build($survey_data);
           
           // Save survey.
           // Survey files can only be handled after the survey is saved.
@@ -180,11 +176,6 @@ class Survey extends CI_Controller {
             // TODO: Form has been tempered with. Redirect and show error.
             redirect('/surveys');
           }
-
-          // Set config.
-          // TODO: Consider moving to builer.
-          // Check comments on $settings var inside Survey_entity for more
-          $survey->set_file_location($this->config->item('aw_survey_files_location'));
           
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);

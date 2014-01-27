@@ -27,7 +27,7 @@ class Survey_model extends CI_Model {
     
     $surveys = array();
     foreach ($result as $value) {
-      $surveys[] = new Survey_entity($value);
+      $surveys[] = Survey_entity::build($value);
     }
     
     return $surveys;
@@ -46,7 +46,7 @@ class Survey_model extends CI_Model {
       ->get('surveys');
     
     if (!empty($result)) {
-      return new Survey_entity($result[0]);
+      return Survey_entity::build($result[0]);
     }
     else {
       return FALSE;
