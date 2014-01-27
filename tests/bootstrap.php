@@ -28,3 +28,6 @@ function show_404($page = '', $log_error = TRUE)
  */
  
 require_once dirname(__FILE__) . '/../index.php';
+
+// Switch db immediately.
+get_instance()->mongo_db->switchDb('mongodb://localhost:27017/aw_datacollection_test');

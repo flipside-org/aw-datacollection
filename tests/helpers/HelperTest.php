@@ -1,19 +1,27 @@
 <?php
 
-class EmailHelperTest extends PHPUnit_Framework_TestCase
+class Status_msg_helper_test extends PHPUnit_Framework_TestCase
 {
-	private $CI;
 	
-	public static function setUpBeforeClass()
-	{
-		$CI =& get_instance();
-		$CI->load->helper('email');
+	public static function setUpBeforeClass() {
 	}
 	
-	public function testEmailValidation()
-	{
-		$this->assertTrue(valid_email('test@test.com'));
-		$this->assertFalse(valid_email('test#test.com'));
+	public function test_data_storage(){
+		Status_msg::success('Success message.');
+    
+    $msg = Status_msg::get();
+    $expected = array(
+      'success' => array('Success message.'),
+      'warning' => array(),
+      'error' => array()
+    );    
+    $this->assertEquals($msg, $expected);
+    
+    // After getting the first get the messages should be cleared. 
+    $msg = Status_msg::get();
+    $expected = NULL;
+    $this->assertEquals($msg, $expected);  
+    
 	}
 }
 
