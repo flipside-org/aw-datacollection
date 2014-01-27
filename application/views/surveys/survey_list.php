@@ -1,20 +1,39 @@
-<ul>
-	<li><a href="survey/add">Add survey</a></li>
-</ul>
-
-<?php foreach ($surveys as $survey_entity):?>
+<div class="row">
   
-  <h1>
-    <a href="<?= $survey_entity->get_url_view() ?>"><?= $survey_entity->title ?></a>
-    <small>
-      <a href="<?= $survey_entity->get_url_edit() ?>">edit</a>
-      <?php 
-        print form_open('survey/delete');
-        print form_hidden('survey_sid', $survey_entity->sid);
-        print form_submit('survey_delete', 'Delete');
-        print form_close();
-      ?>
-    </small>
-  </h1>
-  
-<?php endforeach; ?>
+  <table width='100%' class="survey_list">
+    <thead>
+      <tr>
+        <th width='60%'>Title</th>
+        <th width='10%'>Status</th>
+        <th width='30%'>Actions</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+    <?php foreach ($surveys as $survey_entity):?>
+      <tr>
+        <td><a href="<?= $survey_entity->get_url_view() ?>"><?= $survey_entity->title ?></a></td>
+        <td><?= $survey_entity->status; ?></td>
+        <td>
+          <ul class="button-group">
+            <li><a href="<?= $survey_entity->get_url_edit() ?>" class="button tiny">Edit</a></li>
+            <li>
+              <?php 
+              print form_open('survey/delete');
+              print form_hidden('survey_sid', $survey_entity->sid);
+              print form_submit(array(
+                'name' => 'survey_delete',
+                'value' => 'Delete',
+                'class' => 'button tiny'
+              ));
+              print form_close();
+            ?>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    
+    </tbody>
+  </table>
+</div>

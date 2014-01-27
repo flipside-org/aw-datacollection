@@ -1,10 +1,4 @@
-<?php
-// This form is shared between add and edit.
-function property_if_not_null($obj, $prop, $default = '') {
-  return $obj !== NULL ? $obj->{$prop} : $default;
-}
-?>
-
+<div class="row">
 <?= validation_errors(); ?>
 <?= form_open_multipart(); ?>
 <?php
@@ -14,17 +8,17 @@ function property_if_not_null($obj, $prop, $default = '') {
   }
 ?>
 
-  <?= form_label('Survey Title', 'survey_title'); ?><br />  
-  <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title'))); ?>  <br />
+  <?= form_label('Survey Title', 'survey_title'); ?>
+  <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title'))); ?>
   
-  <?= form_label('Status', 'survey_status'); ?><br />
+  <?= form_label('Status', 'survey_status'); ?>
   <?= form_dropdown('survey_status',
         Survey_entity::$allowed_status,
-        set_value('survey_status', property_if_not_null($survey, 'status', array()))); ?>  <br />
+        set_value('survey_status', property_if_not_null($survey, 'status', array()))); ?>
         
-  <?= form_label('Status', 'survey_status'); ?><br />
-  <?= form_upload('survey_file'); ?><br />
+  <?= form_upload('survey_file'); ?>
   
   <?= form_submit('survey_submit', 'Submit Survey'); ?>
 
 <?= form_close(); ?>
+</div>
