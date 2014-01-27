@@ -271,12 +271,12 @@ class Survey extends CI_Controller {
    */
   public function _survey_status_valid($status) {
     
-    if (!array_key_exists($status, Survey_entity::$allowed_status)) {
+    if (!Survey_entity::is_valid_status($status)) {
       $this->form_validation->set_message('_survey_status_valid', 'The %s is not valid.');
       return FALSE;
     }
     
-    return TRUE;    
+    return TRUE;
   }
   
   /**

@@ -286,6 +286,10 @@ class Survey_entity extends Entity {
     
     return $conversion_result;
   }
+  
+  public static function is_valid_status($status) {
+    return array_key_exists($status, self::$allowed_status);
+  }
 
   /**
    * End of public methods.
