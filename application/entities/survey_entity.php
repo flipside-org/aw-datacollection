@@ -163,10 +163,11 @@ class Survey_entity extends Entity {
    * @return Survey_entity
    */
   public static function build($survey_data) {
-    $survey = new Survey_entity($survey_data);
+    $survey = new Survey_entity($survey_data);    
+    $CI = get_instance();
     
     // Inject dependencies.
-    $survey->set_file_location($this->config->item('aw_survey_files_location'));
+    $survey->set_file_location($CI->config->item('aw_survey_files_location'));
     
     return $survey;
   }
