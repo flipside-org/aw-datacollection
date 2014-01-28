@@ -29,6 +29,9 @@
               print form_close();
             ?>
             </li>
+            <?php if ($survey_entity->has_xml()) : ?>
+              <li><a href="<?= $survey_entity->get_url_survey_testrun() ?>" class="button tiny alert">Test Run</a></li>
+            <?php endif; ?>
           </ul>
         </td>
       </tr>

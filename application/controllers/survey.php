@@ -257,6 +257,49 @@ class Survey extends CI_Controller {
     }
   }
   
+  /**
+   * Enketo test run.
+   * Route
+   * /survey/:sid/testrun
+   */
+  public function survey_testrun($sid) {    
+    $survey = $this->survey_model->get($sid);
+    if ($survey) {
+      
+      $this->js_settings->add('xslt_transform_path', base_url('survey/' . $sid . '/xml_transform'));
+      
+      $this->load->view('base/html_start', array('using_enketo' => TRUE));
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_enketo');
+      $this->load->view('base/html_end');
+    }
+    else {
+     show_404();
+    }
+  }
+  
+  /**
+   * TODO: survey_xml_transform Docs
+   */
+  public function survey_xml_transform($sid) {
+    $survey = $this->survey_model->get($sid);
+    if ($survey && $survey->has_xml()) {
+      
+      $this->load->helper('xslt_transformer');
+      
+      $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
+      $xslt_transformer->convert();
+      $result = $xslt_transformer->get_result();
+      
+      $this->output
+      ->set_content_type('text/xml')
+      ->set_output($result->asXML());      
+    }
+    else {
+     show_404();
+    }
+  }
+  
   /********************************
    ********************************
    * Start of methods that do not relate to routes.
