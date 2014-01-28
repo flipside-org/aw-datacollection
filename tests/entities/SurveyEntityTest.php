@@ -45,6 +45,45 @@ class Survey_entity_test extends PHPUnit_Framework_TestCase
 	  $this->assertFalse(Survey_entity::is_valid_status('Closed'));
 	}
   
+  public function test_has_files() {
+    $data = array(
+      'title' => 'A survey',
+      'files' => array(
+        'xml' => 'survey_1_xml.xml',
+        'xls' => 'survey_1_xls.xls'
+      )
+    );
+    
+    $survey = new Survey_entity($data);
+    
+    $this->assertTrue($survey->has_xls());
+    $this->assertTrue($survey->has_xml());
+    
+    $survey->files['xml'] = null;
+    $this->assertFalse($survey->has_xml());
+  }
+  
+  /**
+   * @depends test_has_files
+   */
+  public function test_get_file_path() {
+    $data = array(
+      'title' => 'A survey',
+      'files' => array(
+        'xml' => 'survey_1_xml.xml',
+        'xls' => NULL
+      )
+    );
+    
+    $survey = new Survey_entity($data);
+    
+    $this->assertEquals('survey_1_xml.xml', $survey->get_xml_full_path());
+    $this->assertFalse($survey->get_xls_full_path());
+    
+    $survey->set_file_location('file/location/');
+    $this->assertEquals('file/location/survey_1_xml.xml', $survey->get_xml_full_path());
+  }
+  
 }
 
 ?>

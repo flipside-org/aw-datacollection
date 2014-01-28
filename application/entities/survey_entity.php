@@ -92,7 +92,9 @@ class Survey_entity extends Entity {
    * 
    * @access private
    */
-  private $settings = array();
+  private $settings = array(
+    'file_loc' => ''
+  );
   
   /**
    * Allowed statuses of a survey.
@@ -215,6 +217,18 @@ class Survey_entity extends Entity {
   }
   
   /**
+   * Returns the url to test run survey.
+   * @access public
+   * @return string
+   */
+  public function get_url_survey_testrun() {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent survey.");       
+    }    
+    return base_url('survey/' . $this->sid . '/testrun') ;
+  }
+  
+  /**
    * Returns the url to edit a survey.
    * 
    * @access public
@@ -269,7 +283,7 @@ class Survey_entity extends Entity {
     // Xml file destination.
     $destination = $this->settings['file_loc'] . $xml_filename;
     // Xls file location.
-    $source = $this->settings['file_loc'] . $this->files['xls'];
+    $source = $this->get_xls_full_path();
     
     // Convert!
     $conversion_result = xls2xform($source, $destination);
@@ -289,6 +303,48 @@ class Survey_entity extends Entity {
   
   public static function is_valid_status($status) {
     return array_key_exists($status, self::$allowed_status);
+  }
+  
+  /**
+   * Checks if the survey has a xml file.
+   * 
+   * @return boolean
+   *   Whether the survey has a xml. 
+   */
+  public function has_xml() {
+    return $this->files['xml'] !== NULL;
+  }
+  
+  /**
+   * Checks if the survey has a xml file.
+   * 
+   * @return boolean
+   *   Whether the survey has a xml. 
+   */
+  public function has_xls() {
+    return $this->files['xls'] !== NULL;
+  }
+  
+  /**
+   * Returns the full path to the survey's xls file.
+   * 
+   * 
+   * @return mixed
+   *   If the survey has no file false is returned
+   */
+  public function get_xls_full_path() {
+    return $this->has_xls() ? $this->settings['file_loc'] . $this->files['xls'] : false;
+  }
+  
+  /**
+   * Returns the full path to the survey's xls file.
+   * 
+   * 
+   * @return mixed
+   *   If the survey has no file false is returned
+   */
+  public function get_xml_full_path() {
+    return $this->has_xml() ? $this->settings['file_loc'] . $this->files['xml'] : false;
   }
 
   /**
