@@ -374,5 +374,8 @@ $config['aw_survey_files_location'] = './files/surveys/';
 
 $config['aw_pyxform_lib'] = './application/third_party/pyxform/';
 
+$config['aw_enketo_xslt_lib'] = './application/third_party/enketo-xslt/';
+
+
 /* End of file config.php */
 /* Location: ./application/config/config.php */
