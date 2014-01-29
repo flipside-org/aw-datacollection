@@ -9,50 +9,42 @@ class Js_settings_test extends PHPUnit_Framework_TestCase {
 	}
   
   public function test_add_settings() {
-    self::$CI->js_settings->reset();
+    self::$CI->js_settings->clear();
     
     $expected = array(
-      'Aw' => array(
-        'settings' => array()
-      )
+      'settings' => array()
     );
     $settings = self::$CI->js_settings->get_settings();
-    $this->assertEquals($expected, $settings, 'Status after reset');
+    $this->assertEquals($expected, $settings, 'Status after clear');
     
     // Add using key, value
     self::$CI->js_settings->add('sid', 1);
     $expected = array(
-      'Aw' => array(
-        'settings' => array(
-          'sid' => 1
-        )
+      'settings' => array(
+        'sid' => 1
       )
     );
     $settings = self::$CI->js_settings->get_settings();
     $this->assertEquals($expected, $settings, 'Add using $key, $value');
     
     // Add using array
-    self::$CI->js_settings->reset();
+    self::$CI->js_settings->clear();
     self::$CI->js_settings->add(array('sid' => 1));
     $expected = array(
-      'Aw' => array(
-        'settings' => array(
-          'sid' => 1
-        )
+      'settings' => array(
+        'sid' => 1
       )
     );
     $settings = self::$CI->js_settings->get_settings();
     $this->assertEquals($expected, $settings, 'Add using array');
     
     // Add using array, multiple values
-    self::$CI->js_settings->reset();
+    self::$CI->js_settings->clear();
     self::$CI->js_settings->add(array('sid' => 1, 'rid' => 2));
     $expected = array(
-      'Aw' => array(
-        'settings' => array(
-          'sid' => 1,
-          'rid' => 2
-        )
+      'settings' => array(
+        'sid' => 1,
+        'rid' => 2
       )
     );
     $settings = self::$CI->js_settings->get_settings();
@@ -67,12 +59,10 @@ class Js_settings_test extends PHPUnit_Framework_TestCase {
     self::$CI->js_settings->reset($default);
     self::$CI->js_settings->add(array('survey' => array('sid' => 1)));
     $expected = array(
-      'Aw' => array(
-        'settings' => array(
-          'survey' => array(
-            'title' => 'The title',
-            'sid' => 1
-          )
+      'settings' => array(
+        'survey' => array(
+          'title' => 'The title',
+          'sid' => 1
         )
       )
     );
@@ -91,10 +81,8 @@ class Js_settings_test extends PHPUnit_Framework_TestCase {
     self::$CI->js_settings->reset($default);
     self::$CI->js_settings->add(array('survey' => 'Title of survey'));
     $expected = array(
-      'Aw' => array(
-        'settings' => array(
-          'survey' => 'Title of survey'
-        )
+      'settings' => array(
+        'survey' => 'Title of survey'
       )
     );
     $settings = self::$CI->js_settings->get_settings();
@@ -109,11 +97,9 @@ class Js_settings_test extends PHPUnit_Framework_TestCase {
     self::$CI->js_settings->reset($default);
     self::$CI->js_settings->add(array('survey' => array('title' => 'Not the title')));
     $expected = array(
-      'Aw' => array(
-        'settings' => array(
-          'survey' => array(
-            'title' => 'Not the title'
-          )
+      'settings' => array(
+        'survey' => array(
+          'title' => 'Not the title'
         )
       )
     );
