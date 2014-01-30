@@ -1,0 +1,12 @@
+//variables and mixins
+@import "core/variables";
+@import "formhub/variables";
+@import "core/mixins";
+@import "formhub/mixins";
+
+@import "bootstrap";
+@import "core/layout";
+@import "core/main";
+@import "widgets";
+@import "core/responsive";
+@import 'formhub/theme';

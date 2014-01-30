@@ -1,0 +1,22 @@
+{
+  "name": "jquery-xpath",
+  "description": "Bunch of XPath tools used in Enketo Smart Paper",
+  "homepage": "https://enketo.org",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MartijnR/jquery-xpath.git"
+  },
+  "contributors": [
+    "Martijn van de Rijdt"
+  ],
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-jasmine": "~0.5.2",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-jsbeautifier": "~0.2.3"
+  }
+}

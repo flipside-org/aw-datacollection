@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>XPathJS Example: Simple (without appending to global space)</title>
+	
+	<link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset.css" type="text/css" />
+	<link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssfonts/cssfonts.css" type="text/css" />
+	<link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssbase/cssbase.css" type="text/css" />
+	
+	<script type="text/javascript" src="../build/xpathjs.js"></script>
+	
+	<script type="text/javascript">
+		// create XPath methods without attaching them to global window or document variables
+		var bindings = XPathJS.createDomLevel3XPathBindings();
+		
+		// run example
+		function run()
+		{
+			var result = bindings.document.evaluate(
+				'//ul/li/text()', // XPath expression
+				document, // context node
+				null, // namespace resolver
+				bindings.window.XPathResult.ORDERED_NODE_SNAPSHOT_TYPE // result type to return
+			);
+			
+			// loop through results
+			for (var i = 0; i < result.snapshotLength; i++) {
+				var node = result.snapshotItem(i);
+				alert(node.nodeValue);
+			}
+		}
+	</script>
+</head>
+
+<body class="yui3-skin-sam">
+
+	<h1>XPathJS Example: Simple (without appending to global space)</h1>
+
+	<ul>
+		<li>Red</li>
+		<li>Blue</li>
+		<li>Green</li>
+	</ul>
+	
+	<input type="button" value="Get a list of all bullet text nodes" onclick="run();" />
+</body>
+</html>
