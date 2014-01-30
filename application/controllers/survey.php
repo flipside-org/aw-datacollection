@@ -279,7 +279,7 @@ class Survey extends CI_Controller {
   }
   
   /**
-   * TODO: survey_xml_transform Docs
+   * TODO: Survey::survey_xml_transform Docs
    */
   public function survey_xml_transform($sid) {
     $survey = $this->survey_model->get($sid);
@@ -288,12 +288,11 @@ class Survey extends CI_Controller {
       $this->load->helper('xslt_transformer');
       
       $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
-      $xslt_transformer->convert();
-      $result = $xslt_transformer->get_result();
+      $result = $xslt_transformer->get_transform_result_sxe();
       
       $this->output
       ->set_content_type('text/xml')
-      ->set_output($result->asXML());      
+      ->set_output($result->asXML());
     }
     else {
      show_404();
