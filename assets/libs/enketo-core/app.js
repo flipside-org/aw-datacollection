@@ -68,7 +68,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     var edit_str = '<survey_1_xls id="survey_1_xls"> <name>Daniel</name> <age>22</age> <gender>male</gender> <photo/> <date/> <location/> <pizza_fan>no</pizza_fan> <pizza_hater/> <pizza_type/> <favorite_toppings/> <thanks/> <start_time>2014-01-30T12:33:24.000-00:00</start_time> <end_time>2014-01-30T12:33:24.000-00:00</end_time> <today>2014-01-30</today> <imei>no device properties in enketo</imei> <phonenumber>no device properties in enketo</phonenumber> <meta> <instanceID>uuid:241b2643-531b-46f2-aceb-cc09f68b9c82</instanceID> </meta> </survey_1_xls>';
     
     
-    form = new Form('form.or:eq(0)', modelStr, edit_str);
+    form = new Form('form.or:eq(0)', modelStr);
     //for debugging
     window.form = form;
     //initialize form and check for load errors
