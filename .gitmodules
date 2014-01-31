@@ -1,3 +1,6 @@
 [submodule "application/third_party/pyxform"]
 	path = application/third_party/pyxform
 	url = git@github.com:SEL-Columbia/pyxform.git
+[submodule "application/third_party/enketo-xslt"]
+	path = application/third_party/enketo-xslt
+	url = git@github.com:MartijnR/enketo-xslt.git
