@@ -9,8 +9,8 @@ class Xslt_transformer {
   /**
    * Path to the enketo xslt libraries.
    */
-  private $file_path_to_jr2HTML5_XSL;
-  private $file_path_to_jr2Data_XSL;
+  private $file_path_to_jr2HTML5_XSL = 'openrosa2html5form_php5.xsl';
+  private $file_path_to_jr2Data_XSL = 'openrosa2xmlmodel.xsl';
   
   /**
    * Path to the survey_xml file.
@@ -72,8 +72,8 @@ class Xslt_transformer {
    *   To allow chaining.
    */
   public function set_enketo_xslt_lib_location($location) {
-    $this->file_path_to_jr2HTML5_XSL = $location . 'openrosa2html5form_php5.xsl';
-    $this->file_path_to_jr2Data_XSL = $location . 'openrosa2xmlmodel.xsl';
+    $this->file_path_to_jr2HTML5_XSL = $location . $this->file_path_to_jr2HTML5_XSL;
+    $this->file_path_to_jr2Data_XSL = $location . $this->file_path_to_jr2Data_XSL;
     return $this;
   }
 
