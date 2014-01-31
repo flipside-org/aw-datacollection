@@ -151,6 +151,28 @@ class Survey_entity extends Entity {
   }
   
   /**
+   * Creates Survey_entity injecting dependencies.
+   * Input params must be the same as in the __construct
+   * 
+   * @access public
+   * @static
+   * 
+   * @param array
+   *   Survey data to construct the survey.
+   * 
+   * @return Survey_entity
+   */
+  public static function build($survey_data) {
+    $survey = new Survey_entity($survey_data);    
+    $CI = get_instance();
+    
+    // Inject dependencies.
+    $survey->set_file_location($CI->config->item('aw_survey_files_location'));
+    
+    return $survey;
+  }
+  
+  /**
    * End of setting methods.
    *******************************/
   
@@ -263,6 +285,10 @@ class Survey_entity extends Entity {
     }
     
     return $conversion_result;
+  }
+  
+  public static function is_valid_status($status) {
+    return array_key_exists($status, self::$allowed_status);
   }
 
   /**

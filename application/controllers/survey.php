@@ -21,7 +21,7 @@ class Survey extends CI_Controller {
    * Controller index.
    */
 	public function index() {
-		print 'Index function of Survey controller';
+		redirect('surveys', 'location', 301);
 	}
   
   /**
@@ -33,7 +33,8 @@ class Survey extends CI_Controller {
     $surveys = $this->survey_model->get_all();
     
     $this->load->view('base/html_start');
-    $this->load->view('survey_list', array('surveys' => $surveys));
+    $this->load->view('navigation');
+    $this->load->view('surveys/survey_list', array('surveys' => $surveys));
     $this->load->view('base/html_end');
     
   }
@@ -45,15 +46,18 @@ class Survey extends CI_Controller {
    */
   public function survey_by_id($sid){
     $survey = $this->survey_model->get($sid);
+    
     $messages = Status_msg::get();
     $data = array(
       'survey' => $survey,
-      'messages' => $messages,
+      //'messages' => $messages,
+      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE)
     );
     
     if ($survey) {
       $this->load->view('base/html_start');
-      $this->load->view('survey_page', $data);
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_page', $data);
       $this->load->view('base/html_end');
     }
     else {
@@ -117,7 +121,8 @@ class Survey extends CI_Controller {
     // If no data submitted show the form.
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
-      $this->load->view('survey_form', array('survey' => $survey));
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_form', array('survey' => $survey));
       $this->load->view('base/html_end');
     }
     else {
@@ -129,11 +134,7 @@ class Survey extends CI_Controller {
           $survey_data['status'] = $this->input->post('survey_status');
           
           // Construct survey.
-          $new_survey = new Survey_entity($survey_data);
-          // Set config.
-          // TODO: Consider moving to builer.
-          // Check comments on $settings var inside Survey_entity for more
-          $new_survey->set_file_location($this->config->item('aw_survey_files_location'));
+          $new_survey = Survey_entity::build($survey_data);
           
           // Save survey.
           // Survey files can only be handled after the survey is saved.
@@ -180,11 +181,6 @@ class Survey extends CI_Controller {
             // TODO: Form has been tempered with. Redirect and show error.
             redirect('/surveys');
           }
-
-          // Set config.
-          // TODO: Consider moving to builer.
-          // Check comments on $settings var inside Survey_entity for more
-          $survey->set_file_location($this->config->item('aw_survey_files_location'));
           
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);
@@ -275,12 +271,12 @@ class Survey extends CI_Controller {
    */
   public function _survey_status_valid($status) {
     
-    if (!array_key_exists($status, Survey_entity::$allowed_status)) {
+    if (!Survey_entity::is_valid_status($status)) {
       $this->form_validation->set_message('_survey_status_valid', 'The %s is not valid.');
       return FALSE;
     }
     
-    return TRUE;    
+    return TRUE;
   }
   
   /**
