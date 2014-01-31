@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>survey_6_xls</h:title>
+    <model>
+      <instance>
+        <survey_6_xls id="survey_6_xls">
+          <family_name/>
+          <phone_number/>
+          <age/>
+          <meta>
+            <instanceID/>
+          </meta>
+        </survey_6_xls>
+      </instance>
+      <bind nodeset="/survey_6_xls/family_name" type="string"/>
+      <bind constraint="regex(., '^\d*$')" nodeset="/survey_6_xls/phone_number" type="string"/>
+      <bind nodeset="/survey_6_xls/age" type="int"/>
+      <bind calculate="concat('uuid:', uuid())" nodeset="/survey_6_xls/meta/instanceID" readonly="true()" type="string"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/survey_6_xls/family_name">
+      <label>What's your family name?</label>
+    </input>
+    <input ref="/survey_6_xls/phone_number">
+      <label>What's your father's phone number?</label>
+      <hint>Enter numbers only.</hint>
+    </input>
+    <input ref="/survey_6_xls/age">
+      <label>How old are you?</label>
+    </input>
+  </h:body>
+</h:html>
