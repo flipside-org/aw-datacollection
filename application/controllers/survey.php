@@ -290,9 +290,21 @@ class Survey extends CI_Controller {
       $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
       $result = $xslt_transformer->get_transform_result_sxe();
       
+      $res = array(
+        'respondents' => array(
+          array(
+            'number' => '987654321'
+          ),
+          array(
+            'number' => '123456789'
+          )
+        ),
+        'form' => $result->asXML()
+      );
+      
       $this->output
-      ->set_content_type('text/xml')
-      ->set_output($result->asXML());
+      ->set_content_type('text/json')
+      ->set_output(json_encode($res));
     }
     else {
      show_404();
