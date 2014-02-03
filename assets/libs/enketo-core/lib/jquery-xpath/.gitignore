@@ -1,6 +1,0 @@
-node_modules/*
-._*
-.grunt/*
-*.sublime-project
-*.sublime-workspace
-_SpecRunner.html
