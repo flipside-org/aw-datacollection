@@ -4,3 +4,6 @@
 [submodule "application/third_party/enketo-xslt"]
 	path = application/third_party/enketo-xslt
 	url = git@github.com:MartijnR/enketo-xslt.git
+[submodule "assets/libs/enketo-core"]
+	path = assets/libs/enketo-core
+	url = git@github.com:MartijnR/enketo-core.git
