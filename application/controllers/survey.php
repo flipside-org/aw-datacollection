@@ -10,7 +10,6 @@ class Survey extends CI_Controller {
    */
   public function __construct() {
     parent::__construct();
-    
     // Load stuff needed for this controller.
     $this->load->helper('form');
     $this->load->library('form_validation');
@@ -21,7 +20,20 @@ class Survey extends CI_Controller {
    * Controller index.
    */
 	public function index() {
-		redirect('surveys', 'location', 301);
+		//redirect('surveys', 'location', 301);
+		/*
+		$data = array(
+      'pool' => array(),
+      'requested' => array(),
+      'submitted' => array(),
+    );
+    for ($i=0;$i<1000;$i++) {
+      $data['pool'][$i] = array();
+      $data['pool'][$i]['number'] = 100000000 + $i;
+    }
+    $this->session->set_userdata('resp', $data);
+    //*/
+    krumo($this->session->userdata('resp'));
 	}
   
   /**
@@ -289,26 +301,90 @@ class Survey extends CI_Controller {
       
       $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
       $result = $xslt_transformer->get_transform_result_sxe();
-      
-      $res = array(
-        'respondents' => array(
-          array(
-            'number' => '987654321'
-          ),
-          array(
-            'number' => '123456789'
-          )
-        ),
-        'form' => $result->asXML()
-      );
-      
+
       $this->output
-      ->set_content_type('text/json')
-      ->set_output(json_encode($res));
+      ->set_content_type('text/xml')
+      ->set_output($result->asXML());
     }
     else {
      show_404();
     }
+  }
+  
+  /**
+   * TODO: Survey::survey_request_numbers Docs
+   */
+  public function survey_request_numbers($sid) {
+    /***** MOCK ***/
+    $REQUEST_MAX = 5;
+    
+    $all_resp = $this->session->userdata('resp');
+    $to_request = $REQUEST_MAX - count($all_resp['requested']);
+    
+    if ($to_request > 0) {
+      $pool_resp = $all_resp['pool'];
+      $requested = array_splice($pool_resp, 0, $to_request);
+      
+      $all_resp['pool'] = $pool_resp;
+      $all_resp['requested'] = array_merge($all_resp['requested'], $requested);
+    }
+    
+    $this->session->set_userdata('resp', $all_resp);
+    /***** END MOCK ***/
+    
+    
+    
+    $res = array(
+      'respondents' => $all_resp['requested'],
+    );
+    
+    $this->output
+    ->set_content_type('text/json')
+    ->set_output(json_encode($res));
+  }
+  /**
+   * TODO: Survey::survey_request_csrf_token Docs
+   */
+  public function survey_request_csrf_token() {
+    $res = array(
+      'csrf' => $this->security->get_csrf_hash(),
+    );    
+    $this->output
+    ->set_content_type('text/json')
+    ->set_output(json_encode($res));
+  }
+  
+  /**
+   * TODO: Survey::survey_submit_enketo_form Docs
+   */
+  public function survey_submit_enketo_form() {
+    $data = $this->input->post('respondent');
+    
+    $resp_number = $data['number'];
+    $all_resp = $this->session->userdata('resp');
+
+    foreach ($all_resp['requested'] as $key => $value) {
+      if ($resp_number == $value['number']){
+        
+        $all_resp['submitted'][] = $all_resp['requested'][$key];
+        unset($all_resp['requested'][$key]);
+        
+        break;
+      }
+    }
+    $this->session->set_userdata('resp', $all_resp);
+    
+    sleep(1);
+    $this->output
+    ->set_content_type('text')
+    ->set_output('OK from server');
+  }
+
+  public function delay($sec) {
+    sleep($sec);
+    $this->output
+    ->set_content_type('text')
+    ->set_output('OK from server');
   }
   
   /********************************

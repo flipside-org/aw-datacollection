@@ -1,3 +1,11 @@
+var always_fail = true;
+$(document).ready(function(){
+  $('#totals').click(function(){
+    always_fail = false;
+  });
+});
+
+
 requirejs.config({
   baseUrl : Aw.settings.base_url + "assets/libs/enketo-core/lib",
   paths : {
@@ -32,17 +40,28 @@ requirejs.config({
   }
 });
 
+// Connection needs to be global.
+var con;
 requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form) {
   var loadErrors, form;
   // Respondent queue.
   var resp_queue;
-  var submission_queue = new SubmissionQueue();
   var current_respondent;
+  var submission_queue;
   // Perform request for form and data.
-  $.get(Aw.settings.xslt_transform_path, function(xml_form) {
+  $.get(Connection.URL_XSLT_TRANSFORM, function(xml_form) {
     RespondentQueue.requestNumbers(function(respondents) {
+      con = new Connection();
       // Set number to call.
-      resp_queue = RespondentQueue.prepareQueue(respondents);
+      submission_queue = new SubmissionQueue();
+      // Manually trigger the submission_queue_change.
+      // If we trigger it inside the SubmissionQueue constructor it
+      // will throw and error because the constructor has not returned yet
+      // and the object is null.
+      $(window).trigger('submission_queue_change');
+      
+      resp_queue = RespondentQueue.prepareQueue(respondents, null);
+      $(window).trigger('respondent_queue_change');
       
       // Enketo form stuff.
       var $data = $(xml_form);
@@ -88,8 +107,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       return;
     }
     
-    // Setting data. Temporary.
-    // TODO: Remove.
+    // TODO: Setting data. Temporary. Remove.
     $('#totals').text(resp_queue.getCurrentCount() + ' of ' + resp_queue.getTotal());
     $('#respondent_number').text(current_respondent.number);
     
@@ -109,15 +127,23 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
 
   //******************************************/
   // Event listeners
-  // EVENT submission_queue_change
-  $(window).on('submission_queue_change', function() {
-    console.log('Queue changed.');
+  // EVENT submission_queue_submit_success
+  $(window).on('submission_queue_submit_success', function() {
+    console.log('EVENT: submission_queue_submit_success');
+    
     RespondentQueue.requestNumbers(function(respondents) { 
       // Set number to call.
-      resp_queue = RespondentQueue.prepareQueue(respondents);
+      resp_queue = RespondentQueue.prepareQueue(respondents, current_respondent);
+      $(window).trigger('respondent_queue_change');
     });
+  });
+  // End Event
+  
+  // EVENT submission_queue_change
+  $(window).on('submission_queue_change', function() {
+    console.log('EVENT: submission_queue_change');
     
-    var $container = $('#queue');
+    var $container = $('#queue_submit');
     $container.html('');
     for (var i in submission_queue.queue) {
       $container.append($('<div>').text(submission_queue.queue[i].number));
@@ -125,9 +151,22 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   });
   // End Event
   
-  // EVENT submission_queue_change
-  $(window).on('online_status_change', function() {
-    if (submission_queue.online){
+  // EVENT respondent_queue_change
+  $(window).on('respondent_queue_change', function() {
+    console.log('EVENT: respondent_queue_change');
+    
+    var $container = $('#queue_resp');
+    $container.html('');
+    for (var i in resp_queue.respondents) {
+      $container.append($('<div>').text(resp_queue.respondents[i].number));
+    }
+  });
+  // End Event
+  
+  // EVENT connection_status_change
+  $(window).on('connection_status_change', function() {
+    console.log('EVENT: connection_status_change');
+    if (con.online){
       submission_queue.submit();
     }
   });
@@ -142,7 +181,7 @@ var RespondentQueue = function(queue) {
   this.current = 0;
 };
 
-RespondentQueue.prepareQueue = function(respondent_queue) {
+RespondentQueue.prepareQueue = function(respondent_queue, current_respondent) {
   if (SubmissionQueue.supportsLocalStorage() == false) {
     alert('You need a modern browser.');
     return null;
@@ -160,32 +199,65 @@ RespondentQueue.prepareQueue = function(respondent_queue) {
   // Remove from respondent_queue the respondents that are already
   // scheduled for submission.
   if ($.isArray(stored_data) && stored_data.length > 0) {
-    
-    var filtered = $(respondent_queue).filter(function() {
+
+    var filtered = $.grep(respondent_queue, function(n, index) {
       for (var i in stored_data) {
-        if (this.number == stored_data[i].number) {
+        if (n.number == stored_data[i].number) {
           return false;
         }
       }
       return true;
     });
     
+    console.log('**********************');
+    console.log('store');
+    console.log(stored_data);
+    console.log('filter');
+    console.log(filtered);
+    console.log('resp queue');
+    console.log(respondent_queue);
+    console.log('**********************');
+    
     // Assign filtered.
-    respondent_queue = filtered;    
+    respondent_queue = filtered;
   }
   
-  return new RespondentQueue(respondent_queue);
+  // If there's a current_respondents means that there was a request for more
+  // numbers. Everytime a number is successfully submitted a request for new
+  // numbers is fired.
+  // However, this request is fired after the next number in the resp_queue
+  // is shown to the user.
+  // Example queues:
+  // Respondent queue: [1,2,3,4,5]
+  // Submission queue: [1]
+  // The user is already viewing the respondent number 2 when 1 is submitted.
+  // After the submission the user recieves the number 6 and number 1 is
+  // removed. The respondent queue becomes:
+  // Respondent queue: [2,3,4,5,6]
+  // This action resets the queue current counter to 0 and when the user
+  // asks for the next number, 2 is returned again.
+  // The next lines prevent that by moving the counter to the next respondent.
+  if (current_respondent != null){
+    var new_respondent_index = 1;
+  }
+  
+  var rq = new RespondentQueue(respondent_queue);
+  rq.current = new_respondent_index || 0;
+  console.log('Current resp: ' + rq.current);
+  return rq;
 };
 
 RespondentQueue.requestNumbers = function(callback) {
-  $.get(Aw.settings.base_url + 'survey/survey_request_numbers/1', function(response) {
-    // Set CSRF
-    SubmissionQueue.csrf = response.csrf;
+  $.get(Connection.URL_REQUEST_RESPONDENTS, function(response) {
+    console.log('Respondenst from server: (RespondentQueue.requestNumbers)');
+    console.log(response.respondents);
     callback(response.respondents);
   }, 'json');
 };
  
 RespondentQueue.prototype.getNextResp = function() {
+  console.log('RespondentQueue.prototype.getNextResp');
+  console.log(this.respondents);
   if (typeof this.respondents[this.current] == 'undefined') {
     return false;
   }
@@ -210,8 +282,88 @@ RespondentQueue.prototype.getCurrentCount = function() {
 
 
 
+Connection = function() {
+  this.connection_check_interval = 15 * 1000;
+  this.csrf_token = null;
+  this.online = false;
+  
+  this.init();
+};
 
+// Add some static variables.
+$.extend(Connection, {
+  URL_CHECK_CONNECTION     : Aw.settings.check_connection,
+  URL_REQUEST_CSRF         : Aw.settings.base_url + 'survey/survey_request_csrf_token/',
+  URL_REQUEST_RESPONDENTS  : Aw.settings.base_url + 'survey/survey_request_numbers/1',
+  URL_XSLT_TRANSFORM       : Aw.settings.xslt_transform_path,
+  URL_FORM_SUBMIT          : Aw.settings.base_url + 'survey/survey_submit_enketo_form',
+});
 
+Connection.prototype.init = function() {
+  var self = this;
+  
+  // Check for the first time.
+  self.checkConnection();
+  
+  // Interval to check for connection.
+  window.setInterval( function() {
+    self.checkConnection();
+  }, self.connection_check_interval );
+};
+
+Connection.prototype.checkConnection = function() {
+  var self = this;
+  // navigator.onLine is totally unreliable (returns incorrect trues) on Firefox, Chrome, Safari (on OS X 10.8),
+  // but I assume falses are correct
+  if ( navigator.onLine ) {
+      $.ajax({
+        type: 'GET',
+        url: Connection.URL_CHECK_CONNECTION,
+        cache: false,
+        dataType: 'json',
+        timeout: 3000,
+        complete: function( response ) {
+          // Important to check for the content of the no-cache response as it will
+          // start receiving the fallback page specified in the manifest!
+          var online = typeof response.responseText !== 'undefined' && response.responseText === 'connected';
+          self.setOnlineStatus( online );
+        }
+      });
+  } else {
+    self.setOnlineStatus( false );
+  }
+};
+
+Connection.prototype.setOnlineStatus = function(newStatus) {
+  var self = this;
+  console.log('Is online: ' + newStatus);
+  if (newStatus != self.online) {
+    self.online = newStatus;
+    $(window).trigger('connection_status_change');
+  }
+};
+
+Connection.prototype.isOnline = function() {
+  return this.online;
+};
+
+Connection.prototype.requestCSRF = function(callback) {
+  var self = this;
+  console.log('Requesting CSRF token. Current: ' + self.csrf_token);
+  $.get(Connection.URL_REQUEST_CSRF, function(response) {
+    self.csrf_token = response.csrf;
+    console.log('New CSRF Token: ' + self.csrf_token);
+    callback();
+  }, 'json');
+};
+
+Connection.prototype.invalidateCSRF = function() {
+  this.csrf_token = null;
+};
+
+Connection.prototype.getCSRF = function() {
+  return this.csrf_token;
+};
 
 
 
@@ -222,20 +374,16 @@ RespondentQueue.prototype.getCurrentCount = function() {
 
 
 var SubmissionQueue = function() {
-  this.connection_check_interval = 15 * 1000;
-  this.csrf;
   this.queue = [];
-  
-  this.online = false;
   this.is_uploading = false;
-  var self = this;
   
   if (SubmissionQueue.supportsLocalStorage() == false) {
     alert('You need a modern browser.');
     return null;
   }
   
-  this.init();    
+  this.init();
+  this.submit();
 };
 
 SubmissionQueue.supportsLocalStorage = function() {
@@ -247,8 +395,8 @@ SubmissionQueue.supportsLocalStorage = function() {
 };
 
 SubmissionQueue.prototype.init = function() {
+  var self = this;
   console.log('Initializing Submission queue');
-  var self = this;  
   
   var data = localStorage.getItem('aw_submission_queue');
   if (data != null) {
@@ -256,7 +404,6 @@ SubmissionQueue.prototype.init = function() {
       var parsed = JSON.parse(data);
       if ($.isArray(parsed) && parsed.length > 0){
         this.queue = parsed;
-        $(window).trigger('submission_queue_change');
       }
     }
     catch(e) {
@@ -266,14 +413,6 @@ SubmissionQueue.prototype.init = function() {
       this.queue = [];
     }
   }
-  
-  this.checkConnection();
-  
-  // Interval to check for connection.
-  window.setInterval( function() {
-    self.checkConnection();
-  }, this.connection_check_interval );
-  
 };
 
 SubmissionQueue.prototype.add = function(value) {
@@ -290,74 +429,73 @@ SubmissionQueue.prototype.store = function(value) {
   localStorage.setItem('aw_submission_queue', to_store);
 };
 
-SubmissionQueue.prototype.checkConnection = function() {
+SubmissionQueue.prototype.submit = function() {
   var self = this;
-  // navigator.onLine is totally unreliable (returns incorrect trues) on Firefox, Chrome, Safari (on OS X 10.8),
-  // but I assume falses are correct
-  if ( navigator.onLine ) {
-    // When uploading do not check connection.
-    if (!this.is_uploading) {
-      $.ajax({
-        type: 'GET',
-        url: Aw.settings.check_connection,
-        cache: false,
-        dataType: 'json',
-        timeout: 3000,
-        complete: function( response ) {
-          // Important to check for the content of the no-cache response as it will
-          // start receiving the fallback page specified in the manifest!
-          var online = typeof response.responseText !== 'undefined' && response.responseText === 'connected';
-          self.setOnlineStatus( online );
-        }
+  /*console.log('Pre submission checks..');
+  console.log('Online: ' + con.isOnline());
+  console.log('Uploading:' + self.is_uploading);
+  console.log('Queue: ' + self.queue.length);
+  */
+  if (con.isOnline() && !self.is_uploading && self.queue.length > 0) {
+  //console.log('Submitting.');
+    
+    // Ceck if there is a CSRF token.
+    if (con.getCSRF() == null) {
+      // Request csrf.
+      con.requestCSRF(function() {
+        self.submit();
       });
+      return;
     }
-  } else {
-    self.setOnlineStatus( false );
-  }
-};
-
-SubmissionQueue.prototype.setOnlineStatus = function(newStatus) {
-  console.log('Is online: ' + newStatus);
-  if (newStatus != this.online) {
-    this.online = newStatus;
-    $(window).trigger('online_status_change');
-  }
-};
-
-SubmissionQueue.prototype.submit = function() {//return;
-  var self = this;
-  self.checkConnection();
-  if (self.online && !self.is_uploading && self.queue.length > 0) {
-    self.is_uploading = true;
+    
+    ///////////////////////MOCK
+    // Simulate errors
+    if (always_fail && Math.random() < 1) {
+      console.warn('error');
+      self.is_uploading = true;
+      $.get(Aw.settings.base_url + 'survey/delay/4', function() {
+        self.is_uploading = false;
+        self.submit();
+      });
+      return;
+    }
+    always_fail = true;
+    ///////////////////////MOCK
     
     var to_submit = self.queue[0];
+    self.is_uploading = true;
     
-    //MOCK
-    if (Math.random() < 0.5) {
-      // TODO: Always get the csrf back.
-      $.post(Aw.settings.base_url + 'survey/survey_submit_enketo_form', {
-        csrf_aw_datacollection : SubmissionQueue.csrf,
-        respondent: to_submit
-      }, function(r) {
-        console.log(r);
-      })
+    // Submit data
+    $.post(Connection.URL_FORM_SUBMIT, {
+      csrf_aw_datacollection : con.getCSRF(),
+      respondent: to_submit
       
-      // success
-      console.log('Submit success');
+    }, function(r) {
+      console.log('Success.');
+      console.log(r);
       // The operation succeeded.
       // Remove the respondent and trigger change.
       self.queue.shift();
       self.store();
       $(window).trigger('submission_queue_change');
-    }
-    else {
-      // error
-      console.log('Submit error');
-    }
-    
-    self.is_uploading = false;
-    
-    setTimeout(function(){self.submit();}, 2000);
+      $(window).trigger('submission_queue_submit_success');
+            
+    }).fail(function(res) {
+      // If the request failed because of the CSRF token, invalidate it and try again.
+      if (res.status == 500 && res.responseText.match('The action you have requested is not allowed.')) {
+        console.log('Fail.');
+        console.log('Invalid token.');
+        // CSRF token error.
+        // Invalidate token.
+        con.invalidateCSRF();
+      }
+      
+    }).always(function() {
+      self.is_uploading = false;
+      // Submit again. If there are no more items in the queue
+      // the submission is not going to run.
+      // If a new token is needed, it will be requested
+      self.submit();
+    });
   }
 };
-
