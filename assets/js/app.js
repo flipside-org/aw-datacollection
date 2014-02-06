@@ -1,9 +1,23 @@
 var always_fail = true;
 $(document).ready(function(){
-  $('#totals').click(function(){
+  $('.allow-submission').click(function(e) {
+    e.preventDefault();
     always_fail = false;
   });
 });
+
+
+// Little object to keep track of what's happening
+var whatsGoingOn = {
+  bootstrapping : true,
+  block_submission : false,
+  
+  numbers : {
+    exhausted_bootstrapping : false,
+    complete_confirm : false,
+    offline : false
+  }
+};
 
 
 requirejs.config({
@@ -54,14 +68,8 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       con = new Connection();
       // Set number to call.
       submission_queue = new SubmissionQueue();
-      // Manually trigger the submission_queue_change.
-      // If we trigger it inside the SubmissionQueue constructor it
-      // will throw and error because the constructor has not returned yet
-      // and the object is null.
-      $(window).trigger('submission_queue_change');
       
       resp_queue = RespondentQueue.prepareQueue(respondents, null);
-      $(window).trigger('respondent_queue_change');
       
       // Enketo form stuff.
       var $data = $(xml_form);
@@ -82,33 +90,65 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         } else {
           alert('Form is correctly filled. However, since this is a test run, no data will be collected.');
           //alert('Form is valid! (see XML record in the console)');
-          current_respondent.form_data = form.getDataStr();
-          submission_queue.add(current_respondent);
-          
-          form.resetView();
-          initializeForm();
+          if (whatsGoingOn.block_submission) {
+            alert('There are no numbers available. The form can not be submitted.');
+          }
+          else {
+            console.log('validate-form');
+            console.log(current_respondent);
+            current_respondent.form_data = form.getDataStr();
+            submission_queue.add(current_respondent);
+            
+            form.resetView();
+            initializeForm();
+          }
         }
       });
       
+      whatsGoingOn.bootstrapping = false;
+      
     });
   }, 'xml');
+  
   
   /**
    * Initialize the form.
    */
   function initializeForm() {
-    // Get the next respondent.
-    current_respondent = resp_queue.getNextResp();
+    whatsGoingOn.block_submission = false;
+    // TODO: Setting data. Temporary. Remove.
+    $('#respondent_number').text('');
     
     // Check if there are more respondents.
-    if (current_respondent == false) {
+    if (!resp_queue.hasNextResp()) {
+      whatsGoingOn.block_submission = true;
       // TODO: Do something when there are no more numbers.
       alert('Numbers exhausted.');
+      
+      // Find out why
+      if (whatsGoingOn.bootstrapping) {
+        alert('BOOTSTRAPPING: Your queue is full. Wait for it to submit.');
+        whatsGoingOn.numbers.exhausted_bootstrapping = true;
+      }
+      else if (!con.isOnline()) {
+        alert("You are offline. It was not possible to fetch more numbers.\nWait");
+        whatsGoingOn.numbers.offline = true;
+      }
+      else if (con.isOnline()) {
+        // Probably numbers are over?
+        whatsGoingOn.numbers.complete_confirm = true;
+        $('#totals').before('<h1>WAIT!</h1>');
+      }
+      else {
+        alert('This is embarrassing. An error occurred. Refresh the page.');
+      }
       return;
     }
     
+    // Get the next respondent.
+    current_respondent = resp_queue.getNextResp();
+    
     // TODO: Setting data. Temporary. Remove.
-    $('#totals').text(resp_queue.getCurrentCount() + ' of ' + resp_queue.getTotal());
     $('#respondent_number').text(current_respondent.number);
     
     // Initialize the form.
@@ -134,31 +174,64 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     RespondentQueue.requestNumbers(function(respondents) { 
       // Set number to call.
       resp_queue = RespondentQueue.prepareQueue(respondents, resp_queue);
-      $(window).trigger('respondent_queue_change');
+      
+      if (whatsGoingOn.numbers.exhausted_bootstrapping) {
+        whatsGoingOn.numbers.exhausted_bootstrapping = false;
+        if (resp_queue.hasNextResp()){
+          alert("Turns out there are more respondents.\n Initialize the form again!");
+          initializeForm();
+        }
+        else {
+          alert("There are no more respondents.\nData collection is over.");
+        }
+      }
+      else if (whatsGoingOn.numbers.complete_confirm) {
+        whatsGoingOn.numbers.complete_confirm = false;
+        if (resp_queue.hasNextResp()){
+          alert("Turns out there are more respondents.\n Initialize the form again!");
+          initializeForm();
+        }
+        else {
+          alert("There are no more respondents.\nData collection is over.");
+        }
+      }
+      else if (whatsGoingOn.numbers.offline) {
+        whatsGoingOn.numbers.offline = false;
+        if (resp_queue.hasNextResp()){
+          alert("Turns out there are more respondents.\n Initialize the form again!");
+          initializeForm();
+        }
+        else {
+          alert("There are no more respondents.\nData collection is over.");
+        }
+      }
+      
     });
   });
   // End Event
   
   // EVENT submission_queue_change
-  $(window).on('submission_queue_change', function() {
+  $(window).on('submission_queue_change', function(event, sub_queue) {
     console.log('EVENT: submission_queue_change');
     
     var $container = $('#queue_submit');
     $container.html('');
-    for (var i in submission_queue.queue) {
-      $container.append($('<div>').text(submission_queue.queue[i].number));
+    var queue = sub_queue.getQueue();
+    for (var i in queue) {
+      $container.append($('<div>').text(queue[i].number));
     }
   });
   // End Event
   
   // EVENT respondent_queue_change
-  $(window).on('respondent_queue_change', function() {
+  $(window).on('respondent_queue_change', function(event, resp_queue) {
     console.log('EVENT: respondent_queue_change');
     
     var $container = $('#queue_resp');
     $container.html('');
-    for (var i in resp_queue.respondents) {
-      $container.append($('<div>').text(resp_queue.respondents[i].number));
+    var all_respondents = resp_queue.getQueue();
+    for (var i in all_respondents) {
+      $container.append($('<div>').text(all_respondents[i].number));
     }
   });
   // End Event
@@ -166,6 +239,13 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   // EVENT connection_status_change
   $(window).on('connection_status_change', function() {
     console.log('EVENT: connection_status_change');
+    // TEMP
+    var $indicator = $('.connection-status');
+    if (con.online) { $indicator.text('Online').removeClass('alert'); }
+    else { $indicator.text('Offline').addClass('alert'); }
+    // /TEMP
+    
+    
     if (con.online){
       submission_queue.submit();
     }
@@ -175,9 +255,45 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Objects
-var RespondentQueue = function(queue) {
-  this.respondents = queue;
+var RespondentQueue = function() {
+  this.respondents = [];
   this.current = 0;
 };
 
@@ -202,9 +318,7 @@ RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queu
 
     var filtered = $.grep(new_respondents, function(n, index) {
       for (var i in stored_data) {
-        if (n.number == stored_data[i].number) {
-          return false;
-        }
+        if (n.number == stored_data[i].number) { return false; }
       }
       return true;
     });
@@ -224,19 +338,19 @@ RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queu
   
   if (current_respondent_queue == null) {
     // First setup.
-    return new RespondentQueue(new_respondents);
+    var queue = new RespondentQueue();
+    queue.appendResp(new_respondents);
+    return queue;
   }
   else {
     // Appending numbers.
     // After filtering the numbers from the server against the ones
     // on localStorage, we need to filter them against the ones in the
     // previous queue. In the end we will be left only with the new numbers.
-    var current_queue = current_respondent_queue.getAllResp();
+    var current_queue = current_respondent_queue.getQueue();
     var new_respondents = $.grep(filtered, function(n, index) {
       for (var i in current_queue) {
-        if (n.number == current_queue[i].number) {
-          return false;
-        }
+        if (n.number == current_queue[i].number) { return false; }
       }
       return true;
     });
@@ -264,6 +378,10 @@ RespondentQueue.prototype.getNextResp = function() {
     return resp;
   }
 };
+ 
+RespondentQueue.prototype.hasNextResp = function() {
+  return typeof this.respondents[this.current] != 'undefined';
+};
 
 RespondentQueue.prototype.getTotal = function() {
   return this.respondents.length;
@@ -273,12 +391,13 @@ RespondentQueue.prototype.getCurrentCount = function() {
   return this.current;
 };
 
-RespondentQueue.prototype.getAllResp = function() {
+RespondentQueue.prototype.getQueue = function() {
   return this.respondents;
 };
 
 RespondentQueue.prototype.appendResp = function(respondents) {
   $.merge(this.respondents, respondents);
+  $(window).trigger('respondent_queue_change', this);
   return this;
 };
 
@@ -390,6 +509,7 @@ var SubmissionQueue = function() {
   }
   
   this.init();
+  $(window).trigger('submission_queue_change', this);
   this.submit();
 };
 
@@ -426,8 +546,19 @@ SubmissionQueue.prototype.add = function(value) {
   console.log('Adding value to submission queue.');
   this.queue.push(value);
   this.store();
-  $(window).trigger('submission_queue_change');
+  $(window).trigger('submission_queue_change', this);
   this.submit();
+};
+
+SubmissionQueue.prototype.shift = function() {
+  console.log('Shifting value from submission queue.');
+  this.queue.shift();
+  this.store();
+  $(window).trigger('submission_queue_change', this);
+};
+
+SubmissionQueue.prototype.getQueue = function() {
+  return this.queue;
 };
 
 SubmissionQueue.prototype.store = function(value) {
@@ -438,15 +569,15 @@ SubmissionQueue.prototype.store = function(value) {
 
 SubmissionQueue.prototype.submit = function() {
   var self = this;
-  /*console.log('Pre submission checks..');
+  console.log('Pre submission checks..');
   console.log('Online: ' + con.isOnline());
   console.log('Uploading:' + self.is_uploading);
   console.log('Queue: ' + self.queue.length);
-  */
+  
   if (con.isOnline() && !self.is_uploading && self.queue.length > 0) {
-  //console.log('Submitting.');
+    console.log('Submitting.');
     
-    // Ceck if there is a CSRF token.
+    // Check if there is a CSRF token.
     if (con.getCSRF() == null) {
       // Request csrf.
       con.requestCSRF(function() {
@@ -461,6 +592,13 @@ SubmissionQueue.prototype.submit = function() {
       console.warn('error');
       self.is_uploading = true;
       $.get(Aw.settings.base_url + 'survey/delay/4', function() {
+        // yeah. do nothing.
+      }).fail(function(r){
+        if (r.status == 404) {
+          // Not found means no connection.
+          con.setOnlineStatus( false );
+        }
+      }).always(function() {
         self.is_uploading = false;
         self.submit();
       });
@@ -482,9 +620,7 @@ SubmissionQueue.prototype.submit = function() {
       console.log(r);
       // The operation succeeded.
       // Remove the respondent and trigger change.
-      self.queue.shift();
-      self.store();
-      $(window).trigger('submission_queue_change');
+      self.shift();
       $(window).trigger('submission_queue_submit_success');
             
     }).fail(function(res) {

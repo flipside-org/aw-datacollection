@@ -315,10 +315,25 @@ class Survey extends CI_Controller {
    * TODO: Survey::survey_request_numbers Docs
    */
   public function survey_request_numbers($sid) {
+    
+    $all_resp = $this->session->userdata('resp');
+    if ($all_resp == FALSE) {
+      $all_resp = array(
+        'pool' => array(),
+        'requested' => array(),
+        'submitted' => array(),
+      );
+      for ($i=0;$i<1000;$i++) {
+        $all_resp['pool'][$i] = array();
+        $all_resp['pool'][$i]['number'] = 100000000 + $i;
+      }
+      $this->session->set_userdata('resp', $all_resp);
+      
+    }    
     /***** MOCK ***/
     $REQUEST_MAX = 5;
     
-    $all_resp = $this->session->userdata('resp');
+    
     $to_request = $REQUEST_MAX - count($all_resp['requested']);
     
     if ($to_request > 0) {
