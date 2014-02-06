@@ -133,7 +133,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     
     RespondentQueue.requestNumbers(function(respondents) { 
       // Set number to call.
-      resp_queue = RespondentQueue.prepareQueue(respondents, current_respondent);
+      resp_queue = RespondentQueue.prepareQueue(respondents, resp_queue);
       $(window).trigger('respondent_queue_change');
     });
   });
@@ -181,7 +181,7 @@ var RespondentQueue = function(queue) {
   this.current = 0;
 };
 
-RespondentQueue.prepareQueue = function(respondent_queue, current_respondent) {
+RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queue) {
   if (SubmissionQueue.supportsLocalStorage() == false) {
     alert('You need a modern browser.');
     return null;
@@ -196,11 +196,11 @@ RespondentQueue.prepareQueue = function(respondent_queue, current_respondent) {
     stored_data = [];
   }
   
-  // Remove from respondent_queue the respondents that are already
+  // Remove from new_respondents the respondents that are already
   // scheduled for submission.
   if ($.isArray(stored_data) && stored_data.length > 0) {
 
-    var filtered = $.grep(respondent_queue, function(n, index) {
+    var filtered = $.grep(new_respondents, function(n, index) {
       for (var i in stored_data) {
         if (n.number == stored_data[i].number) {
           return false;
@@ -215,41 +215,39 @@ RespondentQueue.prepareQueue = function(respondent_queue, current_respondent) {
     console.log('filter');
     console.log(filtered);
     console.log('resp queue');
-    console.log(respondent_queue);
+    console.log(new_respondents);
     console.log('**********************');
     
     // Assign filtered.
-    respondent_queue = filtered;
+    new_respondents = filtered;
   }
   
-  // If there's a current_respondents means that there was a request for more
-  // numbers. Everytime a number is successfully submitted a request for new
-  // numbers is fired.
-  // However, this request is fired after the next number in the resp_queue
-  // is shown to the user.
-  // Example queues:
-  // Respondent queue: [1,2,3,4,5]
-  // Submission queue: [1]
-  // The user is already viewing the respondent number 2 when 1 is submitted.
-  // After the submission the user recieves the number 6 and number 1 is
-  // removed. The respondent queue becomes:
-  // Respondent queue: [2,3,4,5,6]
-  // This action resets the queue current counter to 0 and when the user
-  // asks for the next number, 2 is returned again.
-  // The next lines prevent that by moving the counter to the next respondent.
-  if (current_respondent != null){
-    var new_respondent_index = 1;
+  if (current_respondent_queue == null) {
+    // First setup.
+    return new RespondentQueue(new_respondents);
   }
-  
-  var rq = new RespondentQueue(respondent_queue);
-  rq.current = new_respondent_index || 0;
-  console.log('Current resp: ' + rq.current);
-  return rq;
+  else {
+    // Appending numbers.
+    // After filtering the numbers from the server against the ones
+    // on localStorage, we need to filter them against the ones in the
+    // previous queue. In the end we will be left only with the new numbers.
+    var current_queue = current_respondent_queue.getAllResp();
+    var new_respondents = $.grep(filtered, function(n, index) {
+      for (var i in current_queue) {
+        if (n.number == current_queue[i].number) {
+          return false;
+        }
+      }
+      return true;
+    });
+    
+    return current_respondent_queue.appendResp(new_respondents);
+  }
 };
 
 RespondentQueue.requestNumbers = function(callback) {
   $.get(Connection.URL_REQUEST_RESPONDENTS, function(response) {
-    console.log('Respondenst from server: (RespondentQueue.requestNumbers)');
+    console.log('Respondents from server: (RespondentQueue.requestNumbers)');
     console.log(response.respondents);
     callback(response.respondents);
   }, 'json');
@@ -257,7 +255,6 @@ RespondentQueue.requestNumbers = function(callback) {
  
 RespondentQueue.prototype.getNextResp = function() {
   console.log('RespondentQueue.prototype.getNextResp');
-  console.log(this.respondents);
   if (typeof this.respondents[this.current] == 'undefined') {
     return false;
   }
@@ -274,6 +271,15 @@ RespondentQueue.prototype.getTotal = function() {
 
 RespondentQueue.prototype.getCurrentCount = function() {
   return this.current;
+};
+
+RespondentQueue.prototype.getAllResp = function() {
+  return this.respondents;
+};
+
+RespondentQueue.prototype.appendResp = function(respondents) {
+  $.merge(this.respondents, respondents);
+  return this;
 };
 
 
@@ -359,6 +365,7 @@ Connection.prototype.requestCSRF = function(callback) {
 
 Connection.prototype.invalidateCSRF = function() {
   this.csrf_token = null;
+  return this;
 };
 
 Connection.prototype.getCSRF = function() {
