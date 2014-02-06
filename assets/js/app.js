@@ -6,20 +6,11 @@ $(document).ready(function(){
   });
 });
 
-
-// Little object to keep track of what's happening
-var whatsGoingOn = {
-  bootstrapping : true,
-  block_submission : false,
-  
-  numbers : {
-    exhausted_bootstrapping : false,
-    complete_confirm : false,
-    offline : false
-  }
-};
-
-
+/**
+ * Require Js configuration for enketo.
+ * Coming from enketo core.
+ * TODO: baseUrl should come from server.
+ */
 requirejs.config({
   baseUrl : Aw.settings.base_url + "assets/libs/enketo-core/lib",
   paths : {
@@ -54,8 +45,74 @@ requirejs.config({
   }
 });
 
-// Connection needs to be global.
+/**
+ * Little object to track the status of things.
+ */
+var whatsGoingOn = {
+  /**
+   * Controls whether the for is bootstrapping.
+   * The system finished bootstrapping after the form is initialized
+   * for the first time.
+   */
+  bootstrapping : true,
+  /**
+   * Controls the submission of the form. If the user is waiting for
+   * new numbers, the form submission must be blocked. However the user can
+   * validate it and play around.
+   */
+  block_submission : false,
+  /**
+   * Sub object to control what's happening to numbers.
+   * The user can exhaust numbers for several reasons.
+   */
+  numbers : {
+    /**
+     * Numbers can be exhausted when the user loads the form and all the
+     * numbers assigned are already in the submit queue.
+     * The user has to wait for a submission.
+     * Upon a successful submission the event submission_queue_submit_success
+     * will be triggered, requiring new numbers and re-initializing the form.
+     * If there are no more numbers, means that the data collection is over.
+     */
+    exhausted_bootstrapping : false,
+    /**
+     * This is a somewhat complex reason.
+     * When a user finishes all the numbers and is online, it should mean
+     * that data collection is over. There is a chance, however, that the user
+     * just came online and the system didn't have time to fetch a new number. 
+     * This would be a false positive.
+     * Let's imagine the user receives respondents [1,2,3], and the connection
+     * drops. The user submits [1,2] and immediately before submitting [3] the
+     * connection comes back on. The system has no time to request new numbers
+     * and since the local queue is empty, the system assumes that the data
+     * collection is over.
+     * To prevent this from happening, a confirmation is asked. Since the 
+     * connection was reestablished, a respondent will be submitted and a new
+     * number will be requested.
+     * If there are new numbers the form will be reset otherwise
+     * we know for sure that the data collection is over.
+     */
+    complete_confirm : false,
+    /**
+     * If the user submits the last number in the local queue and the
+     * connection is offline, the system can not fetch more numbers.
+     * The user has to wait for the connection to come online again.
+     * When it comes online a connection_status_change event will be
+     * triggered, a respondent will be submitted, a new number will
+     * be requested and the form re-initialized.
+     * If there are no more numbers data collection is over.
+     */
+    offline : false
+  }
+};
+
+/**
+ * Connection
+ * Variable to hold the connection object.
+ */
 var con;
+
+
 requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form) {
   var loadErrors, form;
   // Respondent queue.
