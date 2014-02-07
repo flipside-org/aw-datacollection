@@ -112,21 +112,31 @@ var whatsGoingOn = {
  */
 var con;
 
-
+// Require needed scripts and start everything.
 requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form) {
-  var loadErrors, form;
-  // Respondent queue.
+  // Errors when loading the form.
+  var loadErrors;
+  // Enketo form.
+  var form;
+  // Respondent queue. Instance of RespondentQueue.
   var resp_queue;
-  var current_respondent;
+  // Submission queue. Instance of SubmissionQueue.
   var submission_queue;
-  // Perform request for form and data.
+  // Current respondent.
+  var current_respondent;
+  
+  // Perform request for form. Form will be returned in xml.
   $.get(Connection.URL_XSLT_TRANSFORM, function(xml_form) {
+    // Request numbers.
     RespondentQueue.requestNumbers(function(respondents) {
+      // Initialize connection. Although this could be initialized before
+      // It's only needed it the form and the first batch of numbers
+      // are successfully requested.
       con = new Connection();
-      // Set number to call.
+      // Initialize the submission queue
       submission_queue = new SubmissionQueue();
-      
-      resp_queue = RespondentQueue.prepareQueue(respondents, null);
+      // Initialize respondent queue using the numbers received.
+      resp_queue = RespondentQueue.prepareQueue(respondents);
       
       // Enketo form stuff.
       var $data = $(xml_form);
@@ -141,27 +151,28 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   
       //validate handler for validate button
       $('#validate-form').on('click', function() {
+        console.log('validate-form click event');
         form.validate();
         if (!form.isValid()) {
           alert('Form contains errors. Please see fields marked in red.');
         } else {
-          alert('Form is correctly filled. However, since this is a test run, no data will be collected.');
-          //alert('Form is valid! (see XML record in the console)');
           if (whatsGoingOn.block_submission) {
             alert('There are no numbers available. The form can not be submitted.');
           }
           else {
-            console.log('validate-form');
-            console.log(current_respondent);
+            // Form is valid. Get the data.
             current_respondent.form_data = form.getDataStr();
+            // Add the respondent to the submission queue.
             submission_queue.add(current_respondent);
-            
+            // Reset the form.
             form.resetView();
+            // Initialize again.
             initializeForm();
           }
         }
       });
       
+      // Bootstrap finished.
       whatsGoingOn.bootstrapping = false;
       
     });
@@ -171,35 +182,50 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   /**
    * Initialize the form.
    */
+  // TODO: initializeForm() - Replace alerts with proper messages.
   function initializeForm() {
+    // Unblock for submission. It could be blocked if the numbers
+    // were exhausted at some point.
     whatsGoingOn.block_submission = false;
+    
     // TODO: Setting data. Temporary. Remove.
     $('#respondent_number').text('');
     
     // Check if there are more respondents.
     if (!resp_queue.hasNextResp()) {
+      // Numbers are exhausted. Block the form until further action is taken.
       whatsGoingOn.block_submission = true;
-      // TODO: Do something when there are no more numbers.
+      
       alert('Numbers exhausted.');
       
       // Find out why
       if (whatsGoingOn.bootstrapping) {
-        alert('BOOTSTRAPPING: Your queue is full. Wait for it to submit.');
+        // Brief explanation. Check the whatsGoingOn Object for more info.
+        // The page has just been loaded and this is the first time the form
+        // is initialized. The numbers fetched from the server are all in
+        // the submission queue.
         whatsGoingOn.numbers.exhausted_bootstrapping = true;
+        alert('BOOTSTRAPPING: Your queue is full. Wait for it to submit.');
       }
       else if (!con.isOnline()) {
-        alert("You are offline. It was not possible to fetch more numbers.\nWait");
+        // Brief explanation. Check the whatsGoingOn Object for more info.
+        // The user is offline and it's not possible to fetch numbers.
         whatsGoingOn.numbers.offline = true;
+        alert("You are offline. It was not possible to fetch more numbers.\nWait");
       }
       else if (con.isOnline()) {
-        // Probably numbers are over?
+        // Brief explanation. Check the whatsGoingOn Object for more info.
+        // Probably numbers are over and data collection is over, however it
+        // could be a false positive.
         whatsGoingOn.numbers.complete_confirm = true;
-        $('#totals').before('<h1>WAIT!</h1>');
+        alert("There are no more numbers in your queue. Please wait while your system fetches more.");
       }
       else {
-        alert('This is embarrassing. An error occurred. Refresh the page.');
+        // This should never happens, but if it does, we got it covered.
+        alert("This is embarrassing.\nAn error occurred. Please refresh the page.");
       }
-      return;
+      // Return
+      return false;
     }
     
     // Get the next respondent.
@@ -224,18 +250,39 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
 
   //******************************************/
   // Event listeners
+  // To ease usage of enketo, the objects involved in making queues work
+  // trigger events. These need to be captured inside the requirejs 
+  // function die to variable scope, and because they are only needed
+  // if the form is correctly initialized.
+  
   // EVENT submission_queue_submit_success
+  // This event is triggered by the SubmissionQueue object when there's a
+  // successful submission.
   $(window).on('submission_queue_submit_success', function() {
     console.log('EVENT: submission_queue_submit_success');
     
+    // After a successful submission request new numbers.
     RespondentQueue.requestNumbers(function(respondents) { 
-      // Set number to call.
+      // Update the respondent queue using the numbers received from the server.
       resp_queue = RespondentQueue.prepareQueue(respondents, resp_queue);
       
+      // TODO: submission_queue_submit_success - Handle equal ifs.
+      // Right now the instructions are the same for every condition. Check if
+      // this is correct and improve code.
+      // TODO: submission_queue_submit_success - Use proper messages instead of alert().
+      
+      // When the numbers are exhausted the user has to wait for a submission.
+      // Upon submission, new numbers are requested and the user can be notified.
+      // The user will either be able to continue data collection or be done
+      // with collection.
       if (whatsGoingOn.numbers.exhausted_bootstrapping) {
+        // Brief explanation. Check the whatsGoingOn Object for more info.
+        // The page has just been loaded and this is the first time the form
+        // is initialized. The numbers fetched from the server are all in
+        // the submission queue.
         whatsGoingOn.numbers.exhausted_bootstrapping = false;
         if (resp_queue.hasNextResp()){
-          alert("Turns out there are more respondents.\n Initialize the form again!");
+          alert("Turns out there are more respondents.\nInitialize the form again!");
           initializeForm();
         }
         else {
@@ -243,9 +290,12 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         }
       }
       else if (whatsGoingOn.numbers.complete_confirm) {
+        // Brief explanation. Check the whatsGoingOn Object for more info.
+        // Probably numbers are over and data collection is over, however it
+        // could be a false positive.
         whatsGoingOn.numbers.complete_confirm = false;
         if (resp_queue.hasNextResp()){
-          alert("Turns out there are more respondents.\n Initialize the form again!");
+          alert("Turns out there are more respondents.\nInitialize the form again!");
           initializeForm();
         }
         else {
@@ -253,9 +303,11 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         }
       }
       else if (whatsGoingOn.numbers.offline) {
+        // Brief explanation. Check the whatsGoingOn Object for more info.
+        // The user is offline and it's not possible to fetch numbers.
         whatsGoingOn.numbers.offline = false;
         if (resp_queue.hasNextResp()){
-          alert("Turns out there are more respondents.\n Initialize the form again!");
+          alert("Turns out there are more respondents.\nInitialize the form again!");
           initializeForm();
         }
         else {
@@ -265,9 +317,13 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       
     });
   });
-  // End Event
+  // End Event submission_queue_submit_success
   
   // EVENT submission_queue_change
+  // This event is triggered every time the submission queue changes.
+  // Adding and/or removing respondents form the queue will trigger the event.
+  // This event is also triggered after the submission queue initialization
+  // even if the submission queue is empty.
   $(window).on('submission_queue_change', function(event, sub_queue) {
     console.log('EVENT: submission_queue_change');
     
@@ -278,9 +334,14 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       $container.append($('<div>').text(queue[i].number));
     }
   });
-  // End Event
+  // End Event submission_queue_change
   
   // EVENT respondent_queue_change
+  // This event is triggered every time the respondent queue changes, however
+  // right now it only possible to append elements to the respondent queue
+  // since it will keep history of respondents (until page refresh)
+  // This event is also triggered after the respondent queue initialization
+  // even if the respondent queue is empty.
   $(window).on('respondent_queue_change', function(event, resp_queue) {
     console.log('EVENT: respondent_queue_change');
     
@@ -291,23 +352,28 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       $container.append($('<div>').text(all_respondents[i].number));
     }
   });
-  // End Event
+  // End Event respondent_queue_change
   
   // EVENT connection_status_change
-  $(window).on('connection_status_change', function() {
+  // Triggered by the Connection object every time there's a status change.
+  // Status can be online of offline and can be checked using
+  // connection.isOnline()
+  $(window).on('connection_status_change', function(event, connection) {
     console.log('EVENT: connection_status_change');
+    
     // TEMP
     var $indicator = $('.connection-status');
-    if (con.online) { $indicator.text('Online').removeClass('alert'); }
+    if (connection.isOnline()) { $indicator.text('Online').removeClass('alert'); }
     else { $indicator.text('Offline').addClass('alert'); }
     // /TEMP
     
     
-    if (con.online){
+    // When the system is back online try to submit.
+    if (connection.isOnline()){
       submission_queue.submit();
     }
   });
-  // End Event
+  // End Event connection_status_change
 
 });
 
@@ -347,16 +413,53 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
 
 
 
-
-// Objects
-var RespondentQueue = function() {
+/**
+ * RespondentQueue
+ * Holds the respondents used by enketo.
+ * The respondents will be appended to the queue and remain in it until
+ * there's a page refresh.
+ * It has an internal counter to keep track of the current respondent.
+ * 
+ * This should not be initialized directly. Use prepareQueue instead.
+ */
+RespondentQueue = function() {
   this.respondents = [];
   this.current = 0;
 };
 
+/**
+ * Static function to initialize the RespondentQueue.
+ * The server has no way to know which numbers are in the submission queue
+ * so it sends all the numbers currently reserved.
+ * During bootstrap, after receiving the numbers, only the ones not in
+ * the submission queue should be added to the respondent queue.
+ * Example:
+ * Numbers in submission queue: [1,2]
+ * Numbers from server: [1,2,3,4]
+ * Numbers added to respondent queue [3,4]
+ * 
+ * When requesting additional numbers, only the new numbers are added to the
+ * respondents queue, so the numbers are matched against the submission queue
+ * and the current respondent queue.
+ * Example:
+ * Number 1 is submitted.
+ * Numbers in submission queue: [2]
+ * Numbers from server: [2,3,4,5]
+ * Numbers in respondent queue: [3,4]
+ * Numbers added to respondent queue [5]
+ * Final respondent queue: [3,4,5] 
+ * 
+ * @static
+ * @param {array} new_respondents
+ *   New respondents received from the server.
+ * @param {RespondentQueue} current_respondent_queue
+ *   If null, a new RespondentQueue is returned, otherwise the numbers are
+ *   appended to the existing queue.
+ */
 RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queue) {
-  if (SubmissionQueue.supportsLocalStorage() == false) {
-    alert('You need a modern browser.');
+  if (Connection.supportsLocalStorage() == false) {
+    alert("Your browser is outdated.\nYou will be redirected to a page to upgrade your browser.");
+    window.location = 'http://browsehappy.com/';
     return null;
   }
   
@@ -381,12 +484,12 @@ RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queu
     });
     
     console.log('**********************');
-    console.log('store');
-    console.log(stored_data);
-    console.log('filter');
-    console.log(filtered);
-    console.log('resp queue');
+    console.log('Respondents from the server:');
     console.log(new_respondents);
+    console.log('Respondents in localStorage:');
+    console.log(stored_data);
+    console.log('Respondents after filter:');
+    console.log(filtered);
     console.log('**********************');
     
     // Assign filtered.
@@ -401,21 +504,35 @@ RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queu
   }
   else {
     // Appending numbers.
+    var current_queue = current_respondent_queue.getQueue();
     // After filtering the numbers from the server against the ones
     // on localStorage, we need to filter them against the ones in the
     // previous queue. In the end we will be left only with the new numbers.
-    var current_queue = current_respondent_queue.getQueue();
-    var new_respondents = $.grep(filtered, function(n, index) {
+    new_respondents = $.grep(filtered, function(n, index) {
       for (var i in current_queue) {
         if (n.number == current_queue[i].number) { return false; }
       }
       return true;
     });
     
+    console.log('Current queue NOT null');
+    console.log('Respondents in current queue:');
+    console.log(current_queue);
+    console.log('Respondents after filter:');
+    console.log(new_respondents);
+    console.log('**********************');
+    
     return current_respondent_queue.appendResp(new_respondents);
   }
 };
 
+/**
+ * Static function to request new numbers.
+ * 
+ * @static
+ * @param {function} callback
+ *   Callback function executed when the request for new numbers is successful.
+ */
 RespondentQueue.requestNumbers = function(callback) {
   $.get(Connection.URL_REQUEST_RESPONDENTS, function(response) {
     console.log('Respondents from server: (RespondentQueue.requestNumbers)');
@@ -423,9 +540,14 @@ RespondentQueue.requestNumbers = function(callback) {
     callback(response.respondents);
   }, 'json');
 };
- 
+
+/**
+ * Returns the next respondent and moves the counter forward.
+ * 
+ * @return {mixed}
+ *   Returns the next respondent in queue or false if not available.
+ */
 RespondentQueue.prototype.getNextResp = function() {
-  console.log('RespondentQueue.prototype.getNextResp');
   if (typeof this.respondents[this.current] == 'undefined') {
     return false;
   }
@@ -435,23 +557,55 @@ RespondentQueue.prototype.getNextResp = function() {
     return resp;
   }
 };
- 
+
+/**
+ * Checks whether there's a next respondent in queue.
+ * 
+ * @return {boolean} 
+ */
 RespondentQueue.prototype.hasNextResp = function() {
   return typeof this.respondents[this.current] != 'undefined';
 };
 
+/**
+ * Returns the total length of the respondent queue.
+ * 
+ * @return {int}
+ */
 RespondentQueue.prototype.getTotal = function() {
   return this.respondents.length;
 };
 
+/**
+ * Returns the current counter.
+ * Since the counter is moved by getNextResp() after returning the respondent
+ * the current respondent index is counter-1
+ * 
+ * @return {int}
+ */
 RespondentQueue.prototype.getCurrentCount = function() {
   return this.current;
 };
 
+/**
+ * Returns all the respondents in queue.
+ * 
+ * @return {array}
+ */
 RespondentQueue.prototype.getQueue = function() {
   return this.respondents;
 };
 
+/**
+ * Appends given respondents to the queue.
+ * Even if it's only one respondent it must be inside an array.
+ * 
+ * Triggers Event respondent_queue_change
+ * 
+ * @param {array} respondents
+ * @return {RespondentQueue} this
+ *   To allow chaining.
+ */
 RespondentQueue.prototype.appendResp = function(respondents) {
   $.merge(this.respondents, respondents);
   $(window).trigger('respondent_queue_change', this);
@@ -464,25 +618,57 @@ RespondentQueue.prototype.appendResp = function(respondents) {
 
 
 
+
+
+/**
+ * Connection
+ * Responsible to asses the status of the connection. After initialization
+ * it will periodically check for connectivity and trigger a 
+ * connection_status_change event every time there's a change.
+ */
 Connection = function() {
   this.connection_check_interval = 15 * 1000;
   this.csrf_token = null;
   this.online = false;
   
+  this.initialized = false;
+  
   this.init();
 };
 
 // Add some static variables.
+// TODO: Urls should be in Aw.settings.url.
 $.extend(Connection, {
+  /**
+   * Url to periodically query to check for connectivity.
+   */
   URL_CHECK_CONNECTION     : Aw.settings.check_connection,
+  /**
+   * Url to request a CSRF token if the current one is void.
+   */
   URL_REQUEST_CSRF         : Aw.settings.base_url + 'survey/survey_request_csrf_token/',
-  URL_REQUEST_RESPONDENTS  : Aw.settings.base_url + 'survey/survey_request_numbers/1',
+  /**
+   * Url to get the survey form.
+   */
   URL_XSLT_TRANSFORM       : Aw.settings.xslt_transform_path,
+  /**
+   * Url to request respondents.
+   */
+  URL_REQUEST_RESPONDENTS  : Aw.settings.base_url + 'survey/survey_request_numbers/1',
+  /**
+   * Url to where the form must be submitted.
+   */
   URL_FORM_SUBMIT          : Aw.settings.base_url + 'survey/survey_submit_enketo_form',
 });
 
+/**
+ * Initializes the connection setting up the checking interval.
+ */
 Connection.prototype.init = function() {
   var self = this;
+  // Only initialize once.
+  if (self.initialized) { return; }
+  self.initialized = true;
   
   // Check for the first time.
   self.checkConnection();
@@ -493,10 +679,15 @@ Connection.prototype.init = function() {
   }, self.connection_check_interval );
 };
 
+/**
+ * Checks if there's connectivity with the server. 
+ */
 Connection.prototype.checkConnection = function() {
   var self = this;
-  // navigator.onLine is totally unreliable (returns incorrect trues) on Firefox, Chrome, Safari (on OS X 10.8),
-  // but I assume falses are correct
+  // As found in enketo.
+  // navigator.onLine is totally unreliable (returns incorrect trues)
+  // on Firefox, Chrome, Safari (on OS X 10.8), but we assume
+  // falses are correct.
   if ( navigator.onLine ) {
       $.ajax({
         type: 'GET',
@@ -516,19 +707,38 @@ Connection.prototype.checkConnection = function() {
   }
 };
 
+/**
+ * Sets the status of the connection if it changed.
+ * 
+ * Trigger Event connection_status_change
+ *  When the status change.
+ * 
+ * @param {boolean} newStatus
+ */
 Connection.prototype.setOnlineStatus = function(newStatus) {
   var self = this;
   console.log('Is online: ' + newStatus);
   if (newStatus != self.online) {
     self.online = newStatus;
-    $(window).trigger('connection_status_change');
+    $(window).trigger('connection_status_change', self);
   }
 };
 
+/**
+ * Returns whether there's connectivity or not.
+ * 
+ * @returns {boolean}
+ */
 Connection.prototype.isOnline = function() {
   return this.online;
 };
 
+/**
+ * Requests new CSRF token
+ * Executes callback function if the request is successful.
+ * 
+ * @param {function} callback
+ */
 Connection.prototype.requestCSRF = function(callback) {
   var self = this;
   console.log('Requesting CSRF token. Current: ' + self.csrf_token);
@@ -539,13 +749,37 @@ Connection.prototype.requestCSRF = function(callback) {
   }, 'json');
 };
 
+/**
+ * Invalidates the current CSRF token.
+ * 
+ * @return {Connection} this
+ *   To allow chaining.
+ */
 Connection.prototype.invalidateCSRF = function() {
   this.csrf_token = null;
   return this;
 };
 
+/**
+ * Returns the current CSRF token.
+ * 
+ * @return {string}
+ */
 Connection.prototype.getCSRF = function() {
   return this.csrf_token;
+};
+
+/**
+ * Checks whether the localStorage is available.
+ * @static
+ * @return {boolean}
+ */
+Connection.supportsLocalStorage = function() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
 };
 
 
@@ -553,15 +787,26 @@ Connection.prototype.getCSRF = function() {
 
 
 
-
-
-
-var SubmissionQueue = function() {
+/**
+ * SubmissionQueue
+ * Holds the respondents scheduled for submission.
+ * Is kept in sync with the localStorage, adding data to it and removing
+ * it when is submitted.
+ * 
+ * On initialization build the queue from the localStorage and tries to
+ * submit data.
+ * 
+ * Trigger Event submission_queue_change
+ *   Event is triggered after syncing with the local storage, even if
+ *   the queue is empty.
+ */
+SubmissionQueue = function() {
   this.queue = [];
   this.is_uploading = false;
   
-  if (SubmissionQueue.supportsLocalStorage() == false) {
-    alert('You need a modern browser.');
+  if (Connection.supportsLocalStorage() == false) {
+    alert("Your browser is outdated.\nYou will be redirected to a page to upgrade your browser.");
+    window.location = 'http://browsehappy.com/';
     return null;
   }
   
@@ -570,14 +815,9 @@ var SubmissionQueue = function() {
   this.submit();
 };
 
-SubmissionQueue.supportsLocalStorage = function() {
-  try {
-    return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
-    return false;
-  }
-};
-
+/**
+ * Initializes the submission queue syncing with the local storage.
+ */
 SubmissionQueue.prototype.init = function() {
   var self = this;
   console.log('Initializing Submission queue');
@@ -593,12 +833,22 @@ SubmissionQueue.prototype.init = function() {
     catch(e) {
       // Something went wrong with the parsing.
       // Probably the data is not correctly stored.
-      // Init as empty.
+      // Initialize as empty.
       this.queue = [];
     }
   }
 };
 
+/**
+ * Adds respondent to the submission queue.
+ * The added respondent will be stored in the localStorage and
+ * a submission will be tried.
+ * 
+ * Triggers Event submission_queue_change
+ *   After storing respondent on localStorage.
+ * 
+ * @param {array} value
+ */
 SubmissionQueue.prototype.add = function(value) {
   console.log('Adding value to submission queue.');
   this.queue.push(value);
@@ -607,6 +857,18 @@ SubmissionQueue.prototype.add = function(value) {
   this.submit();
 };
 
+/**
+ * Removes the first respondent from the submission queue.
+ * The changes will be written to the localStorage.
+ * This method is called after a successful submission. It's always the first
+ * element in the queue to be submitted, and after the submission it can be
+ * removed.
+ * 
+ * Triggers Event submission_queue_change
+ *   After removing respondent from localStorage.
+ * 
+ * @param {array} value
+ */
 SubmissionQueue.prototype.shift = function() {
   console.log('Shifting value from submission queue.');
   this.queue.shift();
@@ -614,16 +876,34 @@ SubmissionQueue.prototype.shift = function() {
   $(window).trigger('submission_queue_change', this);
 };
 
+/**
+ * Returns all the respondents in queue.
+ * 
+ * @return {array}
+ */
 SubmissionQueue.prototype.getQueue = function() {
   return this.queue;
 };
 
-SubmissionQueue.prototype.store = function(value) {
+/**
+ * Stores the queue on localStorage overriding the existing one. Since it is
+ * synced when the SubmissionQueue is initialized the data is safe.
+ */
+SubmissionQueue.prototype.store = function() {
   console.log('Storing on localStorage.');
   var to_store = JSON.stringify(this.queue);
   localStorage.setItem('aw_submission_queue', to_store);
 };
 
+/**
+ * Submits the first respondent in the queue.
+ * When successful will remove the submitted respondent from the queue.
+ * 
+ * Trigger Event submission_queue_change
+ * Trigger Event submission_queue_submit_success
+ *   Events are triggered after a successful submission.
+ * 
+ */
 SubmissionQueue.prototype.submit = function() {
   var self = this;
   console.log('Pre submission checks..');
@@ -631,18 +911,24 @@ SubmissionQueue.prototype.submit = function() {
   console.log('Uploading:' + self.is_uploading);
   console.log('Queue: ' + self.queue.length);
   
+  // Only try to submit if the following condition are met:
+  // There's an active connection.
+  // There's no concurrent submission.
+  // There's something to submit.
   if (con.isOnline() && !self.is_uploading && self.queue.length > 0) {
     console.log('Submitting.');
     
     // Check if there is a CSRF token.
     if (con.getCSRF() == null) {
-      // Request csrf.
+      // Request CSRF token.
       con.requestCSRF(function() {
+        // Now that we have a token, submit again.
         self.submit();
       });
-      return;
+      return null;
     }
     
+    // TODO: SubmissionQueue.prototype.submit - Remove MOCK
     ///////////////////////MOCK
     // Simulate errors
     if (always_fail && Math.random() < 1) {
@@ -662,32 +948,43 @@ SubmissionQueue.prototype.submit = function() {
       return;
     }
     always_fail = true;
-    ///////////////////////MOCK
+    ///////////////////////--MOCK
     
-    var to_submit = self.queue[0];
+    // Submit only the first respondent on queue.
+    var respondent_to_submit = self.queue[0];
+    // Marks as uploading to prevent concurrent uploads.
     self.is_uploading = true;
     
     // Submit data
     $.post(Connection.URL_FORM_SUBMIT, {
+      // TODO: Survey id must always accompany the post
       csrf_aw_datacollection : con.getCSRF(),
-      respondent: to_submit
+      respondent: respondent_to_submit
       
-    }, function(r) {
-      console.log('Success.');
-      console.log(r);
+    }, function(res) {
+      console.log('Submission successful.');
+      console.log(res);
       // The operation succeeded.
       // Remove the respondent and trigger change.
       self.shift();
       $(window).trigger('submission_queue_submit_success');
             
     }).fail(function(res) {
+      console.log('Submission failed.');
       // If the request failed because of the CSRF token, invalidate it and try again.
       if (res.status == 500 && res.responseText.match('The action you have requested is not allowed.')) {
-        console.log('Fail.');
         console.log('Invalid token.');
         // CSRF token error.
         // Invalidate token.
         con.invalidateCSRF();
+      }
+      else if (res.status == 404) {
+        console.log('404 - Offline');
+        // 404 - Not found means no connection.
+        // Just set the connection status to offline. If this turns out to
+        // be a false positive, the next time the connection check runs
+        // the status is changed and the submission will be tried again.
+        con.setOnlineStatus( false );
       }
       
     }).always(function() {
