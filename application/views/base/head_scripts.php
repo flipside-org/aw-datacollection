@@ -8,5 +8,5 @@
   <script type="text/javascript" src="<?= base_url('assets/js/connection.js'); ?>"></script>
   <script type="text/javascript" src="<?= base_url('assets/js/respondentQueue.js'); ?>"></script>
   <script type="text/javascript" src="<?= base_url('assets/js/submissionQueue.js'); ?>"></script>
-  <script type="text/javascript" data-main="<?= base_url('assets/js/app.js'); ?>" src="<?= base_url('assets/libs/enketo-core/lib/require.js'); ?>"></script>
+  <script type="text/javascript" data-main="<?= base_url('assets/js/enketo_collection.js'); ?>" src="<?= base_url('assets/libs/enketo-core/lib/require.js'); ?>"></script>
 <?php endif; ?>
