@@ -270,19 +270,33 @@ class Survey extends CI_Controller {
   }
   
   /**
-   * Enketo test run.
+   * Starts enketo showing the form for data collection or for
+   * a testrun. 
    * Route
-   * /survey/:sid/testrun
+   * /survey/:sid/(testrun|data_collection)
    */
-  public function survey_testrun($sid) {    
+  public function survey_enketo($sid, $type) {    
     $survey = $this->survey_model->get($sid);
-    if ($survey) {
+    if ($survey) {      
+      // Needed urls.
+      $settings = array(
+        'current_survey' => array(
+          'sid' => $sid,
+        ),
+        'url' => array(
+          'request_csrf' => base_url('api/survey/request_csrf_token'),
+          'xslt_transform' => base_url('api/survey/' . $sid . '/xslt_transform'),
+          'request_respondents' => base_url('api/survey/' . $sid . '/request_respondents'),
+          'enketo_submit' => base_url('api/survey/enketo_submit'),
+        )
+      );
+      $this->js_settings->add($settings);
       
-      $this->js_settings->add('xslt_transform_path', base_url('survey/' . $sid . '/xml_transform'));
+      $enketo_testrun = $type == 'testrun';
       
-      $this->load->view('base/html_start', array('using_enketo' => TRUE));
+      $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_testrun' => $enketo_testrun));
       $this->load->view('navigation');
-      $this->load->view('surveys/survey_enketo');
+      $this->load->view('surveys/survey_enketo', array('enketo_testrun' => $enketo_testrun));
       $this->load->view('base/html_end');
     }
     else {
@@ -293,7 +307,7 @@ class Survey extends CI_Controller {
   /**
    * TODO: Survey::survey_xml_transform Docs
    */
-  public function survey_xml_transform($sid) {
+  public function api_survey_xslt_transform($sid) {
     $survey = $this->survey_model->get($sid);
     if ($survey && $survey->has_xml()) {
       
@@ -314,8 +328,9 @@ class Survey extends CI_Controller {
   /**
    * TODO: Survey::survey_request_numbers Docs
    */
-  public function survey_request_numbers($sid) {
+  public function api_survey_request_respondents($sid) {
     
+    /***** MOCK ***/
     $all_resp = $this->session->userdata('resp');
     if ($all_resp == FALSE) {
       $all_resp = array(
@@ -330,7 +345,6 @@ class Survey extends CI_Controller {
       $this->session->set_userdata('resp', $all_resp);
       
     }    
-    /***** MOCK ***/
     $REQUEST_MAX = 5;
     
     
@@ -360,7 +374,7 @@ class Survey extends CI_Controller {
   /**
    * TODO: Survey::survey_request_csrf_token Docs
    */
-  public function survey_request_csrf_token() {
+  public function api_survey_request_csrf_token() {
     $res = array(
       'csrf' => $this->security->get_csrf_hash(),
     );    
@@ -372,7 +386,7 @@ class Survey extends CI_Controller {
   /**
    * TODO: Survey::survey_submit_enketo_form Docs
    */
-  public function survey_submit_enketo_form() {
+  public function api_survey_enketo_form_submit() {
     $data = $this->input->post('respondent');
     
     $resp_number = $data['number'];
@@ -392,7 +406,7 @@ class Survey extends CI_Controller {
     sleep(1);
     $this->output
     ->set_content_type('text')
-    ->set_output('OK from server');
+    ->set_output('OK from server ' . $resp_number . ' | ' . $this->input->post('sid'));
   }
 
   public function delay($sec) {

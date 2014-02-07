@@ -144,13 +144,13 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       modelStr = (new XMLSerializer() ).serializeToString($data.find( 'model:eq(0)' )[0]);
       
       // Insert form.
-      $('#validate-form').before(formStr);
+      $('#submit-form').before(formStr);
       
       // Initialize form.
       initializeForm();
   
       //validate handler for validate button
-      $('#validate-form').on('click', function() {
+      $('#submit-form').on('click', function() {
         console.log('validate-form click event');
         form.validate();
         if (!form.isValid()) {
