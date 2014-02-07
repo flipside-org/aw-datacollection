@@ -49,10 +49,16 @@ $route['survey/(:num)'] = 'survey/survey_by_id/$1';
 $route['survey/(:num)/edit'] = 'survey/survey_edit_by_id/$1';
 $route['survey/delete'] = 'survey/survey_delete_by_id';
 $route['survey/(:num)/files/(xls|xml)'] = 'survey/survey_file_download/$1/$2';
-$route['survey/(:num)/testrun'] = 'survey/survey_testrun/$1';
+$route['survey/(:num)/(testrun|data_collection)'] = 'survey/survey_enketo/$1/$2';
 
-$route['survey/(:num)/xml_transform'] = 'survey/survey_xml_transform/$1';
+$route['survey/(:num)/xslt_transform'] = 'survey/survey_xslt_transform/$1';
 
+// URLs for enketo. To avoid confusion will call them api
+// Every method that is related to an API should start with api_[name]
+$route['api/survey/request_csrf_token'] = 'survey/api_survey_request_csrf_token';
+$route['api/survey/(:num)/xslt_transform'] = 'survey/api_survey_xslt_transform/$1';
+$route['api/survey/(:num)/request_respondents'] = 'survey/api_survey_request_respondents/$1';
+$route['api/survey/enketo_submit'] = 'survey/api_survey_enketo_form_submit';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

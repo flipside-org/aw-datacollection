@@ -15,28 +15,27 @@ Connection = function() {
 };
 
 // Add some static variables.
-// TODO: Urls should be in Aw.settings.url.
 $.extend(Connection, {
   /**
    * Url to periodically query to check for connectivity.
    */
-  URL_CHECK_CONNECTION     : Aw.settings.check_connection,
+  URL_CHECK_CONNECTION     : Aw.settings.check_connection_url,
   /**
    * Url to request a CSRF token if the current one is void.
    */
-  URL_REQUEST_CSRF         : Aw.settings.base_url + 'survey/survey_request_csrf_token/',
+  URL_REQUEST_CSRF         : Aw.settings.url.request_csrf,
   /**
    * Url to get the survey form.
    */
-  URL_XSLT_TRANSFORM       : Aw.settings.xslt_transform_path,
+  URL_XSLT_TRANSFORM       : Aw.settings.url.xslt_transform,
   /**
    * Url to request respondents.
    */
-  URL_REQUEST_RESPONDENTS  : Aw.settings.base_url + 'survey/survey_request_numbers/1',
+  URL_REQUEST_RESPONDENTS  : Aw.settings.url.request_respondents,
   /**
    * Url to where the form must be submitted.
    */
-  URL_FORM_SUBMIT          : Aw.settings.base_url + 'survey/survey_submit_enketo_form',
+  URL_FORM_SUBMIT          : Aw.settings.url.enketo_submit,
 });
 
 /**
