@@ -1,4 +1,15 @@
+  
+<div id="debug_data">
+  <span class="connection-status label alert">Offline</span>
+  <a href="#" class="button tiny success allow-submission">Allow one submission</a>
   <h2 id="totals"></h2>
+  <h3>Queue Resp</h3>
+  <div id="queue_resp"></div>
+  <h3>Queue Submit</h3>
+  <div id="queue_submit"></div>
+</div>
+  
+ 
 <div class="main">
   <article class="paper">
     <h1 id="respondent_number"></h1>
