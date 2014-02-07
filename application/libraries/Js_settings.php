@@ -34,6 +34,7 @@ class Js_settings {
    */
   public function set_defaults() {
     $this->add('base_url', base_url());
+    $this->add('check_connection_url', base_url('assets/checkforconnection.php'));
     return $this;
   } 
   
