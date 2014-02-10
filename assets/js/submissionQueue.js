@@ -146,7 +146,7 @@ SubmissionQueue.prototype.submit = function() {
     // TODO: SubmissionQueue.prototype.submit - Remove MOCK
     ///////////////////////MOCK
     // Simulate errors
-    /*if (always_fail && Math.random() < 1) {
+    if (always_fail) {
       console.warn('error');
       self.is_uploading = true;
       $.get(Aw.settings.base_url + 'survey/delay/4', function() {
