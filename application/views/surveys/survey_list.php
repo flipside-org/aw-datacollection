@@ -3,9 +3,9 @@
   <table width='100%' class="survey_list">
     <thead>
       <tr>
-        <th width='60%'>Title</th>
-        <th width='10%'>Status</th>
-        <th width='30%'>Actions</th>
+        <th width='40%'>Title</th>
+        <th width='5%'>Status</th>
+        <th width='35%'>Actions</th>
       </tr>
     </thead>
     
@@ -30,7 +30,8 @@
             ?>
             </li>
             <?php if ($survey_entity->has_xml()) : ?>
-              <li><a href="<?= $survey_entity->get_url_survey_testrun() ?>" class="button tiny alert">Test Run</a></li>
+              <li><a href="<?= $survey_entity->get_url_survey_enketo('testrun') ?>" class="button tiny secondary">Test Run</a></li>
+              <li><a href="<?= $survey_entity->get_url_survey_enketo('collection') ?>" class="button tiny success">Collect Data</a></li>
             <?php endif; ?>
           </ul>
         </td>

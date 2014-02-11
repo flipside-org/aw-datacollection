@@ -221,11 +221,16 @@ class Survey_entity extends Entity {
    * @access public
    * @return string
    */
-  public function get_url_survey_testrun() {
+  public function get_url_survey_enketo($type) {
     if ($this->sid == NULL) {
       throw new Exception("Trying to get link for a nonexistent survey.");       
-    }    
-    return base_url('survey/' . $this->sid . '/testrun') ;
+    }
+    if ($type == 'testrun') {
+      return base_url('survey/' . $this->sid . '/testrun') ;
+    }
+    elseif ($type == 'collection') {
+      return base_url('survey/' . $this->sid . '/data_collection') ;
+    }
   }
   
   /**
