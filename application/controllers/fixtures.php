@@ -1,23 +1,47 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Fixtures extends CI_Controller {
+  
+  public function index() {
+    
+    echo '<h1>Set fixtures:<h1>';
+    echo anchor('fixtures/all', 'All') . '<br/>';
+    echo anchor('fixtures/surveys', 'Surveys'). '<br/>';
+    echo anchor('fixtures/users', 'Users'). '<br/>';    
+  }
+  
+  private function _env_check() {
+    if (ENVIRONMENT != 'development') {
+      show_error('Not allowed. Only available during development');
+    }
+  }
 
   /**
    * Populate db.
    */
-	public function index() {    
-		if (ENVIRONMENT == 'development') {
-		  // Down with the DB.
-      $this->_tear_down();
-      
-		  if ($this->mongo_db->count('surveys') === 0) {
-		    $this->_fix_surveys();
-		  }
-      
-      print "<p>Done fixing data.</p>";
-      print anchor('surveys', 'Suvey List');
-		}
+	public function all() {
+	  $this->_env_check();
+	  // Down with the DB.
+    $this->_tear_down();
+    
+	  $this->_fix_surveys();
+    $this->_fix_users();
+    redirect('/');
 	}
+  
+  public function surveys() {
+    $this->_env_check();
+    $this->mongo_db->dropCollection('aw_datacollection', 'surveys');
+    $this->_fix_surveys();
+    redirect('/');
+  }
+  
+  public function users() {
+    $this->_env_check();
+    $this->mongo_db->dropCollection('aw_datacollection', 'users');
+    $this->_fix_users();
+    redirect('/');
+  }
   
   /**
    * Drop database.
@@ -141,6 +165,28 @@ class Fixtures extends CI_Controller {
         
         'created' => Mongo_db::date()
       ),
+    ));
+  }
+
+  /**
+   * Fixtures
+   * Sets up demo users.
+   */
+  private function _fix_users() {
+    $this->mongo_db->batchInsert('users', array(
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'admin@localhost',
+        'name' => 'Admin',
+        'username' => 'admin',
+        'password' => sha1('admin'),
+        'roles' => array('administrator'),
+        'author' => null,
+        'status' => 2,
+        
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()        
+      )
     ));
   }
 }
