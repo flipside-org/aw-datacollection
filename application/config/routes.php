@@ -60,5 +60,8 @@ $route['api/survey/(:num)/xslt_transform'] = 'survey/api_survey_xslt_transform/$
 $route['api/survey/(:num)/request_respondents'] = 'survey/api_survey_request_respondents/$1';
 $route['api/survey/enketo_submit'] = 'survey/api_survey_enketo_form_submit';
 
+// Users
+$route['login'] = 'user/login';
+
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
