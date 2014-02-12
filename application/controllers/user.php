@@ -124,6 +124,22 @@ class User extends CI_Controller {
     }
   }
   
+  public function user_recover_password() {
+    $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__check_email_exists');
+    
+    $user = get_logged_user();
+    
+    if ($this->form_validation->run() == FALSE) {
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('users/user_recover_password');
+      $this->load->view('base/html_end');
+    }
+    else {
+      die();
+    }
+  }
+  
   /**
    * Checks if the login data is valid.
    * Form validation callback.
@@ -175,6 +191,23 @@ class User extends CI_Controller {
     }
     else {
       $this->form_validation->set_message('_check_confirm_password', 'The New Password Confirmation does not match.');
+      return FALSE;
+    }
+  }
+
+  /**
+   * Checks if the user with the given email exists.
+   * Used for password recovery
+   * Form validation callback.
+   */
+  public function _check_email_exists($email) {
+    $user = $this->user_model->get_by_email($email);
+    
+    if ($user !== FALSE) {
+      return TRUE;
+    }
+    else {
+      $this->form_validation->set_message('_check_email_exists', 'The is no user with the given email.');
       return FALSE;
     }
   }

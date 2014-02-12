@@ -34,6 +34,23 @@ class User_model extends CI_Model {
   }
   
   /**
+   * Returns the user with the given email
+   * @return User_entity
+   */
+  public function get_by_email($email) {
+    $result = $this->mongo_db
+      ->where('email', $email)
+      ->get('users');
+    
+    if (!empty($result)) {
+      return User_entity::build($result[0]);
+    }
+    else {
+      return FALSE;
+    }
+  }
+  
+  /**
    * Returns the user with the given uid
    * @return User_entity
    */

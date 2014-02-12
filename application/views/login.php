@@ -7,7 +7,7 @@
 
   <?= form_label('Password', 'signin_password'); ?>
   <?= form_password('signin_password'); ?>
-  
+  <?= anchor('user/recover', 'Recover password'); ?>
   <?= form_submit('signin_submit', 'Login'); ?>
 
 <?= form_close(); ?>
