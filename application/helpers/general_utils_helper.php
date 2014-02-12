@@ -42,13 +42,21 @@ if ( ! function_exists('is_logged')) {
  */
 if ( ! function_exists('get_logged_user')) {
   function get_logged_user() {
-    $CI = get_instance();    
-    $uid = $CI->session->userdata('user_uid');
+    static $current_user;
     
-    if ($uid !== FALSE) {
-      return $CI->user_model->get($uid);
+    if (!isset($current_user)) {  
+      $CI = get_instance();    
+      $uid = $CI->session->userdata('user_uid');
+      
+      if ($uid !== FALSE) {
+        $current_user = $CI->user_model->get($uid);
+      }
+      else {
+        return FALSE;
+      }
     }
-    return FALSE;
+    
+    return $current_user;;
   }
 }
 

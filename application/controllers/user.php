@@ -20,7 +20,7 @@ class User extends CI_Controller {
    * Route:
    * /login
    */
-	public function login() {	  
+	public function user_login() {	  
     if (is_logged()) {
       die('The user is already logged. Redirect to the profile page.');
     }
@@ -45,9 +45,26 @@ class User extends CI_Controller {
    * Route:
    * /logout
    */
-  public function logout() {
+  public function user_logout() {
     $this->session->sess_destroy();
     redirect('login');
+  }
+  
+  /**
+   * Logout.
+   * Route:
+   * /user
+   */
+  public function user_profile($uid = null) {
+    if (is_logged()) {
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('users/profile', array('user' => get_logged_user()));
+      $this->load->view('base/html_end');
+    }
+    else {
+      redirect('login');
+    }
   }
   
   /**
