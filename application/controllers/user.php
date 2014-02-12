@@ -59,11 +59,68 @@ class User extends CI_Controller {
     if (is_logged()) {
       $this->load->view('base/html_start');
       $this->load->view('navigation');
-      $this->load->view('users/profile', array('user' => get_logged_user()));
+      $this->load->view('users/user_profile', array('user' => get_logged_user()));
       $this->load->view('base/html_end');
     }
     else {
       redirect('login');
+    }
+  }
+  
+  /**
+   * Logout.
+   * Route:
+   * /user/(:num)/edit
+   */
+  public function user_edit_by_id($uid) {
+    if (is_logged()) {
+      $user = $this->user_model->get($uid);
+      
+      if (!$user) {
+        show_404();
+      }
+      
+      //if (user is admin) {
+      if (FALSE) {
+        // Admin can edit everything.
+        
+      }
+      elseif (get_logged_user()->uid == $user->uid) {
+        // Editing own account.
+        $this->_edit_own_account();
+      }
+      else {
+        // Editing other user account.
+        // Only admins can do that.
+        show_error("You're not allowed to edit other user's accounts.", 403, 'Operation not allowed');
+      }
+    }
+    else {
+      redirect('login');
+    }
+  }
+  
+  private function _edit_own_account() {
+    $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
+    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__check_user_password');
+    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
+    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__check_confirm_password');
+    
+    $user = get_logged_user();
+    
+    if ($this->form_validation->run() == FALSE) {
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('users/user_form_edit_self', array('user' => $user));
+      $this->load->view('base/html_end');
+    }
+    else {
+      $user->name = $this->input->post('user_name');
+      $user->set_password($this->input->post('user_new_password'));
+      
+      $this->user_model->save($user);
+      // TODO: Savin own profile. Handle success, error.
+      redirect('user');
     }
   }
   
@@ -77,7 +134,7 @@ class User extends CI_Controller {
     // Get user.
     $user = $this->user_model->get_by_username($username);
     
-    if ($user && sha1($password) == $user->password) {
+    if ($user && $user->check_password($password)) {
       // Set session data here since we already loaded the user.
       $data = array(
         'is_logged' => TRUE,
@@ -88,6 +145,36 @@ class User extends CI_Controller {
     }
     else {
       $this->form_validation->set_message('_check_login_data', 'Invalid username or password.');
+      return FALSE;
+    }
+  }
+
+  /**
+   * Checks if the password matches the logged user's
+   * Form validation callback.
+   */
+  public function _check_user_password($password) {
+    if (get_logged_user()->check_password($password)) {
+      return TRUE;
+    }
+    else {
+      $this->form_validation->set_message('_check_user_password', 'The current password is not correct.');
+      return FALSE;
+    }
+  }
+
+  /**
+   * Checks if the new password and new password confirm match.
+   * Form validation callback.
+   */
+  public function _check_confirm_password($new_password_confirm) {
+    $new_password = $this->input->post('user_new_password');
+    
+    if ($new_password == $new_password_confirm) {
+      return TRUE;
+    }
+    else {
+      $this->form_validation->set_message('_check_confirm_password', 'The New Password Confirmation does not match.');
       return FALSE;
     }
   }

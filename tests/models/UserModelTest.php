@@ -43,14 +43,16 @@ class User_model_test extends PHPUnit_Framework_TestCase
   }
   
   public function test_get_user_by_uid() {
-    $uid = 1;
-    $user_one = self::$CI->user_model->get($uid);
-    
+    $user_one = self::$CI->user_model->get(1);
     $this->assertInstanceOf('User_entity', $user_one);
-    $this->assertEquals($uid, $user_one->uid);
+    $this->assertEquals(1, $user_one->uid);
     
-    $user_two = self::$CI->user_model->get('abc');
-    $this->assertFalse($user_two);
+    $user_two = self::$CI->user_model->get("1");    
+    $this->assertInstanceOf('User_entity', $user_two);
+    $this->assertEquals(1, $user_one->uid);
+    
+    $user_three = self::$CI->user_model->get('abc');
+    $this->assertFalse($user_three);
   }
   
   public function test_get_user_by_username() {

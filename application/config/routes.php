@@ -64,6 +64,7 @@ $route['api/survey/enketo_submit'] = 'survey/api_survey_enketo_form_submit';
 $route['login'] = 'user/user_login';
 $route['logout'] = 'user/user_logout';
 $route['user'] = 'user/user_profile';
+$route['user/(:num)/edit'] = 'user/user_edit_by_id/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

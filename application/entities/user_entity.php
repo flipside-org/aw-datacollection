@@ -188,6 +188,25 @@ class User_entity extends Entity {
   public function is_new() {
     return $this->uid == NULL;
   }
+   
+  /**
+   * Encodes the password and sets it
+   * @access public
+   */
+  public function set_password($pass) {
+    if (!empty($pass)) {
+      $this->password = sha1($pass);
+    }
+  }
+   
+  /**
+   * Checks whether the given password matches the user's
+   * @access public
+   * @return boolean
+   */
+  public function check_password($pass) {
+    return $this->password == sha1($pass);
+  }
 
   /**
    * End of public methods.

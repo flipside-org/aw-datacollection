@@ -186,6 +186,19 @@ class Fixtures extends CI_Controller {
         
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()        
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'regular@localhost',
+        'name' => 'Regular user',
+        'username' => 'regular',
+        'password' => sha1('regular'),
+        'roles' => array(),
+        'author' => 1,
+        'status' => 2,
+        
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
       )
     ));
   }
