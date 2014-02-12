@@ -12,3 +12,6 @@ files/*
 #System files
 .project
 .DS_Store
+
+# Other
+document-it
