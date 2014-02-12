@@ -1,0 +1,63 @@
+<nav>
+  <a class="menu-icon mobile show-mobile" href="#"><!-- menu --></a>
+  
+  {% comment %}
+    Liquid templating doesn't allow the creation of arrays.
+    We need arrays to store all available parents so we can loop through them.
+    As a workaround we store every parent as a string separated by pipe.
+    Ex: one|two|three
+    Then we split the string by a pipe and voilà we have an array.
+  {% endcomment %}
+  
+  {% assign parents = '' %}
+  {% for post in site.posts %}
+    {% unless parents contains post.parent %}
+      {% capture parents %}{{ parents }}{{ post.parent }}|{% endcapture %}
+    {% endunless %}
+  {% endfor %}  
+  {% assign parents = parents | split: "|" %}
+  
+  
+  <ul class="menu-main">
+  {% for parent in parents %}
+    {% assign parent_url = false %}
+    
+    {% assign children = '' %}
+    
+    {% for post in site.posts %}
+      {% if parent == post.parent %}
+      
+        {% if parent_url == false %}
+          {% assign parent_url = post.url %}
+        {% endif %}
+        
+        {% if post.top_level == true %}
+          {% assign parent_url = post.url %}
+        {% else %}
+          {% assign active = '' %}
+          {% if post.url == page.url %}
+            {% assign active = "class='active'" %}
+          {% endif %}        
+          {% capture children %}
+            {{ children }}
+            <li><a href="{{ post.url }}" {{ active }}>{{ post.title }}</a></li>
+          {% endcapture %}
+        {% endif %}
+        
+      {% endif %}
+    {% endfor %}
+    
+    {% assign active = '' %}
+    {% if parent_url == page.url and children == '' %}
+      {% assign active = "class='active'" %}
+    {% endif %}   
+    <li><a href="{{ parent_url }}" {{ active }}>{{ parent }}</a>
+      {% if children != '' %}
+        <ul class="menu-sub">
+        {{ children }}
+        </ul>
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+</nav>

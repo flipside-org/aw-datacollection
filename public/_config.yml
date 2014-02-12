@@ -1,0 +1,4 @@
+safe:       false
+permalink:  /:title/
+pygments:   true
+exclude:    ['node_modules', 'src', 'Gruntfile.js', 'package.json', 'Readme.md']

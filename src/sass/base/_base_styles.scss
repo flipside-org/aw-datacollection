@@ -1,0 +1,132 @@
+body {
+  font-family: Verdana;
+  color: $body-text-color;
+  background: $body-bg-color;
+}
+
+/******* Mobile styles *******/
+.sidebar {  
+  .logo {
+      padding: emCalc(20);
+      max-width: $logo-max-width;
+      
+      a, img {
+        width: 100%;
+        display: block;
+      }
+    }
+  
+  .menu-icon.mobile {
+    display: block;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAN0lEQVQ4y2NgYGBoYGBg+E8l3MAIZVANMDFQGTAzMDAwMjAwOFDJvEaGkQlGk81oshlNNnRPNgBDnz4goR8fjgAAAABJRU5ErkJggg==');
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+    width: 20px;
+    height: 20px;
+    padding: 10px;
+    margin: emCalc(0 0 20 20);
+    border: 1px solid $menu-mobile-border-color-hover;
+  }
+  
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    
+    a {
+      text-decoration: none;
+      display: block;
+      padding: emCalc(10);
+      padding-left: emCalc(20);
+      color: $menu-mobile-text-color;
+      border-bottom: 1px solid $menu-mobile-border-color;
+      background: $menu-mobile-bg-color;
+      
+      &:hover, &:active, &.active {
+        color: $menu-mobile-text-color-hover;
+        box-shadow:  0 -1px 0 0 $menu-mobile-border-color-hover;
+        border-color: $menu-mobile-border-color-hover;
+        background: $menu-mobile-bg-color-hover;
+      }
+    }
+  }
+  
+  .menu-main > li:first-child > a{
+    border-top: 1px solid $menu-mobile-border-color;
+    
+    &:hover, &:active, &.active {
+      border-top: none;
+      margin-top: 21px;
+    }
+  }
+  
+  .menu-sub {
+    a {
+      padding-left: emCalc(40);
+      font-size: 0.75em;
+    }
+  }
+}
+  
+#container {
+  padding: emCalc(20);
+}
+
+/******* END Mobile styles *******/
+
+
+/******* Desktop styles (>768) *******/
+@media #{$small} {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 25%;
+    background: $sidebar-bg-color;
+    overflow: auto;
+    
+    .show-mobile {
+      display: none !important;
+    }
+    
+    ul {
+      a {
+        padding: emCalc(10);
+        color: $menu-text-color;
+        border-bottom: 1px solid $menu-border-color;
+        background: $menu-bg-color;
+        
+        &:hover, &:active, &.active {
+          color: $menu-text-color-hover;
+          box-shadow:  0 -1px 0 0 $menu-border-color-hover;
+          border-color: $menu-border-color-hover;
+          background: $menu-bg-color-hover;
+        }
+      }
+    }
+    
+    .menu-main {
+      /* Force the menu to be shown. Even if it was hidden in mobile
+       it must be visible in desktop mode. */
+      display: block !important; 
+    
+      & > li:first-child > a{
+        border-top: 1px solid $menu-border-color;
+        
+        &:hover, &:active, &.active {
+          margin-top: 1px;
+        }
+      }
+      
+    }
+  }
+  
+  #container {
+    width: 66%;
+    margin-left: 25%;
+    max-width: emCalc(1000);
+  }
+}
+/******* END Desktop styles (>768) *******/

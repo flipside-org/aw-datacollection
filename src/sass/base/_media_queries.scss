@@ -1,0 +1,31 @@
+/* Available Variables */
+$small-screen: 768px;
+$medium-screen: 1280px;
+$large-screen: 1440px;
+
+$screen: "only screen";
+$small: "only screen and (min-width:"#{$small-screen}")";
+$medium: "only screen and (min-width:"#{$medium-screen}")";
+$large: "only screen and (min-width:"#{$large-screen}")";
+$landscape: "only screen and (orientation: landscape)";
+$portrait: "only screen and (orientation: portrait)";
+
+/* 
+We use this media query to add styles to any device that supports media queries
+@media #{$screen} { }
+
+Used to alter styles for screens at least 768px wide. This is where the grid changes.
+@media #{$small} { }
+
+Used to alter styles for screens at least 1280px wide.
+@media #{$medium} { }
+
+Used to alter styles for screens at least 1440px wide.
+@media #{$large} { }
+
+Apply styles to screens in landscape orientation
+@media #{$landscape} { }
+
+Apply styles to screens in portrait orientation
+@media #{$portrait} { }
+*/
