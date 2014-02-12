@@ -6,33 +6,53 @@ class User extends CI_Controller {
     parent::__construct();
     $this->load->helper('form');
     $this->load->library('form_validation');
-    $this->load->model('user_model');
   }
 
 	public function login() {
-    
-    $this->form_validation->set_rules('signin_username', 'Username', 'required');
-    $this->form_validation->set_rules('signin_password', 'Password', 'required');
-    
-    if ($this->form_validation->run() == FALSE) {
+	  
+    if (is_logged()) {
+      die('The user is already logged. Redirect to the profile page.');
+    }
+
+    $this->form_validation->set_rules('signin_username', 'Username', 'trim|required|xss_clean');
+    $this->form_validation->set_rules('signin_password', 'Password', 'trim|required|xss_clean|callback__check_login_data');
+
+    if ($this->form_validation->run() == FALSE) {      
   		$this->load->view('base/html_start');
       $this->load->view('navigation');
       $this->load->view('login');
       $this->load->view('base/html_end');
     }
     else {
-      $username = $this->input->post('signin_username', TRUE);
-      $password = $this->input->post('signin_password');
-      $user = $this->user_model->get_by_username($username);
-      
-      if (sha1($password) == $user->password) {
-        die('logged in');
-      }
-      else {
-        die('wrong pwd');
-      }
+      redirect();
     }
 	}
+  
+  public function logout() {
+    $this->session->sess_destroy();
+    redirect('login');
+  }
+
+  public function _check_login_data($password) {
+    // Username.
+    $username = $this->input->post('signin_username');
+    // Get user.
+    $user = $this->user_model->get_by_username($username);
+    
+    if ($user && sha1($password) == $user->password) {
+      // Set session data here since we already loaded the user.
+      $data = array(
+        'is_logged' => TRUE,
+        'user_uid' => $user->uid
+      );
+      $this->session->set_userdata($data);
+      return TRUE;
+    }
+    else {
+      $this->form_validation->set_message('_check_login_data', 'Invalid username or password');
+      return FALSE;
+    }
+  }
 }
 
 /* End of file login.php */

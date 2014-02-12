@@ -23,6 +23,24 @@ if ( ! function_exists('property_if_not_null')) {
   }
 }
 
+if ( ! function_exists('is_logged')) {
+  function is_logged() {
+    return get_instance()->session->userdata('is_logged');
+  }
+}
+
+if ( ! function_exists('get_logged_user')) {
+  function get_logged_user() {
+    $CI = get_instance();    
+    $uid = $CI->session->userdata('user_uid');
+    
+    if ($uid !== FALSE) {
+      return $CI->user_model->get($uid);
+    }
+    return FALSE;
+  }
+}
+
 // ------------------------------------------------------------------------
 
 /* End of file general_utils_helper.php */

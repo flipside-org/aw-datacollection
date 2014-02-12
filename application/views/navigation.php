@@ -40,6 +40,14 @@
           </ul>
         </li>
       </ul>
+      <?php if (is_logged()) : ?>
+      <ul class="right">
+      	<li class="name"><a href="#">Hello <?= get_logged_user()->name ?></a></li>
+      	<li class="has-form">
+      	  <a href="<?= base_url('logout') ?>" class="button alert">logout</a>
+      	</li>
+      </ul>
+      <?php endif; ?>
     </section>
   </nav>
  

@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row"> 
 <?= validation_errors(); ?>
 <?= form_open(); ?>
 
