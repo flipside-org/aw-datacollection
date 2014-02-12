@@ -1,15 +1,26 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * User controller.
+ */
 class User extends CI_Controller {
   
+  /**
+   * Constructor.
+   */
   public function __construct() {
     parent::__construct();
+    // Load form and form validation.
     $this->load->helper('form');
     $this->load->library('form_validation');
   }
-
-	public function login() {
-	  
+  
+  /**
+   * Login form.
+   * Route:
+   * /login
+   */
+	public function login() {	  
     if (is_logged()) {
       die('The user is already logged. Redirect to the profile page.');
     }
@@ -24,15 +35,25 @@ class User extends CI_Controller {
       $this->load->view('base/html_end');
     }
     else {
+      // Redirect to home page.
       redirect();
     }
 	}
   
+  /**
+   * Logout.
+   * Route:
+   * /logout
+   */
   public function logout() {
     $this->session->sess_destroy();
     redirect('login');
   }
-
+  
+  /**
+   * Checks if the login data is valid.
+   * Form validation callback.
+   */
   public function _check_login_data($password) {
     // Username.
     $username = $this->input->post('signin_username');
@@ -49,7 +70,7 @@ class User extends CI_Controller {
       return TRUE;
     }
     else {
-      $this->form_validation->set_message('_check_login_data', 'Invalid username or password');
+      $this->form_validation->set_message('_check_login_data', 'Invalid username or password.');
       return FALSE;
     }
   }

@@ -3,7 +3,7 @@
 // Store general helper functions.
 
 /**
- * Returns an object's property it is not null.
+ * Returns an object's property if is not null.
  * When null it will return the default value.
  * 
  * @param object $obj
@@ -23,12 +23,23 @@ if ( ! function_exists('property_if_not_null')) {
   }
 }
 
+/**
+ * Checks whether the user is logged.
+ * 
+ * @return boolean
+ */
 if ( ! function_exists('is_logged')) {
   function is_logged() {
     return get_instance()->session->userdata('is_logged');
   }
 }
 
+/**
+ * Returns the logged user.
+ * 
+ * @return mixed
+ *   User entity if there's a logged user, FALSE otherwise
+ */
 if ( ! function_exists('get_logged_user')) {
   function get_logged_user() {
     $CI = get_instance();    
