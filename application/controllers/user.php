@@ -100,7 +100,11 @@ class User extends CI_Controller {
     }
   }
   
-  private function _edit_own_account() {
+  /**
+   * Used by user_edit_by_id
+   * When non admin user is attemping to edit own account.
+   */
+  protected function _edit_own_account() {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
     $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__check_user_password');
     $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
@@ -124,6 +128,13 @@ class User extends CI_Controller {
     }
   }
   
+  /**
+   * Recover password.
+   * A link will be sent to the email with the recover data.
+   * 
+   * Route:
+   * /user/recover
+   */
   public function user_recover_password() {
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__check_email_exists');
     
@@ -143,7 +154,7 @@ class User extends CI_Controller {
       
       if ($hash) {
         $this->load->library('email');
-        
+        // TODO: Email data. Use settings as much as possible.
         $this->email->from('aw-datacollection@airwolf.edispilf.org', 'Aw-datacollection Admin');
         $this->email->to('daniel.silva@flipside.org');
         
@@ -161,11 +172,17 @@ class User extends CI_Controller {
     }
   }
 
+  /**
+   * Form to reset password. Only accessible through url sent to email.
+   * 
+   * Route:
+   * /user/reset_password
+   */
   public function user_reset_password($hash) {
     $this->load->model('recover_password_model');
-    $validate = $this->recover_password_model->validate($hash);
+    $user_email = $this->recover_password_model->validate($hash);
     
-    if ($validate) {
+    if ($user_email) {
       $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|required');
       $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|required|callback__check_confirm_password');
       
@@ -176,7 +193,7 @@ class User extends CI_Controller {
         $this->load->view('base/html_end');
       }
       else {
-        $user = $this->user_model->get_by_email($validate['email']);
+        $user = $this->user_model->get_by_email($user_email);
         
         if ($user) {
           $user->set_password($this->input->post('user_new_password'));

@@ -19,6 +19,14 @@ class Recover_password_model extends CI_Model {
     $this->_gc();
   }
   
+  /**
+   * Generates a new unique hash and stores it in the database.
+   * 
+   * @param string $email
+   *   The user email.
+   * @return mixed
+   *   The hash if it was correctly stored, FALSE otherwise.
+   */
   public function generate($email) {    
     // Delete any prevoiusly set hashes for this email.
     $this->_gc($email);
@@ -38,22 +46,45 @@ class Recover_password_model extends CI_Model {
     
   }
   
+  /**
+   * Checks if the hash is still valid.
+   * 
+   * @param string $hash
+   *   The hash to check.
+   * @return mixed
+   *   The user email if the hash is valid, FALSE otherwise.
+   */
   public function validate($hash) {
     $result = $this->mongo_db
       ->where('hash', $hash)
       ->whereGte('expire', time())
       ->get('password_recovery');
     
-    return empty($result) ? FALSE : $result[0];
+    return empty($result) ? FALSE : $result[0]['email'];
   }
   
+  /**
+   * Invalidates the hash setting the expire date in the past.
+   * 
+   * @param string $hash
+   *   The hash to invalidate.
+   */
   public function invalidate($hash) {
     $result = $this->mongo_db
+      ->set('expire', -1)
       ->where('hash', $hash)
-      ->delete('password_recovery');
+      ->update('password_recovery');
   }
   
-  private function _gc($email = null) {
+  /**
+   * Garbage collector for password recovery.
+   * Deleted all the expired hashes.
+   * 
+   * @param string $email
+   *   Default to NULL. If given the hashes for the given email will also
+   *   be removed, even if they are not expired.
+   */
+  protected function _gc($email = NULL) {
     $where = array(
       'expire' => array('$lt' => time())
     );    
