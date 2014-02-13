@@ -119,7 +119,7 @@ class User extends CI_Controller {
       $user->set_password($this->input->post('user_new_password'));
       
       $this->user_model->save($user);
-      // TODO: Savin own profile. Handle success, error.
+      // TODO: Saving own profile. Handle success, error.
       redirect('user');
     }
   }
@@ -136,7 +136,73 @@ class User extends CI_Controller {
       $this->load->view('base/html_end');
     }
     else {
-      die();
+      $this->load->model('recover_password_model');
+      $email = $this->input->post('user_email');
+      
+      $hash = $this->recover_password_model->generate($email);
+      
+      if ($hash) {
+        $this->load->library('email');
+        
+        $this->email->from('aw-datacollection@airwolf.edispilf.org', 'Aw-datacollection Admin');
+        $this->email->to('daniel.silva@flipside.org');
+        
+        $this->email->subject('Password Recover');
+        $this->email->message('Use the following link. ' . base_url('user/reset_password/' . $hash));
+        
+        $this->email->send();
+        // TODO: Message user. Check your email.
+        redirect('login');
+      }
+      else {
+        show_error("An error occurred while generating hash to recover password. Try again later.");
+      }
+      
+    }
+  }
+
+  public function user_reset_password($hash) {
+    $this->load->model('recover_password_model');
+    $validate = $this->recover_password_model->validate($hash);
+    
+    if ($validate) {
+      $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|required');
+      $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|required|callback__check_confirm_password');
+      
+      if ($this->form_validation->run() == FALSE) {
+        $this->load->view('base/html_start');
+        $this->load->view('navigation');
+        $this->load->view('users/user_reset_password');
+        $this->load->view('base/html_end');
+      }
+      else {
+        $user = $this->user_model->get_by_email($validate['email']);
+        
+        if ($user) {
+          $user->set_password($this->input->post('user_new_password'));
+          
+          if ($this->user_model->save($user)) {
+            $this->recover_password_model->invalidate($hash);
+            // TODO: Message user. Login with your new password.
+            redirect('login');
+          }
+          else {
+            show_error("Error saving your new password. Try again later.");
+          }
+          
+        }
+        else {
+          // This could happen if the email stored with the hash doesn't return a user.
+          // Maybe the user was deleted before the link was clicked?
+          // During normal usage this is improbable.
+          show_error("An error occurred while getting user from the hash. Try again later.");
+        }
+        
+      }
+    }
+    else {
+      // Hash expired.
+      show_error('Sorry, this link is no longer valid.', 404);
     }
   }
   

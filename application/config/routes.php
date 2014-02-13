@@ -66,6 +66,7 @@ $route['logout'] = 'user/user_logout';
 $route['user'] = 'user/user_profile';
 $route['user/(:num)/edit'] = 'user/user_edit_by_id/$1';
 $route['user/recover'] = 'user/user_recover_password';
+$route['user/reset_password/(:any)'] = 'user/user_reset_password/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
