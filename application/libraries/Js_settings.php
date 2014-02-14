@@ -18,12 +18,21 @@ class Js_settings {
    * @var array
    */
   private $js_settings = array();
+  
+  /**
+   * Holds the default settings as set in the config file.
+   * @var array
+   */
+  private $default_settings = array();
 
   /**
    * Class constructor.
    * Sets the defaults.
    */
-  function __construct() {
+  function __construct($config) {
+    if (isset($config['defaults']) && is_array($config['defaults'])) {
+      $this->default_settings = $config['defaults'];
+    }
     $this->set_defaults();
   }
   
@@ -33,8 +42,9 @@ class Js_settings {
    *   To allow chaining.
    */
   public function set_defaults() {
-    $this->add('base_url', base_url());
-    $this->add('check_connection_url', base_url('assets/checkforconnection.php'));
+    if (!empty($this->default_settings)) {
+      $this->add($this->default_settings);
+    }
     return $this;
   } 
   
