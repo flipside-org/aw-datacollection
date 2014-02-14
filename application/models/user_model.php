@@ -10,6 +10,11 @@ load_entity('user');
 class User_model extends CI_Model {
   
   /**
+   * Mongo db collection for this model.
+   */
+  const COLLECTION = 'users';
+  
+  /**
    * Model constructor.
    */
   function __construct() {
@@ -23,7 +28,7 @@ class User_model extends CI_Model {
   public function get_by_username($username) {
     $result = $this->mongo_db
       ->where('username', $username)
-      ->get('users');
+      ->get(self::COLLECTION);
     
     if (!empty($result)) {
       return User_entity::build($result[0]);
@@ -40,7 +45,7 @@ class User_model extends CI_Model {
   public function get_by_email($email) {
     $result = $this->mongo_db
       ->where('email', $email)
-      ->get('users');
+      ->get(self::COLLECTION);
     
     if (!empty($result)) {
       return User_entity::build($result[0]);
@@ -57,7 +62,7 @@ class User_model extends CI_Model {
   public function get($uid) {
     $result = $this->mongo_db
       ->where('uid', (int) $uid)
-      ->get('users');
+      ->get(self::COLLECTION);
     
     if (!empty($result)) {
       return User_entity::build($result[0]);
@@ -94,7 +99,7 @@ class User_model extends CI_Model {
       $prepared_data['uid'] = $user_entity->uid;
       $prepared_data['created'] = Mongo_db::date();
       
-      $result = $this->mongo_db->insert('users', $prepared_data);
+      $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
       return $result !== FALSE ? TRUE : FALSE;
       
@@ -103,7 +108,7 @@ class User_model extends CI_Model {
       $result = $this->mongo_db
         ->set($prepared_data)
         ->where('uid', $user_entity->uid)
-        ->update('users');
+        ->update(self::COLLECTION);
       
       return $result !== FALSE ? TRUE : FALSE;
     }

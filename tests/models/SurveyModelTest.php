@@ -8,6 +8,9 @@ class Survey_model_test extends PHPUnit_Framework_TestCase
   public static function setUpBeforeClass() {
     self::$CI =& get_instance();
     
+    // Load model
+    self::$CI->load->model('survey_model');
+    
     // Clean db!
     self::$CI->mongo_db->dropDb('aw_datacollection_test');
     
@@ -43,11 +46,7 @@ class Survey_model_test extends PHPUnit_Framework_TestCase
       )
     );
     
-    
-    self::$CI->mongo_db->batchInsert('surveys', $fixture);
-    
-    // Load model
-    self::$CI->load->model('survey_model');
+    self::$CI->mongo_db->batchInsert(Survey_model::COLLECTION, $fixture);
     
   }
   

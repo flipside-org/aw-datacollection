@@ -10,6 +10,11 @@ load_entity('survey');
 class Survey_model extends CI_Model {
   
   /**
+   * Mongo db collection for this model.
+   */
+  const COLLECTION = 'surveys';
+  
+  /**
    * Model constructor.
    */
   function __construct() {
@@ -23,7 +28,7 @@ class Survey_model extends CI_Model {
   public function get_all() {
     $result = $this->mongo_db
       ->orderBy(array('created' => 'desc'))
-      ->get('surveys');
+      ->get(self::COLLECTION);
     
     $surveys = array();
     foreach ($result as $value) {
@@ -43,7 +48,7 @@ class Survey_model extends CI_Model {
   public function get($sid) {
     $result = $this->mongo_db
       ->where('sid', (int) $sid)
-      ->get('surveys');
+      ->get(self::COLLECTION);
     
     if (!empty($result)) {
       return Survey_entity::build($result[0]);
@@ -60,7 +65,7 @@ class Survey_model extends CI_Model {
   public function delete($sid) {
     $result = $this->mongo_db
       ->where('sid', (int) $sid)
-      ->delete('surveys');
+      ->delete(self::COLLECTION);
   }
   
   /**
@@ -84,7 +89,7 @@ class Survey_model extends CI_Model {
       $survey_entity->sid = increment_counter('survey_sid');
       $prepared_data['sid'] = $survey_entity->sid;
       
-      $result = $this->mongo_db->insert('surveys', $prepared_data);
+      $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
       return $result !== FALSE ? TRUE : FALSE;
       
@@ -93,7 +98,7 @@ class Survey_model extends CI_Model {
       $result = $this->mongo_db
         ->set($prepared_data)
         ->where('sid', $survey_entity->sid)
-        ->update('surveys');
+        ->update(self::COLLECTION);
       
       return $result !== FALSE ? TRUE : FALSE;
     }

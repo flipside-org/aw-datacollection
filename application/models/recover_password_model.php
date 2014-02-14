@@ -4,8 +4,16 @@
  * Recover Password model.
  */
 class Recover_password_model extends CI_Model {
-  // TODO: Move duration to config!
+  /**
+   * @var int
+   * Duration of the hash
+   */
   private $duration;
+  
+  /**
+   * Mongo db collection for this model.
+   */
+  const COLLECTION = 'password_recovery';
   
   /**
    * Model constructor.
@@ -13,7 +21,8 @@ class Recover_password_model extends CI_Model {
   function __construct() {
     parent::__construct();
     
-    $this->duration = 60 * 15;
+    // Default duration - 15 min
+    $this->set_duration(60 * 15);
     
     // Garbage collector.
     $this->_gc();
@@ -28,20 +37,19 @@ class Recover_password_model extends CI_Model {
    *   The hash if it was correctly stored, FALSE otherwise.
    */
   public function generate($email) {    
-    // Delete any prevoiusly set hashes for this email.
+    // Delete any previously set hashes for this email.
     $this->_gc($email);
     
     // Generate hash.
     $hash = sha1(microtime(TRUE) . rand(1, 999) . $email);
     
-    $duration = 60 * 15;
     $data = array(
       'email' => $email,
       'hash' => $hash,
-      'expire' => time() + $duration
+      'expire' => time() + $this->duration
     );
     
-    $result = $this->mongo_db->insert('password_recovery', $data);    
+    $result = $this->mongo_db->insert(self::COLLECTION, $data);    
     return $result !== FALSE ? $hash : FALSE;
     
   }
@@ -58,7 +66,7 @@ class Recover_password_model extends CI_Model {
     $result = $this->mongo_db
       ->where('hash', $hash)
       ->whereGte('expire', time())
-      ->get('password_recovery');
+      ->get(self::COLLECTION);
     
     return empty($result) ? FALSE : $result[0]['email'];
   }
@@ -73,7 +81,25 @@ class Recover_password_model extends CI_Model {
     $result = $this->mongo_db
       ->set('expire', -1)
       ->where('hash', $hash)
-      ->update('password_recovery');
+      ->update(self::COLLECTION);
+  }
+  
+  /**
+   * Set the duration of the hash from the moment of its creation.
+   * 
+   * @param int $sec
+   *   Duration of the hash in seconds.
+   * @return mixed
+   *   This to allow chaining, or FALSE if $sec is invalid
+   */
+  public function set_duration($sec) {
+    if (is_numeric($sec) && $sec > 0) {
+      $this->duration = $sec;
+      return $this;
+    }
+    else {
+      return FALSE;
+    }
   }
   
   /**
@@ -94,7 +120,7 @@ class Recover_password_model extends CI_Model {
     
     $this->mongo_db
     ->orWhere($where)
-    ->deleteAll('password_recovery');
+    ->deleteAll(self::COLLECTION);
   }
 }
 
