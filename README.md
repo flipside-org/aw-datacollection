@@ -30,7 +30,6 @@ $ git submdodule update --recursive
 ```
 The enketo library needs to be built. Change into its directory:
 ```
-$ cd aw-datacollection
 $ cd assets/libs/enketo-core
 $ npm install
 $ grunt
