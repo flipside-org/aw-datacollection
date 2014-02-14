@@ -91,7 +91,7 @@ class User_model extends CI_Model {
     
     if ($user_entity->is_new()) {
       $user_entity->uid = increment_counter('user_uid');
-      $prepared_data['uid'] = $user_entity->sid;
+      $prepared_data['uid'] = $user_entity->uid;
       $prepared_data['created'] = Mongo_db::date();
       
       $result = $this->mongo_db->insert('users', $prepared_data);

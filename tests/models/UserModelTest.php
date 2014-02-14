@@ -14,12 +14,27 @@ class User_model_test extends PHPUnit_Framework_TestCase
     // Some data!
     $fixture = array(
       array(
-        'uid' => 1,
-        'email' => 'admin@localhost',
+        // Returns 1.
+        'uid' => increment_counter('user_uid'),
+        'email' => 'admin@localhost.dev',
         'name' => 'Admin',
         'username' => 'admin',
         'password' => sha1('admin'),
         'roles' => array('administrator'),
+        'author' => null,
+        'status' => 2,
+        
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        // Returns 2.
+        'uid' => increment_counter('user_uid'),
+        'email' => 'test_user@airwolf.dev',
+        'name' => 'test user',
+        'username' => 'test_user',
+        'password' => sha1('test_user'),
+        'roles' => array(),
         'author' => null,
         'status' => 2,
         
@@ -64,6 +79,34 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $user_two = self::$CI->user_model->get_by_username('abc');
     $this->assertFalse($user_two);
+  }
+  
+  public function test_get_user_by_email() {
+    $email = 'admin@localhost.dev';
+    $user_one = self::$CI->user_model->get_by_email($email);
+    
+    $this->assertInstanceOf('User_entity', $user_one);
+    $this->assertEquals($email, $user_one->email);
+    
+    $user_two = self::$CI->user_model->get_by_email('abc');
+    $this->assertFalse($user_two);
+  }
+  
+  /**
+   * @depends test_get_user_by_uid
+   */
+  public function test_edit_user() {
+    $user = self::$CI->user_model->get(2);
+    $this->assertEquals('test user', $user->name);
+    
+    $user->name = 'Another user name';
+    $user->set_password('pass');
+    
+    $result = self::$CI->user_model->save($user);
+    
+    $this->assertTrue($result);
+    $this->assertEquals('Another user name', $user->name);
+    $this->assertEquals(sha1('pass'), $user->password);   
   }
   
 }
