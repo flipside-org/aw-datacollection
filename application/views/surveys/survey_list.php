@@ -16,7 +16,11 @@
         <td><?= $survey_entity->status; ?></td>
         <td>
           <ul class="button-group">
+            <?php if (has_permission('edit any survey')) :?>
             <li><a href="<?= $survey_entity->get_url_edit() ?>" class="button tiny">Edit</a></li>
+            <?php endif; ?>
+            
+            <?php if (has_permission('delete any survey')) :?>
             <li>
               <?php 
               print form_open('survey/delete');
@@ -29,6 +33,8 @@
               print form_close();
             ?>
             </li>
+            <?php endif; ?>
+            
             <?php if ($survey_entity->has_xml()) : ?>
               <li><a href="<?= $survey_entity->get_url_survey_enketo('testrun') ?>" class="button tiny secondary">Test Run</a></li>
               <li><a href="<?= $survey_entity->get_url_survey_enketo('collection') ?>" class="button tiny success">Collect Data</a></li>

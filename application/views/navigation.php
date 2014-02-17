@@ -42,7 +42,7 @@
       </ul>
       <?php if (is_logged()) : ?>
       <ul class="right">
-      	<li class="name"><a href="user">Hello <?= current_user()->name ?></a></li>
+      	<li class="name"><a href="<?= base_url('user') ?>">Hello <?= current_user()->name ?></a></li>
       	<li class="has-form">
       	  <a href="<?= base_url('logout') ?>" class="button alert">logout</a>
       	</li>
