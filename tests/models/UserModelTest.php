@@ -44,11 +44,10 @@ class User_model_test extends PHPUnit_Framework_TestCase
     );
     
     
-    self::$CI->mongo_db->batchInsert('users', $fixture);
+    self::$CI->mongo_db->batchInsert(User_model::COLLECTION, $fixture);
     
-    // Load model
-    self::$CI->load->model('user_model');
-    
+    // User model is autoloaded.
+    // No need to load.    
   }
   
   public static function tearDownAfterClass() {
