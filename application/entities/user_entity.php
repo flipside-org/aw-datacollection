@@ -9,9 +9,12 @@
  * Adding new fields to a user:
  *   - Handle constructor data in the constructor function.
  *     Data comes in directly from a mongo query.
- *   - Define how that field should be saved in mongodb.
- *     That should be done in the save function of User_model.
+ *   - All object's PUBLIC fields will be saved to mongodb. That's how you
+ *     define which fields are saved. If you need an accessible field, set it as
+ *     protected and use Getters and Setters.
  *   - Add new fileds to fixtures (Only during dev)
+ * 
+ * IMPORTANT: Only use public field for fields that need to be saved to mongodb
  */
 class User_entity extends Entity {
   
@@ -25,10 +28,13 @@ class User_entity extends Entity {
   
   /**
    * Mongo Id.
+   * The mongo Id is immutable. It can not be set when updating documents
+   * since it is not used to query for them. Mark it as protected so it 
+   * isn't picked up in the model's save method.
    * @var int
    * @access public
    */
-  public $_id = NULL;
+  protected $_id = NULL;
   
   /**
    * Creation Date.
@@ -114,7 +120,7 @@ class User_entity extends Entity {
    * 
    * @access private
    */
-   private $settings = array();
+   protected $settings = array();
   
   
   /**
@@ -192,20 +198,22 @@ class User_entity extends Entity {
   /**
    * Encodes the password and sets it
    * @access public
+   * @param string $pass
    */
   public function set_password($pass) {
     if (!empty($pass)) {
-      $this->password = sha1($pass);
+      $this->password = $this->_hash_password($pass);
     }
   }
    
   /**
    * Checks whether the given password matches the user's
    * @access public
+   * @param string $pass
    * @return boolean
    */
   public function check_password($pass) {
-    return $this->password == sha1($pass);
+    return $this->password == $this->_hash_password($pass);
   }
 
   /**
@@ -216,6 +224,16 @@ class User_entity extends Entity {
    ********************************
    * Start of private and protected methods.
    */
+   
+   /**
+   * Hashes the password.
+   * @access public
+   * @param string $pass
+   * @return string
+   */
+   private function _hash_password($pass) {
+     return sha1($pass);
+   }
    
   /**
    * End of private and protected methods.

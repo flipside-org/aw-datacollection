@@ -15,6 +15,11 @@ class User_model extends CI_Model {
   const COLLECTION = 'users';
   
   /**
+   * Mongo db counter collection for this model.
+   */
+  const COUNTER_COLLECTION = 'user_uid';
+  
+  /**
    * Model constructor.
    */
   function __construct() {
@@ -81,22 +86,19 @@ class User_model extends CI_Model {
    * @return boolean
    *   Whether or not the save was successful.
    */
-  public function save(User_entity &$user_entity) {
+  public function save(User_entity &$entity) {
+    // Set update date:
+    $entity->updated = Mongo_db::date();
     
-    $prepared_data = array(
-      'name' => $user_entity->name,
-      'username' => $user_entity->username,
-      'email' => $user_entity->email,
-      'password' => $user_entity->password,
-      'author' => $user_entity->author,
-      'status' => $user_entity->username,
-      'roles' => $user_entity->roles,
-      'updated' => Mongo_db::date()  
-    );
-    
-    if ($user_entity->is_new()) {
-      $user_entity->uid = increment_counter('user_uid');
-      $prepared_data['uid'] = $user_entity->uid;
+    $prepared_data = array();
+    foreach ($entity as $field_name => $field_value) {
+      $prepared_data[$field_name] = $field_value;
+    }
+        
+    if ($entity->is_new()) {
+      $entity->uid = increment_counter(self::COUNTER_COLLECTION);
+      $prepared_data['uid'] = $entity->uid;
+      // Set creation date:
       $prepared_data['created'] = Mongo_db::date();
       
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
@@ -107,7 +109,7 @@ class User_model extends CI_Model {
     else {
       $result = $this->mongo_db
         ->set($prepared_data)
-        ->where('uid', $user_entity->uid)
+        ->where('uid', $entity->uid)
         ->update(self::COLLECTION);
       
       return $result !== FALSE ? TRUE : FALSE;

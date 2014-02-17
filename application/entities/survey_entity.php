@@ -9,9 +9,13 @@
  * Adding new fields to a survey:
  *   - Handle constructor data in the constructor function.
  *     Data comes in directly from a mongo query.
- *   - Define how that field should be saved in mongodb.
- *     That should be done in the save function of Survey_model.
+ *   - All object's PUBLIC fields will be saved to mongodb. That's how you
+ *     define which fields are saved. If you need an accessible field, set it as
+ *     protected and use Getters and Setters.
  *   - Add new fileds to fixtures (Only during dev)
+ * 
+ * 
+ * IMPORTANT: Only use public field for fields that need to be saved to mongodb
  */
 class Survey_entity extends Entity {
   
@@ -25,10 +29,13 @@ class Survey_entity extends Entity {
   
   /**
    * Mongo Id.
+   * The mongo Id is immutable. It can not be set when updating documents
+   * since it is not used to query for them. Mark it as protected so it 
+   * isn't picked up in the model's save method.
    * @var int
    * @access public
    */
-  public $_id = NULL;
+  protected $_id = NULL;
   
   /**
    * Creation Date.
@@ -36,6 +43,13 @@ class Survey_entity extends Entity {
    * @access public
    */
   public $created = NULL;
+  
+  /**
+   * Update Date.
+   * @var date
+   * @access public
+   */
+  public $updated = NULL;
   
   /**
    * Survey Id.
@@ -92,7 +106,7 @@ class Survey_entity extends Entity {
    * 
    * @access private
    */
-  private $settings = array(
+  protected $settings = array(
     'file_loc' => ''
   );
   

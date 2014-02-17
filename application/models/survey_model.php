@@ -15,6 +15,11 @@ class Survey_model extends CI_Model {
   const COLLECTION = 'surveys';
   
   /**
+   * Mongo db counter collection for this model.
+   */
+  const COUNTER_COLLECTION = 'survey_sid';
+  
+  /**
    * Model constructor.
    */
   function __construct() {
@@ -77,17 +82,20 @@ class Survey_model extends CI_Model {
    * @return boolean
    *   Whether or not the save was successful.
    */
-  public function save(Survey_entity &$survey_entity) {
+  public function save(Survey_entity &$entity) {
+    // Set update date:
+    $entity->updated = Mongo_db::date();
     
-    $prepared_data = array(
-      'title' => $survey_entity->title,
-      'status' => $survey_entity->status,
-      'files' => $survey_entity->files,
-    );
+    $prepared_data = array();
+    foreach ($entity as $field_name => $field_value) {
+      $prepared_data[$field_name] = $field_value;
+    }
     
-    if ($survey_entity->is_new()) {
-      $survey_entity->sid = increment_counter('survey_sid');
-      $prepared_data['sid'] = $survey_entity->sid;
+    if ($entity->is_new()) {
+      $entity->sid = increment_counter(self::COUNTER_COLLECTION);
+      $prepared_data['sid'] = $entity->sid;
+      // Set creation date:
+      $prepared_data['created'] = Mongo_db::date();
       
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
@@ -97,7 +105,7 @@ class Survey_model extends CI_Model {
     else {
       $result = $this->mongo_db
         ->set($prepared_data)
-        ->where('sid', $survey_entity->sid)
+        ->where('sid', $entity->sid)
         ->update(self::COLLECTION);
       
       return $result !== FALSE ? TRUE : FALSE;
