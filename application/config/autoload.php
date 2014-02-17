@@ -80,7 +80,7 @@ $autoload['helper'] = array('url', 'mongo_counter', 'entities_loader', 'general_
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('permissions');
 
 
 /*

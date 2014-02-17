@@ -98,18 +98,22 @@ class User_entity extends Entity {
    * @var int
    * @access public
    */
-  public $author = null;
+  public $author = NULL;
   
   /**
    * User status.
    * @var int
    * @access public
    */
-  public $status = null;
+  public $status = NULL;
 
   /**
    * End of survey fields.
    *******************************/
+  
+  protected $permissions = NULL;
+  
+  protected $logged_in = NULL;
   
   /**
    * Setting passed to the Survey entity.
@@ -120,7 +124,9 @@ class User_entity extends Entity {
    * 
    * @access private
    */
-   protected $settings = array();
+  protected $settings = array(
+    'permissions' => array()
+  );
   
   
   /**
@@ -154,7 +160,16 @@ class User_entity extends Entity {
    * http://www.potstuck.com/2009/01/08/php-dependency-injection/
    */
   
-  // Nothing for now.
+  /**
+   * Builds the permissions for a user
+   * @param array $perms.
+   *   The permission array form the config file.
+   * @return this
+   */
+  public function set_permissions_array($perms) {
+    $this->settings['permissions'] = $perms;
+    return $this;
+  }
   
   /**
    * Creates User_entity injecting dependencies.
@@ -173,6 +188,7 @@ class User_entity extends Entity {
     $CI = get_instance();
     
     // Inject dependencies.
+    $user->set_permissions_array($CI->config->item('permissions'));
     
     return $user;
   }
@@ -196,7 +212,7 @@ class User_entity extends Entity {
   }
    
   /**
-   * Encodes the password and sets it
+   * Encodes the password and sets it.
    * @access public
    * @param string $pass
    */
@@ -207,7 +223,7 @@ class User_entity extends Entity {
   }
    
   /**
-   * Checks whether the given password matches the user's
+   * Checks whether the given password matches the user's.
    * @access public
    * @param string $pass
    * @return boolean
@@ -215,7 +231,54 @@ class User_entity extends Entity {
   public function check_password($pass) {
     return $this->password == $this->_hash_password($pass);
   }
-
+  
+  /**
+   * Check if a user has a given permission.
+   * @access public
+   * @param string $perm
+   *   The permission to check.
+   * @return boolean
+   */
+  public function has_permission($perm) {
+    // Only build permissions once.
+    if ($this->permissions === NULL) {
+      $this->_build_permissions();
+    }
+    return in_array($perm, $this->permissions);
+  }
+  
+  /**
+   * Returns all the user permissions.
+   * @access public
+   * @return array
+   */
+  public function all_permissions() {
+    // Only build permissions once.
+    if ($this->permissions === NULL) {
+      $this->_build_permissions();
+    }
+    return $this->permissions;
+  }
+  
+  /**
+   * Sets the user as logged in or not.
+   * @param Boolean $status
+   *   Default to TRUE.
+   * @return this.
+   */
+  public function set_logged($status = TRUE) {
+    $this->logged_in = $status;
+    return $this;
+  }
+  
+  /**
+   * Checks if the user is logged in.
+   * @return boolean.
+   */
+  public function is_logged() {
+    return $this->logged_in;
+  }
+  
   /**
    * End of public methods.
    *******************************/
@@ -227,12 +290,36 @@ class User_entity extends Entity {
    
    /**
    * Hashes the password.
-   * @access public
+   * @access private
    * @param string $pass
    * @return string
    */
-   private function _hash_password($pass) {
+   protected function _hash_password($pass) {
      return sha1($pass);
+   }
+   
+   /**
+    * Builds the user permissions. In the config files the permissions
+    * are grouped by name. We loop through all the permissions to check
+    * which are available to the user's roles.
+    * @access private
+    */
+   protected function _build_permissions() {
+     // ALL, anonymous and authenticated are not roles, but to ease search
+     // temporarily treat them as such.
+     $fake_roles = $this->roles;
+     $fake_roles[] = 'ALL';
+     $fake_roles[] = $this->is_logged() ? ROLE_LOGGED : ROLE_ANONYMOUS;
+     
+     $user_perms = array();
+     foreach ($this->settings['permissions'] as $permission_name => $permission_affected_roles) {
+       // The user has the permission if it is for all or
+       // if the permission if for a role the user has.
+       if (count(array_intersect($fake_roles, $permission_affected_roles)) ) {
+         $user_perms[] = $permission_name;
+       }
+     }
+     $this->permissions = $user_perms;
    }
    
   /**

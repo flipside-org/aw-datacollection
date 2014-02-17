@@ -25,12 +25,13 @@ if ( ! function_exists('property_if_not_null')) {
 
 /**
  * Checks whether the user is logged.
+ * Alias of current_user()->is_logged()
  * 
  * @return boolean
  */
 if ( ! function_exists('is_logged')) {
   function is_logged() {
-    return get_instance()->session->userdata('is_logged');
+    return current_user()->is_logged() === TRUE;
   }
 }
 
@@ -40,23 +41,27 @@ if ( ! function_exists('is_logged')) {
  * @return mixed
  *   User entity if there's a logged user, FALSE otherwise
  */
-if ( ! function_exists('get_logged_user')) {
-  function get_logged_user() {
+if ( ! function_exists('current_user')) {
+  function current_user() {
     static $current_user;
     
-    if (!isset($current_user)) {  
-      $CI = get_instance();    
+    if (!isset($current_user)) {
+      $CI = get_instance();
       $uid = $CI->session->userdata('user_uid');
       
       if ($uid !== FALSE) {
+        // There is a logged user.
         $current_user = $CI->user_model->get($uid);
+        $current_user->set_logged();
       }
       else {
-        return FALSE;
+        $current_user = User_entity::build(array());
+        $current_user->set_logged(FALSE);
       }
+      
     }
     
-    return $current_user;;
+    return $current_user;
   }
 }
 

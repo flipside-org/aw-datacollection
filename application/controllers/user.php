@@ -59,7 +59,7 @@ class User extends CI_Controller {
     if (is_logged()) {
       $this->load->view('base/html_start');
       $this->load->view('navigation');
-      $this->load->view('users/user_profile', array('user' => get_logged_user()));
+      $this->load->view('users/user_profile', array('user' => current_user()));
       $this->load->view('base/html_end');
     }
     else {
@@ -85,7 +85,7 @@ class User extends CI_Controller {
         // Admin can edit everything.
         
       }
-      elseif (get_logged_user()->uid == $user->uid) {
+      elseif (current_user()->uid == $user->uid) {
         // Editing own account.
         $this->_edit_own_account();
       }
@@ -110,7 +110,7 @@ class User extends CI_Controller {
     $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
     $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__check_confirm_password');
     
-    $user = get_logged_user();
+    $user = current_user();
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
@@ -138,7 +138,7 @@ class User extends CI_Controller {
   public function user_recover_password() {
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__check_email_exists');
     
-    $user = get_logged_user();
+    $user = current_user();
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
@@ -253,7 +253,7 @@ class User extends CI_Controller {
    * Form validation callback.
    */
   public function _check_user_password($password) {
-    if (get_logged_user()->check_password($password)) {
+    if (current_user()->check_password($password)) {
       return TRUE;
     }
     else {
