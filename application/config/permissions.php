@@ -26,7 +26,13 @@ define('ROLE_ANONYMOUS', 'anonymous');
 define('ROLE_LOGGED', 'authenticated');
 
 $config['permissions'] = array(
-  'permission name' => array('administrator'),
-  'another permission' => array('cc_operator', 'administrator'),
-  'all permission' => array('ALL')
+  'can edit own account' => array(ROLE_LOGGED),
+  'can edit any account' => array('administrator'),
+  
+  'view survey list' => array(ROLE_LOGGED),
+  'view survey page' => array(ROLE_LOGGED),
+  'edit any survey' => array('administrator'),
+  'create survey' => array('administrator'),
+  'delete any survey' => array('administrator'),
+  'download survey files' => array(ROLE_LOGGED),
 );

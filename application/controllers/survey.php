@@ -42,6 +42,10 @@ class Survey extends CI_Controller {
    * /surveys
    */
   public function surveys_list(){
+    if (!has_permission('view survey list')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+    
     $surveys = $this->survey_model->get_all();
     
     $this->load->view('base/html_start');
@@ -57,6 +61,10 @@ class Survey extends CI_Controller {
    * /survey/:sid
    */
   public function survey_by_id($sid){
+    if (!has_permission('view survey page')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+    
     $survey = $this->survey_model->get($sid);
     
     $messages = Status_msg::get();
@@ -82,7 +90,11 @@ class Survey extends CI_Controller {
    * Route
    * /survey/add
    */
-  public function survey_add(){    
+  public function survey_add(){
+    if (!has_permission('create survey')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+    
     $this->_survey_form_handle('add');
   }
   
@@ -92,6 +104,10 @@ class Survey extends CI_Controller {
    * /survey/:sid/edit
    */
   public function survey_edit_by_id($sid){
+    if (!has_permission('edit any survey')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+    
     $survey = $this->survey_model->get($sid);
     
     if ($survey) {
@@ -112,7 +128,7 @@ class Survey extends CI_Controller {
    * @param Survey_entity $survey.
    *   If editing the survey is passed to the function.
    */
-  private function _survey_form_handle($action = 'add', $survey = null) {
+  protected function _survey_form_handle($action = 'add', $survey = null) {
     
     // Config data for the file upload.
     $file_upload_config = array(
@@ -127,8 +143,8 @@ class Survey extends CI_Controller {
     
     // Set form validation rules.
     $this->form_validation->set_rules('survey_title', 'Survey Title', 'required');
-    $this->form_validation->set_rules('survey_status', 'Survey Status', 'required|callback__survey_status_valid');
-    $this->form_validation->set_rules('survey_file', 'Survey File', 'callback__survey_file_handle');
+    $this->form_validation->set_rules('survey_status', 'Survey Status', 'required|callback__cb_survey_status_valid');
+    $this->form_validation->set_rules('survey_file', 'Survey File', 'callback__cb_survey_file_handle');
     
     // If no data submitted show the form.
     if ($this->form_validation->run() == FALSE) {
@@ -237,8 +253,11 @@ class Survey extends CI_Controller {
    * /survey/delete
    */
   public function survey_delete_by_id(){
+    if (!has_permission('delete any survey')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
     
-    $this->form_validation->set_rules('survey_sid', 'Survey ID', 'required|callback__survey_exists');
+    $this->form_validation->set_rules('survey_sid', 'Survey ID', 'required|callback__cb_survey_exists');
     $sid = $this->input->post('survey_sid');
     
     if ($this->form_validation->run() == TRUE) {
@@ -246,9 +265,9 @@ class Survey extends CI_Controller {
     }
     else {
       // Survey Id has been tempered with.
-      // TODO: Survey Id has been tempered with. Show Message
+      show_error("An error occurred while deleting the survey.");
     }
-      redirect('/surveys');
+    redirect('/surveys');
   }
   
   /**
@@ -256,7 +275,11 @@ class Survey extends CI_Controller {
    * Route
    * /survey/:sid/files/(xls|xml)
    */
-  public function survey_file_download($sid, $type) {    
+  public function survey_file_download($sid, $type) {
+    if (!has_permission('download survey files')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+        
     $survey = $this->survey_model->get($sid);
     if ($survey && isset($survey->files[$type]) && $survey->files[$type] !== NULL) {
       $this->load->helper('download');     
@@ -275,6 +298,7 @@ class Survey extends CI_Controller {
    * Route
    * /survey/:sid/(testrun|data_collection)
    */
+   // TODO: Permissions for enketo.
   public function survey_enketo($sid, $type) {    
     $survey = $this->survey_model->get($sid);
     if ($survey) {      
@@ -408,7 +432,8 @@ class Survey extends CI_Controller {
     ->set_content_type('text')
     ->set_output('OK from server ' . $resp_number . ' | ' . $this->input->post('sid'));
   }
-
+  
+  // TODO: Survey. Delete delay function.
   public function delay($sec) {
     sleep($sec);
     $this->output
@@ -428,7 +453,7 @@ class Survey extends CI_Controller {
    * Checks if the submitted status is valid
    * Form validation callback.
    */
-  public function _survey_status_valid($status) {
+  public function _cb_survey_status_valid($status) {
     
     if (!Survey_entity::is_valid_status($status)) {
       $this->form_validation->set_message('_survey_status_valid', 'The %s is not valid.');
@@ -442,7 +467,7 @@ class Survey extends CI_Controller {
    * Checks if the survey exists
    * Form validation callback.
    */
-  public function _survey_exists($sid) {
+  public function _cb_survey_exists($sid) {
     $survey = $this->survey_model->get($sid);
     
     return $survey ? TRUE : FALSE;
@@ -456,7 +481,7 @@ class Survey extends CI_Controller {
    * http://keighl.com/post/codeigniter-file-upload-validation/
    * Form validation callback.
    */
-  public function _survey_file_handle() {
+  public function _cb_survey_file_handle() {
     if (isset($_FILES['survey_file']) && !empty($_FILES['survey_file']['name'])) {
       if ($this->upload->do_upload('survey_file')) {
         // Set a $_POST value with the results of the upload to use later.

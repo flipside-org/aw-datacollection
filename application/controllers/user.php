@@ -22,13 +22,14 @@ class User extends CI_Controller {
    */
 	public function user_login() {	  
     if (is_logged()) {
-      die('The user is already logged. Redirect to the profile page.');
+      // If the user is already logged redirect to the Home Page.
+      redirect();
     }
 
     $this->form_validation->set_rules('signin_username', 'Username', 'trim|required|xss_clean');
-    $this->form_validation->set_rules('signin_password', 'Password', 'trim|required|xss_clean|callback__check_login_data');
+    $this->form_validation->set_rules('signin_password', 'Password', 'trim|required|xss_clean|callback__cb_check_login_data');
 
-    if ($this->form_validation->run() == FALSE) {      
+    if ($this->form_validation->run() == FALSE) {
   		$this->load->view('base/html_start');
       $this->load->view('navigation');
       $this->load->view('login');
@@ -56,6 +57,10 @@ class User extends CI_Controller {
    * /user
    */
   public function user_profile($uid = null) {
+    // Viewing other user's profile is not a requirement.
+    // Viewing the current user profile requires the user
+    // to be logged in. It is not something to control through
+    // a permission.
     if (is_logged()) {
       $this->load->view('base/html_start');
       $this->load->view('navigation');
@@ -81,18 +86,19 @@ class User extends CI_Controller {
       }
       
       //if (user is admin) {
-      if (FALSE) {
+      if (has_permission('can edit any account')) {
         // Admin can edit everything.
-        
+        // TODO: admin can edit every account.
+        $this->_edit_own_account();
       }
-      elseif (current_user()->uid == $user->uid) {
+      elseif (current_user()->uid == $user->uid && has_permission('can edit own account')) {
         // Editing own account.
         $this->_edit_own_account();
       }
       else {
         // Editing other user account.
         // Only admins can do that.
-        show_error("You're not allowed to edit other user's accounts.", 403, 'Operation not allowed');
+        show_error("You're not allowed to edit accounts.", 403, 'Operation not allowed');
       }
     }
     else {
@@ -106,9 +112,9 @@ class User extends CI_Controller {
    */
   protected function _edit_own_account() {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
-    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__check_user_password');
+    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__cb_check_user_password');
     $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
-    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__check_confirm_password');
+    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_check_confirm_password');
     
     $user = current_user();
     
@@ -136,7 +142,13 @@ class User extends CI_Controller {
    * /user/recover
    */
   public function user_recover_password() {
-    $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__check_email_exists');
+    if (is_logged()) {
+      // If the user is already logged redirect to the Home Page.
+      // A logged user has no business here.
+      redirect();
+    }
+    
+    $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__cb_check_email_exists');
     
     $user = current_user();
     
@@ -184,7 +196,7 @@ class User extends CI_Controller {
     
     if ($user_email) {
       $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|required');
-      $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|required|callback__check_confirm_password');
+      $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|required|callback__cb_check_confirm_password');
       
       if ($this->form_validation->run() == FALSE) {
         $this->load->view('base/html_start');
@@ -227,7 +239,7 @@ class User extends CI_Controller {
    * Checks if the login data is valid.
    * Form validation callback.
    */
-  public function _check_login_data($password) {
+  public function _cb_check_login_data($password) {
     // Username.
     $username = $this->input->post('signin_username');
     // Get user.
@@ -252,7 +264,7 @@ class User extends CI_Controller {
    * Checks if the password matches the logged user's
    * Form validation callback.
    */
-  public function _check_user_password($password) {
+  public function _cb_check_user_password($password) {
     if (current_user()->check_password($password)) {
       return TRUE;
     }
@@ -266,7 +278,7 @@ class User extends CI_Controller {
    * Checks if the new password and new password confirm match.
    * Form validation callback.
    */
-  public function _check_confirm_password($new_password_confirm) {
+  public function _cb_check_confirm_password($new_password_confirm) {
     $new_password = $this->input->post('user_new_password');
     
     if ($new_password == $new_password_confirm) {
@@ -283,7 +295,7 @@ class User extends CI_Controller {
    * Used for password recovery
    * Form validation callback.
    */
-  public function _check_email_exists($email) {
+  public function _cb_check_email_exists($email) {
     $user = $this->user_model->get_by_email($email);
     
     if ($user !== FALSE) {

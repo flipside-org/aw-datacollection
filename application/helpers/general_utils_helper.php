@@ -36,6 +36,18 @@ if ( ! function_exists('is_logged')) {
 }
 
 /**
+ * Checks whether the logged user has a given permission.
+ * Alias of current_user()->has_permission($perm)
+ * 
+ * @return boolean
+ */
+if ( ! function_exists('has_permission')) {
+  function has_permission($perm) {
+    return current_user()->has_permission($perm);
+  }
+}
+
+/**
  * Returns the logged user.
  * 
  * @return mixed
