@@ -88,7 +88,6 @@ class User extends CI_Controller {
       //if (user is admin) {
       if (has_permission('edit any account')) {
         // Admin can edit everything.
-        // TODO: admin can edit every account.
         $this->_edit_other_account($user);
       }
       elseif (current_user()->uid == $user->uid && has_permission('edit own account')) {
@@ -121,7 +120,7 @@ class User extends CI_Controller {
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
       $this->load->view('navigation');
-      $this->load->view('users/user_form_edit_self', array('user' => $user));
+      $this->load->view('users/user_form', array('user' => $user, 'action' => 'edit_own'));
       $this->load->view('base/html_end');
     }
     else {
@@ -149,7 +148,7 @@ class User extends CI_Controller {
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
       $this->load->view('navigation');
-      $this->load->view('users/user_form_edit_admin', array('user' => $user));
+      $this->load->view('users/user_form', array('user' => $user, 'action' => 'edit_other'));
       $this->load->view('base/html_end');
     }
     else {
@@ -163,6 +162,60 @@ class User extends CI_Controller {
       $this->user_model->save($user);
       // TODO: Saving user. Handle success, error.
       redirect('users');
+    }
+  }
+
+  /**
+   * Page to add new user.
+   * Route
+   * /user/add
+   */
+  public function user_add(){
+    if (!has_permission('create account')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+    
+    $this->_add_account();
+  }
+  /**
+   * Used by user_add
+   * When adding an account.
+   */
+  protected function _add_account() {
+    $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
+    $this->form_validation->set_rules('user_username', 'Username', 'trim|required|xss_clean|alpha_dash|callback__cb_check_unique[username]');
+    $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__cb_check_unique[email]');
+    $this->form_validation->set_rules('user_new_password', 'Password', 'trim|required');
+    $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
+    $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
+    
+    if ($this->form_validation->run() == FALSE) {
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('users/user_form', array('user' => NULL, 'action' => 'add'));
+      $this->load->view('base/html_end');
+    }
+    else {
+      
+      // Some values can be set in the constructor.
+      $userdata = array(
+        'name' => $this->input->post('user_name'),
+        'username' => $this->input->post('user_username'),
+        'email' => $this->input->post('user_email'),
+        'author' => current_user()->uid,
+      );
+      
+      $user = User_entity::build($userdata);
+      $user
+        ->set_password($this->input->post('user_new_password'))
+        ->set_status($this->input->post('user_status'))
+        ->set_roles($this->input->post('user_roles'));
+      
+      // Save
+      $this->user_model->save($user);
+      // TODO: Saving user. Handle success, error.
+      redirect('users');
+      
     }
   }
   
@@ -397,6 +450,21 @@ class User extends CI_Controller {
       return FALSE;
     }
   }
+
+  /**
+   * Checks for uniqueness. Used for email and username.
+   * Form validation callback.
+   */
+  public function _cb_check_unique($value, $field) {
+    if ($this->user_model->check_unique($field, $value)) {
+      return TRUE;
+    }
+    else {
+      $this->form_validation->set_message('_cb_check_unique', 'There is already a user with the chosen %s');
+      return FALSE;
+    }
+  }
+
 }
 
 /* End of file login.php */

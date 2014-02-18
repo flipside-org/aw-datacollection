@@ -30,6 +30,9 @@
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('users'); ?>">Users</a>
+          <ul class="dropdown">
+            <li><a href="<?= base_url('user/add'); ?>">Add</a></li>            
+          </ul>
         </li>
         <?php endif; ?>
         

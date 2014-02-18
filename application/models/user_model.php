@@ -131,7 +131,26 @@ class User_model extends CI_Model {
       
       return $result !== FALSE ? TRUE : FALSE;
     }
-    
+  }
+  
+  /**
+   * Checks if the value is unique for the given field.
+   * If the field doesn't exist, true will be returned.
+   * It's not in the scope of the function to check that
+   * since it will never be directly used by the user.
+   * 
+   * @param string $field
+   *   The field to check
+   * @param string $value
+   *   The field value
+   * @return boolean
+   */
+  public function check_unique($field, $value) {
+    $result = $this->mongo_db
+      ->where($field, $value)
+      ->count(self::COLLECTION);
+      
+    return $result == 0;
   }
 }
 

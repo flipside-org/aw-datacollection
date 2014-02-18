@@ -34,6 +34,7 @@ $config['permissions'] = array(
   // Users.
   'edit own account' => array(ROLE_LOGGED),
   'edit any account' => array('administrator'),
+  'create account' => array('administrator'),
   'view user list' => array('administrator'),
   
   // Surveys.
