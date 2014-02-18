@@ -30,5 +30,3 @@
 
 <?= form_close(); ?>
 </div>
-
-<?php krumo($user); ?>
