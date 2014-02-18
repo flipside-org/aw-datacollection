@@ -201,14 +201,6 @@ class Survey extends CI_Controller {
           redirect('/survey/' . $new_survey->sid);          
           break;
         case 'edit':
-          $sid_submitted = $this->input->post('survey_sid');
-          
-          if ($sid_submitted != $survey->sid) {
-            // If the submitted sid is different than the loaded, means
-            // that the form has been tempered with. Redirect and show error.
-            // TODO: Form has been tempered with. Redirect and show error.
-            redirect('/surveys');
-          }
           
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);
