@@ -456,7 +456,7 @@ class Survey extends CI_Controller {
   public function _cb_survey_status_valid($status) {
     
     if (!Survey_entity::is_valid_status($status)) {
-      $this->form_validation->set_message('_survey_status_valid', 'The %s is not valid.');
+      $this->form_validation->set_message('_cb_survey_status_valid', 'The %s is not valid.');
       return FALSE;
     }
     
@@ -491,7 +491,7 @@ class Survey extends CI_Controller {
       }
       else {
         // possibly do some clean up ... then throw an error
-        $this->form_validation->set_message('_survey_file_handle', $this->upload->display_errors());
+        $this->form_validation->set_message('_cb_survey_file_handle', $this->upload->display_errors());
         return false;
       }
     }
