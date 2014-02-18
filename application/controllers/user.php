@@ -86,12 +86,12 @@ class User extends CI_Controller {
       }
       
       //if (user is admin) {
-      if (has_permission('can edit any account')) {
+      if (has_permission('edit any account')) {
         // Admin can edit everything.
         // TODO: admin can edit every account.
         $this->_edit_other_account($user);
       }
-      elseif (current_user()->uid == $user->uid && has_permission('can edit own account')) {
+      elseif (current_user()->uid == $user->uid && has_permission('edit own account')) {
         // Editing own account.
         $this->_edit_own_account();
       }
@@ -162,7 +162,7 @@ class User extends CI_Controller {
       // Save
       $this->user_model->save($user);
       // TODO: Saving user. Handle success, error.
-      redirect('/');
+      redirect('users');
     }
   }
   
@@ -265,6 +265,25 @@ class User extends CI_Controller {
       // Hash expired.
       show_error('Sorry, this link is no longer valid.', 404);
     }
+  }
+
+  /**
+   * List with all the users.
+   * 
+   * Route:
+   * /users
+   */
+  public function users_list() {
+    if (!has_permission('view user list')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+    
+    $users = $this->user_model->get_all();
+    
+    $this->load->view('base/html_start');
+    $this->load->view('navigation');
+    $this->load->view('users/user_list', array('users' => $users));
+    $this->load->view('base/html_end');
   }
   
   /**

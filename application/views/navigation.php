@@ -15,6 +15,8 @@
     <section class="top-bar-section"> 
       <!-- Right Nav Section -->
       <ul class="left">
+        
+        <?php if (has_permission('view survey list')) : ?>
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('surveys'); ?>">Surveys</a>
@@ -22,6 +24,15 @@
             <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>            
           </ul>
         </li>
+        <?php endif; ?>
+        
+        <?php if (has_permission('view user list')) : ?>
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a href="<?= base_url('users'); ?>">Users</a>
+        </li>
+        <?php endif; ?>
+        
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="#">Main Item 6</a>

@@ -336,6 +336,17 @@ class User_entity extends Entity {
   }
   
   /**
+   * Returns the url to edit a user.
+   * @access public
+   * @return string
+   */
+  public function get_url_edit() {
+    if ($this->uid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent user.");       
+    }    
+    return base_url('user/' . $this->uid . '/edit') ;
+  }
+  /**
    * End of public methods.
    *******************************/
    

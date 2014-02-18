@@ -31,9 +31,12 @@ $config['roles'] = array(
 );
 
 $config['permissions'] = array(
-  'can edit own account' => array(ROLE_LOGGED),
-  'can edit any account' => array('administrator'),
+  // Users.
+  'edit own account' => array(ROLE_LOGGED),
+  'edit any account' => array('administrator'),
+  'view user list' => array('administrator'),
   
+  // Surveys.
   'view survey list' => array(ROLE_LOGGED),
   'view survey page' => array(ROLE_LOGGED),
   'edit any survey' => array('administrator'),

@@ -27,6 +27,23 @@ class User_model extends CI_Model {
   }
   
   /**
+   * Returns all the users as User_entity
+   * @return array of User_entity
+   */
+  public function get_all() {
+    $result = $this->mongo_db
+      ->orderBy(array('created' => 'desc'))
+      ->get(self::COLLECTION);
+    
+    $users = array();
+    foreach ($result as $value) {
+      $users[] = User_entity::build($value);
+    }
+    
+    return $users;
+  }
+  
+  /**
    * Returns the user with the given username
    * @return User_entity
    */
