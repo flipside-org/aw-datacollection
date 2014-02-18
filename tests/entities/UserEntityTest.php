@@ -59,6 +59,35 @@ class User_entity_test extends PHPUnit_Framework_TestCase
     $expected = array('view site', 'browse around');
     $this->assertEquals($expected, $user_anonymous->all_permissions());    
   }
+
+  public function test_set_methods() {
+    // Some values can be set in the constructor.
+    $userdata = array(
+      'name' => 'A new test user',
+      'username' => 'new_test_user',
+      'email' => 'test@testing.com',
+    );
+    
+    $user = new User_entity($userdata);
+    // Must be converted to int before sending to DB.
+    $user->set_status("2");
+    $user->set_password('password');
+    
+    $this->assertInternalType('int', $user->status);
+    $this->assertTrue($user->check_password('password'));
+    
+    $user->set_roles(array('role1', 'role2'));
+    $this->assertEquals(array('role1', 'role2'), $user->roles);
+    
+    $user->set_roles(array('role1', 'role2', 'role2'));
+    $this->assertEquals(array('role1', 'role2'), $user->roles);
+    
+    $user->set_roles('not_a_role');
+    $this->assertEmpty($user->roles);
+    
+    $user->set_roles(NULL);
+    $this->assertEmpty($user->roles);
+  }
 }
 
 ?>

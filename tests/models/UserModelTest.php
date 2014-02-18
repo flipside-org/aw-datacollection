@@ -96,27 +96,66 @@ class User_model_test extends PHPUnit_Framework_TestCase
    */
   public function test_edit_user() {
     $user = self::$CI->user_model->get(2);
+    // Ensure correct user.
     $this->assertEquals('test user', $user->name);
-    
+    // Alter name.
     $user->name = 'Another user name';
+    // Alter password.
     $user->set_password('pass');
+    // Check status saving.
+    $user->set_status(User_entity::STATUS_ACTIVE);
     
     $result = self::$CI->user_model->save($user);
-    
     $this->assertTrue($result);
+    
+    // Get from db and check.
+    $user = self::$CI->user_model->get(2);
     $this->assertEquals('Another user name', $user->name);
     $this->assertEquals(sha1('pass'), $user->password);
-    
-    // Check status saving.
-    // The status must be converted to integer before going into the DB.
-    $user->set_status("2");
-    self::$CI->user_model->save($user);
-    // Query again user.
-    $user = self::$CI->user_model->get(2);
-    $this->assertInternalType('int', $user->status);
-    
+    $this->assertEquals(User_entity::STATUS_ACTIVE, $user->status);
   }
   
+  /**
+   * @depends test_get_user_by_uid
+   */
+  public function test_add_user() {
+    // Some values can be set in the constructor.
+    $userdata = array(
+      'name' => 'A new test user',
+      'username' => 'new_test_user',
+      'email' => 'test@testing.com',
+    );
+    
+    $user = new User_entity($userdata);
+    $user
+      ->set_password('test_password')
+      ->set_status(User_entity::STATUS_ACTIVE)
+      ->set_roles(NULL);
+    
+    // Save.
+    // We have two test users. This one will be added with uid 3.
+    self::$CI->user_model->save($user);
+    
+    $saved_user = self::$CI->user_model->get(3);    
+    $this->assertEquals('A new test user', $saved_user->name);
+    $this->assertEquals('new_test_user', $saved_user->username);
+    $this->assertEquals('test@testing.com', $saved_user->email);
+    $this->assertEquals(User_entity::STATUS_ACTIVE, $saved_user->status);
+    $this->assertInternalType('int', $saved_user->status);
+    $this->assertEmpty($saved_user->roles);
+  }
+  
+  public function test_unique() {
+    $this->assertTrue(self::$CI->user_model->check_unique('username', 'non_existen_user'));
+    $this->assertFalse(self::$CI->user_model->check_unique('username', 'admin'));
+    
+    $this->assertTrue(self::$CI->user_model->check_unique('email', 'new_user_email@localhost.dev'));
+    $this->assertFalse(self::$CI->user_model->check_unique('email', 'admin@localhost.dev'));
+    
+    // Invalid fields should return true.
+    // It's not in the scope of the function to check field validity.
+    $this->assertTrue(self::$CI->user_model->check_unique('invalid_field', 'nothing'));
+  }
 }
 
 ?>
