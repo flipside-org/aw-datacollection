@@ -20,7 +20,7 @@ class User extends CI_Controller {
    * Route:
    * /login
    */
-	public function user_login() {	  
+	public function user_login() {
     if (is_logged()) {
       // If the user is already logged redirect to the Home Page.
       redirect();
@@ -89,7 +89,7 @@ class User extends CI_Controller {
       if (has_permission('can edit any account')) {
         // Admin can edit everything.
         // TODO: admin can edit every account.
-        $this->_edit_own_account();
+        $this->_edit_other_account($user);
       }
       elseif (current_user()->uid == $user->uid && has_permission('can edit own account')) {
         // Editing own account.
@@ -108,7 +108,7 @@ class User extends CI_Controller {
   
   /**
    * Used by user_edit_by_id
-   * When non admin user is attemping to edit own account.
+   * When non admin user is attempting to edit own account.
    */
   protected function _edit_own_account() {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
@@ -131,6 +131,38 @@ class User extends CI_Controller {
       $this->user_model->save($user);
       // TODO: Saving own profile. Handle success, error.
       redirect('user');
+    }
+  }
+  
+  /**
+   * Used by user_edit_by_id
+   * When admin user is editing an account.
+   */
+  protected function _edit_other_account($user) {
+    $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
+    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__cb_check_user_password');
+    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
+    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_check_confirm_password');
+    $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
+    $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
+    
+    if ($this->form_validation->run() == FALSE) {
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('users/user_form_edit_admin', array('user' => $user));
+      $this->load->view('base/html_end');
+    }
+    else {
+      $user->name = $this->input->post('user_name');
+      $user
+        ->set_password($this->input->post('user_new_password'))
+        ->set_status($this->input->post('user_status'))
+        ->set_roles($this->input->post('user_roles'));
+      
+      // Save
+      $this->user_model->save($user);
+      // TODO: Saving user. Handle success, error.
+      redirect('/');
     }
   }
   
@@ -246,16 +278,22 @@ class User extends CI_Controller {
     $user = $this->user_model->get_by_username($username);
     
     if ($user && $user->check_password($password)) {
-      // Set session data here since we already loaded the user.
-      $data = array(
-        'is_logged' => TRUE,
-        'user_uid' => $user->uid
-      );
-      $this->session->set_userdata($data);
-      return TRUE;
+      if ($user->is_active()){
+        // Set session data here since we already loaded the user.
+        $data = array(
+          'is_logged' => TRUE,
+          'user_uid' => $user->uid
+        );
+        $this->session->set_userdata($data);
+        return TRUE;
+      }
+      else {
+        $this->form_validation->set_message('_cb_check_login_data', 'This account is no longer active. Please contact an Administrator.');
+        return FALSE;
+      }
     }
     else {
-      $this->form_validation->set_message('_check_login_data', 'Invalid username or password.');
+      $this->form_validation->set_message('_cb_check_login_data', 'Invalid username or password.');
       return FALSE;
     }
   }
@@ -269,7 +307,7 @@ class User extends CI_Controller {
       return TRUE;
     }
     else {
-      $this->form_validation->set_message('_check_user_password', 'The current password is not correct.');
+      $this->form_validation->set_message('_cb_check_user_password', 'The current password is not correct.');
       return FALSE;
     }
   }
@@ -285,7 +323,7 @@ class User extends CI_Controller {
       return TRUE;
     }
     else {
-      $this->form_validation->set_message('_check_confirm_password', 'The New Password Confirmation does not match.');
+      $this->form_validation->set_message('_cb_check_confirm_password', 'The New Password Confirmation does not match.');
       return FALSE;
     }
   }
@@ -302,7 +340,41 @@ class User extends CI_Controller {
       return TRUE;
     }
     else {
-      $this->form_validation->set_message('_check_email_exists', 'The is no user with the given email.');
+      $this->form_validation->set_message('_cb_check_email_exists', 'There is no user with the given email.');
+      return FALSE;
+    }
+  }
+
+  /**
+   * Checks if the given roles are valid.
+   * Form validation callback.
+   */
+  public function _cb_check_roles($roles) {
+    // A user with no roles is allowed.
+    if ($roles === NULL) {
+      return TRUE;
+    }
+    
+    $config_roles = $this->config->item('roles');
+    foreach ($roles as $value) {
+      if (!array_key_exists($value, $config_roles)) {
+        $this->form_validation->set_message('_cb_check_roles', 'Invalid role.');
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
+   * Checks if the given roles are valid.
+   * Form validation callback.
+   */
+  public function _cb_check_status($status) {    
+    if (array_key_exists($status, User_entity::$statuses)) {
+      return TRUE;
+    }
+    else  {
+      $this->form_validation->set_message('_cb_check_status', 'Invalid status.');
       return FALSE;
     }
   }

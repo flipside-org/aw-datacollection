@@ -105,7 +105,16 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $this->assertTrue($result);
     $this->assertEquals('Another user name', $user->name);
-    $this->assertEquals(sha1('pass'), $user->password);   
+    $this->assertEquals(sha1('pass'), $user->password);
+    
+    // Check status saving.
+    // The status must be converted to integer before going into the DB.
+    $user->set_status("2");
+    self::$CI->user_model->save($user);
+    // Query again user.
+    $user = self::$CI->user_model->get(2);
+    $this->assertInternalType('int', $user->status);
+    
   }
   
 }

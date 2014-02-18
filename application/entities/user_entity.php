@@ -20,6 +20,28 @@ class User_entity extends Entity {
   
   /********************************
    ********************************
+   * Start of static fields and constants.
+   */
+  
+  /**
+   * User statuses.
+   */
+  const STATUS_ACTIVE  = 2;
+  const STATUS_BLOCKED = 0;
+  const STATUS_DELETED = 99;
+  
+  /**
+   * User statuses labels.
+   * Useful for printing.
+   */
+  static $statuses = array(
+    self::STATUS_ACTIVE  => 'Active',
+    self::STATUS_BLOCKED => 'Blocked',
+    self::STATUS_DELETED => 'Deleted'
+  );
+  
+  /********************************
+   ********************************
    * Start of user fields.
    * The next variables hold actual user info that will
    * go in the database.
@@ -215,11 +237,13 @@ class User_entity extends Entity {
    * Encodes the password and sets it.
    * @access public
    * @param string $pass
+   * @return this
    */
   public function set_password($pass) {
     if (!empty($pass)) {
       $this->password = $this->_hash_password($pass);
     }
+    return $this;
   }
    
   /**
@@ -272,11 +296,43 @@ class User_entity extends Entity {
   }
   
   /**
+   * Sets the user roles.
+   * @param Array $roles
+   * @return this.
+   */
+  public function set_roles($roles) {
+    if (is_array($roles)) {
+      $this->roles = array_unique($roles);
+    }
+    else {
+      $this->roles = array();
+    }
+    return $this;
+  }
+  
+  /**
+   * Sets the user status. The value is converted to integer.
+   * @return this.
+   */
+  public function set_status($status) {
+    $this->status = (int) $status;
+    return $this;
+  }
+  
+  /**
    * Checks if the user is logged in.
    * @return boolean.
    */
   public function is_logged() {
     return $this->logged_in;
+  }
+  
+  /**
+   * Checks if the user is active.
+   * @return boolean.
+   */
+  public function is_active() {
+    return $this->status === User_entity::STATUS_ACTIVE;
   }
   
   /**

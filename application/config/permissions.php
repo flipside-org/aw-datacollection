@@ -25,6 +25,11 @@
 define('ROLE_ANONYMOUS', 'anonymous');
 define('ROLE_LOGGED', 'authenticated');
 
+$config['roles'] = array(
+  'administrator' => 'Administrator',
+  'cc_operator' => 'CC Operator'
+);
+
 $config['permissions'] = array(
   'can edit own account' => array(ROLE_LOGGED),
   'can edit any account' => array('administrator'),

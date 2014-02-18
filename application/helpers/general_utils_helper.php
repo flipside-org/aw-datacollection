@@ -64,13 +64,21 @@ if ( ! function_exists('current_user')) {
       if ($uid !== FALSE) {
         // There is a logged user.
         $current_user = $CI->user_model->get($uid);
-        $current_user->set_logged();
-      }
-      else {
-        $current_user = User_entity::build(array());
-        $current_user->set_logged(FALSE);
+        if ($current_user && $current_user->is_active()){
+          // Logged user found. Set logged and return.
+          $current_user->set_logged();
+          return $current_user;
+        }
+        elseif ($current_user && !$current_user->is_active()) {
+          // The user is no longer active.
+          // Kill session and redirect to login.
+          $CI->session->sess_destroy();
+          redirect('login');
+        }
       }
       
+      $current_user = User_entity::build(array());
+      $current_user->set_logged(FALSE);
     }
     
     return $current_user;
