@@ -196,7 +196,6 @@ class User extends CI_Controller {
       $this->load->view('base/html_end');
     }
     else {
-      
       // Some values can be set in the constructor.
       $userdata = array(
         'name' => $this->input->post('user_name'),
@@ -213,6 +212,20 @@ class User extends CI_Controller {
       
       // Save
       $this->user_model->save($user);
+      
+      // Notify user?
+      if ($this->input->post('user_notify') == 'notify') {
+        $this->load->library('email');
+        // TODO: Email data. Use settings as much as possible.
+        $this->email->from('aw-datacollection@airwolf.edispilf.org', 'Aw-datacollection Admin');
+        $this->email->to($user->email);
+        
+        $this->email->subject('Account Created');
+        $this->email->message("An account has been created for you.\nUsername:" . $user->username . "\nPassword:" . $this->input->post('user_new_password'));
+        
+        $this->email->send();
+      }
+      
       // TODO: Saving user. Handle success, error.
       redirect('users');
       

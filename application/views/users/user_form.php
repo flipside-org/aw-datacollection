@@ -36,6 +36,12 @@
     <?= form_dropdown('user_status', User_entity::$statuses, property_if_not_null($user, 'status')); ?>
   <?php endif; ?>
   
+  <?php if ($action == 'add'): ?>
+    <div>
+      <?= form_checkbox('user_notify', 'notify'); ?>
+      Notify user about account creation.
+    </div>
+  <?php endif; ?>
   
   <?php if ($action == 'edit_own' || $action == 'edit_other'): ?>
     <hr>
