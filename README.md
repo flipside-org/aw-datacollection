@@ -45,5 +45,18 @@ $ mongod
 ```
 
 ## Testing
-Server side testing is being done with phpunit.  
+
+### Code testing
+
+Server side testing is being done with phpunit.
 Check the documentation for more.
+
+### Behaviour testing
+
+This is implemented with [CasperJS](http://casperjs.org/) and currently living under `tests/casperjs`.
+
+```
+@todo
+- integration with grunt
+- document usage
+```
