@@ -11,31 +11,31 @@
       </li>
       <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
     </ul>
- 
-    <section class="top-bar-section"> 
+
+    <section class="top-bar-section">
       <!-- Right Nav Section -->
       <ul class="left">
-        
+
         <?php if (has_permission('view survey list')) : ?>
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('surveys'); ?>">Surveys</a>
           <ul class="dropdown">
-            <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>            
+            <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>
           </ul>
         </li>
         <?php endif; ?>
-        
+
         <?php if (has_permission('view user list')) : ?>
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('users'); ?>">Users</a>
           <ul class="dropdown">
-            <li><a href="<?= base_url('user/add'); ?>">Add</a></li>            
+            <li><a href="<?= base_url('user/add'); ?>">Add</a></li>
           </ul>
         </li>
         <?php endif; ?>
-        
+
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="#">Main Item 6</a>
@@ -48,7 +48,7 @@
               <ul class="dropdown">
                 <li><a href="#">Dropdown Options</a></li>
                 <li><a href="#">Dropdown Options</a></li>
-                
+
               </ul>
             </li>
           </ul>
@@ -58,11 +58,11 @@
       <ul class="right">
       	<li class="name"><a href="<?= base_url('user') ?>">Hello <?= current_user()->name ?></a></li>
       	<li class="has-form">
-      	  <a href="<?= base_url('logout') ?>" class="button alert">logout</a>
+      	  <a href="<?= base_url('logout') ?>" id="logout-button" class="button alert">logout</a>
       	</li>
       </ul>
       <?php endif; ?>
     </section>
   </nav>
- 
+
   <!-- End Header and Nav -->
