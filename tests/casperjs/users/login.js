@@ -6,8 +6,6 @@
  */
 
 
-
-
 /**
  * Initialise the variables
  */
@@ -19,6 +17,21 @@ if (!casper.cli.has("uri")) {
 
 var uri = casper.cli.get("uri") + '/login'
 
+
+/**
+ * Initialise user object
+ */
+function User(username, password) {
+    this.username = username
+    this.password = password
+
+    this.fill_login = function() {
+      return {
+        'signin_username': this.username,
+        'signin_password': this.password,
+      }
+    }
+}
 
 /**
  * Test the login page.
@@ -44,9 +57,8 @@ casper.test.begin('AW login', function suite(test) {
 
     // Attempting login without password.
     casper.echo('Attempting login without password.', 'INFO')
-    this.fill('form#login-form', {
-      'signin_username': 'admin',
-    }, true)
+    var user = new User('admin', '')
+    this.fill('form#login-form', user.fill_login(), true)
     this.click('input[type="submit"]')
   })
 
@@ -57,9 +69,8 @@ casper.test.begin('AW login', function suite(test) {
 
     // Attempting login without username.
     casper.echo('Attempting login without username.', 'INFO')
-    this.fill('form#login-form', {
-      'signin_password': 'admin',
-    }, true)
+    var user = new User('', 'password')
+    this.fill('form#login-form', user.fill_login(), true)
     this.click('input[type="submit"]')
   })
 
@@ -70,10 +81,8 @@ casper.test.begin('AW login', function suite(test) {
 
     // Attempting login with unknown username.
     casper.echo('Attempting login with unknown username.', 'INFO')
-    this.fill('form#login-form', {
-      'signin_username': 'i_am_casper',
-      'signin_password': 'i_am_casper',
-    }, true)
+    var user = new User('i_am_casper_username', 'i_am_casper_password')
+    this.fill('form#login-form', user.fill_login(), true)
   })
 
   casper.then(function() {
@@ -83,10 +92,8 @@ casper.test.begin('AW login', function suite(test) {
 
     // Attempting login with known username but bad password.
     casper.echo('Attempting login with known username but bad password.', 'INFO')
-    this.fill('form#login-form', {
-      'signin_username': 'admin',
-      'signin_password': 'wrong_password',
-    }, true)
+    var user = new User('admin', 'wrong_password')
+    this.fill('form#login-form', user.fill_login(), true)
     this.click('input[type="submit"]')
   })
 
@@ -97,10 +104,8 @@ casper.test.begin('AW login', function suite(test) {
 
     // Attempting login with correct credentials.
     casper.echo('Attempting login with correct credentials.', 'INFO')
-    this.fill('form#login-form', {
-      'signin_username': 'admin',
-      'signin_password': 'admin',
-    }, true)
+    var user = new User('admin', 'admin')
+    this.fill('form#login-form', user.fill_login(), true)
     this.click('input[type="submit"]')
   })
 
