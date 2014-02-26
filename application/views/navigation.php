@@ -54,13 +54,17 @@
           </ul>
         </li>
       </ul>
-      <?php if (is_logged()) : ?>
       <ul class="right">
+      <?php if (is_logged()) : ?>
       	<li class="name"><a href="<?= base_url('user') ?>">Hello <?= current_user()->name ?></a></li>
       	<li class="has-form">
       	  <a href="<?= base_url('logout') ?>" class="button alert">logout</a>
       	</li>
       </ul>
+      <?php else: ?>
+        <li class="has-form">
+          <a href="<?= base_url('login') ?>" class="button">login</a>
+        </li>
       <?php endif; ?>
     </section>
   </nav>
