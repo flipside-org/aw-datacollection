@@ -38,6 +38,8 @@ class Fixtures extends CI_Controller {
   
   public function users() {
     $this->_env_check();
+    
+    $this->load->helper('password_hashing');
     $this->mongo_db->dropCollection('aw_datacollection', 'users');
     $this->_fix_users();
     redirect('/');
@@ -179,7 +181,7 @@ class Fixtures extends CI_Controller {
         'email' => 'admin@localhost',
         'name' => 'Admin',
         'username' => 'admin',
-        'password' => sha1('admin'),
+        'password' => hash_password('admin'),
         'roles' => array('administrator'),
         'author' => null,
         'status' => 2,
@@ -192,7 +194,7 @@ class Fixtures extends CI_Controller {
         'email' => 'regular@localhost',
         'name' => 'Regular user',
         'username' => 'regular',
-        'password' => sha1('regular'),
+        'password' => hash_password('regular'),
         'roles' => array(),
         'author' => 1,
         'status' => 2,

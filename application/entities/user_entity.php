@@ -234,26 +234,17 @@ class User_entity extends Entity {
   }
    
   /**
-   * Encodes the password and sets it.
+   * Sets the password.
+   * It is set directly, so it must be hashed before.
    * @access public
    * @param string $pass
    * @return this
    */
   public function set_password($pass) {
     if (!empty($pass)) {
-      $this->password = $this->_hash_password($pass);
+      $this->password = $pass;
     }
     return $this;
-  }
-   
-  /**
-   * Checks whether the given password matches the user's.
-   * @access public
-   * @param string $pass
-   * @return boolean
-   */
-  public function check_password($pass) {
-    return $this->password == $this->_hash_password($pass);
   }
   
   /**
@@ -354,17 +345,8 @@ class User_entity extends Entity {
    ********************************
    * Start of private and protected methods.
    */
-   
-   /**
-   * Hashes the password.
-   * @access private
-   * @param string $pass
-   * @return string
-   */
-   protected function _hash_password($pass) {
-     return sha1($pass);
-   }
-   
+
+      
    /**
     * Builds the user permissions. In the config files the permissions
     * are grouped by name. We loop through all the permissions to check

@@ -74,7 +74,7 @@ class User_entity_test extends PHPUnit_Framework_TestCase
     $user->set_password('password');
     
     $this->assertInternalType('int', $user->status);
-    $this->assertTrue($user->check_password('password'));
+    $this->assertEquals('password', $user->password);
     
     $user->set_roles(array('role1', 'role2'));
     $this->assertEquals(array('role1', 'role2'), $user->roles);

@@ -7,6 +7,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
   
   public static function setUpBeforeClass() {
     self::$CI =& get_instance();
+    self::$CI->load->helper('password_hashing');
     
     // Clean db!
     self::$CI->mongo_db->dropDb('aw_datacollection_test');
@@ -19,7 +20,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
         'email' => 'admin@localhost.dev',
         'name' => 'Admin',
         'username' => 'admin',
-        'password' => sha1('admin'),
+        'password' => hash_password('admin'),
         'roles' => array('administrator'),
         'author' => null,
         'status' => 2,
@@ -33,7 +34,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
         'email' => 'test_user@airwolf.dev',
         'name' => 'test user',
         'username' => 'test_user',
-        'password' => sha1('test_user'),
+        'password' => hash_password('test_user'),
         'roles' => array(),
         'author' => null,
         'status' => 2,
@@ -101,7 +102,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
     // Alter name.
     $user->name = 'Another user name';
     // Alter password.
-    $user->set_password('pass');
+    $user->set_password(hash_password('pass'));
     // Check status saving.
     $user->set_status(User_entity::STATUS_ACTIVE);
     
@@ -111,7 +112,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
     // Get from db and check.
     $user = self::$CI->user_model->get(2);
     $this->assertEquals('Another user name', $user->name);
-    $this->assertEquals(sha1('pass'), $user->password);
+    $this->assertTrue(validate_password('pass', $user->password));
     $this->assertEquals(User_entity::STATUS_ACTIVE, $user->status);
   }
   
@@ -128,7 +129,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $user = new User_entity($userdata);
     $user
-      ->set_password('test_password')
+      ->set_password(hash_password('test_password'))
       ->set_status(User_entity::STATUS_ACTIVE)
       ->set_roles(NULL);
     

@@ -13,6 +13,7 @@ class User extends CI_Controller {
     // Load form and form validation.
     $this->load->helper('form');
     $this->load->library('form_validation');
+    $this->load->helper('password_hashing');
   }
   
   /**
@@ -125,7 +126,7 @@ class User extends CI_Controller {
     }
     else {
       $user->name = $this->input->post('user_name');
-      $user->set_password($this->input->post('user_new_password'));
+      $user->set_password(hash_password($this->input->post('user_new_password')));
       
       $this->user_model->save($user);
       // TODO: Saving own profile. Handle success, error.
@@ -154,7 +155,7 @@ class User extends CI_Controller {
     else {
       $user->name = $this->input->post('user_name');
       $user
-        ->set_password($this->input->post('user_new_password'))
+        ->set_password(hash_password($this->input->post('user_new_password')))
         ->set_status($this->input->post('user_status'))
         ->set_roles($this->input->post('user_roles'));
       
@@ -206,7 +207,7 @@ class User extends CI_Controller {
       
       $user = User_entity::build($userdata);
       $user
-        ->set_password($this->input->post('user_new_password'))
+        ->set_password(hash_password($this->input->post('user_new_password')))
         ->set_status($this->input->post('user_status'))
         ->set_roles($this->input->post('user_roles'));
       
@@ -306,7 +307,7 @@ class User extends CI_Controller {
         $user = $this->user_model->get_by_email($user_email);
         
         if ($user) {
-          $user->set_password($this->input->post('user_new_password'));
+          $user->set_password(hash_password($this->input->post('user_new_password')));
           
           if ($this->user_model->save($user)) {
             $this->recover_password_model->invalidate($hash);
@@ -361,8 +362,8 @@ class User extends CI_Controller {
     $username = $this->input->post('signin_username');
     // Get user.
     $user = $this->user_model->get_by_username($username);
-    
-    if ($user && $user->check_password($password)) {
+
+    if ($user && validate_password($password, $user->password)) {
       if ($user->is_active()){
         // Set session data here since we already loaded the user.
         $data = array(
@@ -388,7 +389,7 @@ class User extends CI_Controller {
    * Form validation callback.
    */
   public function _cb_check_user_password($password) {
-    if (current_user()->check_password($password)) {
+    if (validate_password($password, current_user()->password)) {
       return TRUE;
     }
     else {
