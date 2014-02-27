@@ -12,8 +12,10 @@ class Survey extends CI_Controller {
     parent::__construct();
     // Load stuff needed for this controller.
     $this->load->helper('form');
+    $this->load->helper('typography');
     $this->load->library('form_validation');
     $this->load->model('survey_model');
+    load_entity('call_task');
   }
   
   /**
@@ -144,6 +146,7 @@ class Survey extends CI_Controller {
     // Set form validation rules.
     $this->form_validation->set_rules('survey_title', 'Survey Title', 'required');
     $this->form_validation->set_rules('survey_status', 'Survey Status', 'required|callback__cb_survey_status_valid');
+    $this->form_validation->set_rules('survey_introduction', 'Survey Introduction', 'xss_clean');
     $this->form_validation->set_rules('survey_file', 'Survey File', 'callback__cb_survey_file_handle');
     
     // If no data submitted show the form.
@@ -160,6 +163,7 @@ class Survey extends CI_Controller {
           $survey_data = array();
           $survey_data['title'] = $this->input->post('survey_title', TRUE);
           $survey_data['status'] = $this->input->post('survey_status');
+          $survey_data['introduction'] = $this->input->post('survey_introduction', TRUE);
           
           // Construct survey.
           $new_survey = Survey_entity::build($survey_data);
@@ -205,6 +209,7 @@ class Survey extends CI_Controller {
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);
           $survey->status = $this->input->post('survey_status');
+          $survey->introduction = $this->input->post('survey_introduction', TRUE);
           
           // Handle uploaded file:
           $file = $this->input->post('survey_file');
@@ -308,11 +313,9 @@ class Survey extends CI_Controller {
       );
       $this->js_settings->add($settings);
       
-      $enketo_testrun = $type == 'testrun';
-      
-      $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_testrun' => $enketo_testrun));
+      $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_action' => $type));
       $this->load->view('navigation');
-      $this->load->view('surveys/survey_enketo', array('enketo_testrun' => $enketo_testrun));
+      $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'enketo_action' => $type));
       $this->load->view('base/html_end');
     }
     else {
@@ -404,6 +407,11 @@ class Survey extends CI_Controller {
    */
   public function api_survey_enketo_form_submit() {
     $data = $this->input->post('respondent');
+    
+    
+    $filepath = APPPATH.'logs/enketo-submit-' . date('Y-m-d') . '.txt';
+    file_put_contents($filepath, print_r($data, TRUE) . "\n", FILE_APPEND);
+    
     
     $resp_number = $data['number'];
     $all_resp = $this->session->userdata('resp');

@@ -68,6 +68,8 @@ class Fixtures extends CI_Controller {
         'title' => 'Meteor usage',
         'status' => 1,
         
+        'introduction' => 'The text the user has to read.',
+        
         'files' => array(
           'xls' => "survey_1_xls.xls",
           'xml'=> "survey_1_xml.xml",
@@ -85,6 +87,8 @@ class Fixtures extends CI_Controller {
         'sid' => increment_counter('survey_sid'),
         'title' => 'Handlebars vs something else',
         'status' => 1,
+        
+        'introduction' => 'The text the user has to read.',
         
         'files' => array(
           'xls' => NULL,
@@ -104,6 +108,8 @@ class Fixtures extends CI_Controller {
         'title' => 'Cat ladies around the neighborhood',
         'status' => 2,
         
+        'introduction' => 'The text the user has to read.',
+        
         'files' => array(
           'xls' => NULL,
           'xml'=> NULL,
@@ -120,6 +126,8 @@ class Fixtures extends CI_Controller {
         'sid' => increment_counter('survey_sid'),
         'title' => 'Knowledge of html',
         'status' => 2,
+        
+        'introduction' => 'The text the user has to read.',
         
         'files' => array(
           'xls' => NULL,
@@ -138,6 +146,8 @@ class Fixtures extends CI_Controller {
         'title' => 'Running out of titles',
         'status' => 3,
         
+        'introduction' => 'The text the user has to read.',
+        
         'files' => array(
           'xls' => NULL,
           'xml'=> NULL,
@@ -154,6 +164,8 @@ class Fixtures extends CI_Controller {
         'sid' => increment_counter('survey_sid'),
         'title' => 'Another survey',
         'status' => 99,
+        
+        'introduction' => 'The text the user has to read.',
         
         'files' => array(
           'xls' => NULL,
