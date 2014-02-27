@@ -147,9 +147,23 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       $('#submit-form').before(formStr);
       
       // Initialize form.
-      initializeForm();
+      init();
+      
+      // Proceed with data collection and show the enketo form.
+      $('#proceed-collection').click(function(e) {
+        e.preventDefault();
+        $('.call-actions').addClass('hide');
+        $('.enketo-container').removeClass('hide');
+      });
+      
+      // Show the form to set the call status.
+      $('#halt-collection').click(function(e) {
+        e.preventDefault();
+        $('.call-actions').addClass('hide');
+        $('.call-status').removeClass('hide');
+      });
   
-      //validate handler for validate button
+      // Submit enketo form.
       $('#submit-form').on('click', function() {
         console.log('validate-form click event');
         form.validate();
@@ -167,9 +181,42 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
             // Reset the form.
             form.resetView();
             // Initialize again.
-            initializeForm();
+            init();
           }
         }
+      });
+      
+      // Submit call status form.
+      $('#call-task-status-submit').click(function(e) {
+        e.preventDefault();
+        if (whatsGoingOn.block_submission) {
+          alert('There are no numbers available. The form can not be submitted.');
+          return false;
+        }
+        var call_task_status_code = $('.call-status [name=call_task_status_code]').val();
+        var call_task_status_msg = $('.call-status [name=call_task_status_msg]').val();
+        console.log('Call task status CODE: ' + call_task_status_code);
+        console.log('Call task status MSG: ' + call_task_status_msg);
+        
+        // Do something with the data.
+        current_respondent.new_status = {
+          code : call_task_status_code,
+          msg : call_task_status_msg,
+        }
+        
+        // Add the respondent to the submission queue.
+        submission_queue.add(current_respondent);
+        
+        // Reset the form.
+        form.resetView();
+        // Initialize again.
+        init();
+      });
+      
+      $('#call-task-status-cancel').click(function(e) {
+        e.preventDefault();
+        $('.call-actions').removeClass('hide');
+        $('.call-status').addClass('hide');
       });
       
       // Bootstrap finished.
@@ -178,6 +225,28 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     });
   }, 'xml');
   
+  function init() {
+    initializeForm();
+    initializeGUI();
+  }
+  
+  /**
+   * Always after initializeForm();
+   */
+  function initializeGUI() {
+    $('.call-actions').removeClass('hide');
+    // Clean call task
+    $('.call-status').addClass('hide');
+    $('.call-status [name=call_task_status_code]').val('--');
+    $('.call-status [name=call_task_status_msg]').val('');
+    
+    $('.enketo-container').addClass('hide');
+    
+    $('#respondent_number').text('');
+    if (!whatsGoingOn.numbers.exhausted_bootstrapping && !whatsGoingOn.numbers.complete_confirm && !whatsGoingOn.numbers.offline) {
+      $('#respondent_number').text(current_respondent.number);
+    }
+  }
   
   /**
    * Initialize the form.
@@ -187,9 +256,6 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     // Unblock for submission. It could be blocked if the numbers
     // were exhausted at some point.
     whatsGoingOn.block_submission = false;
-    
-    // TODO: Setting data. Temporary. Remove.
-    $('#respondent_number').text('');
     
     // Check if there are more respondents.
     if (!resp_queue.hasNextResp()) {
@@ -231,9 +297,6 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     // Get the next respondent.
     current_respondent = resp_queue.getNextResp();
     
-    // TODO: Setting data. Temporary. Remove.
-    $('#respondent_number').text(current_respondent.number);
-    
     // Initialize the form.
     form = new Form('form.or:eq(0)', modelStr);
     // For debugging.
@@ -244,6 +307,8 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       // TODO: Find out what kind of errors.
       alert('loadErrors: ' + loadErrors.join(', '));
     }
+    
+    return true;
   }
 
 
@@ -283,7 +348,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         whatsGoingOn.numbers.exhausted_bootstrapping = false;
         if (resp_queue.hasNextResp()){
           alert("Turns out there are more respondents.\nInitialize the form again!");
-          initializeForm();
+          init();
         }
         else {
           alert("There are no more respondents.\nData collection is over.");
@@ -296,7 +361,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         whatsGoingOn.numbers.complete_confirm = false;
         if (resp_queue.hasNextResp()){
           alert("Turns out there are more respondents.\nInitialize the form again!");
-          initializeForm();
+          init();
         }
         else {
           alert("There are no more respondents.\nData collection is over.");
@@ -308,7 +373,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         whatsGoingOn.numbers.offline = false;
         if (resp_queue.hasNextResp()){
           alert("Turns out there are more respondents.\nInitialize the form again!");
-          initializeForm();
+          init();
         }
         else {
           alert("There are no more respondents.\nData collection is over.");
@@ -327,7 +392,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   $(window).on('submission_queue_change', function(event, sub_queue) {
     console.log('EVENT: submission_queue_change');
     
-    var $container = $('#queue_submit');
+    var $container = $('#debug_data .queue-submit');
     $container.html('');
     var queue = sub_queue.getQueue();
     for (var i in queue) {
@@ -345,7 +410,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   $(window).on('respondent_queue_change', function(event, resp_queue) {
     console.log('EVENT: respondent_queue_change');
     
-    var $container = $('#queue_resp');
+    var $container = $('#debug_data .queue-resp');
     $container.html('');
     var all_respondents = resp_queue.getQueue();
     for (var i in all_respondents) {
