@@ -10,6 +10,9 @@
         Survey_entity::$allowed_status,
         set_value('survey_status', property_if_not_null($survey, 'status', array()))); ?>
         
+  <?= form_label('Survey Introduction', 'survey_introduction'); ?>
+  <?= form_textarea('survey_introduction', set_value('survey_introduction', property_if_not_null($survey, 'introduction'))); ?>
+        
   <?= form_upload('survey_file'); ?>
   
   <?= form_submit('survey_submit', 'Submit Survey'); ?>
