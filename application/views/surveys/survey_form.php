@@ -1,12 +1,6 @@
 <div class="row">
 <?= validation_errors(); ?>
 <?= form_open_multipart(); ?>
-<?php
- // Only need sid if editing.
-  if (isset($survey->sid)) {
-    print form_hidden('survey_sid', $survey->sid);
-  }
-?>
 
   <?= form_label('Survey Title', 'survey_title'); ?>
   <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title'))); ?>

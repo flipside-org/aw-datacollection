@@ -60,5 +60,15 @@ $route['api/survey/(:num)/xslt_transform'] = 'survey/api_survey_xslt_transform/$
 $route['api/survey/(:num)/request_respondents'] = 'survey/api_survey_request_respondents/$1';
 $route['api/survey/enketo_submit'] = 'survey/api_survey_enketo_form_submit';
 
+// Users
+$route['login'] = 'user/user_login';
+$route['logout'] = 'user/user_logout';
+$route['user'] = 'user/user_profile';
+$route['user/(:num)/edit'] = 'user/user_edit_by_id/$1';
+$route['user/recover'] = 'user/user_recover_password';
+$route['user/reset_password/(:any)'] = 'user/user_reset_password/$1';
+$route['users'] = 'user/users_list';
+$route['user/add'] = 'user/user_add';
+
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
