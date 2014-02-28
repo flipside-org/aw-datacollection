@@ -102,8 +102,8 @@ class Call_task_entity extends Entity {
     // call task it's not a problem.
     $activity = isset($call_task['activity']) ? $call_task['activity'] : array();
     unset($call_task['activity']);
-    foreach ($activity as $status) {
-      
+    foreach ($activity as $activity_element) {
+      $this->activity[] = new Call_task_status($activity_element);
     }
     
     // Data will come from the database or it will be sanitized before.
