@@ -5,6 +5,9 @@
   <span class="label"><strong>Status:</strong> <?= $survey->status ?></span>
   <h1><?= $survey->title ?></h1>
   
+  <div>
+    <?= nl2br_except_pre($survey->introduction) ?>
+  </div>
   
   <?php if (has_permission('download survey files')) : ?>
     <?php if ($survey->files['xls'] !== NULL) : ?>

@@ -73,6 +73,14 @@ class Survey_entity extends Entity {
   public $status;
   
   /**
+   * Survey introduction.
+   * Text presented to the CC operator when collecting data.
+   * @var int
+   * @access public
+   */
+  public $introduction;
+  
+  /**
    * Survey files.
    * This will be a sub document on mongo.
    * @var array
