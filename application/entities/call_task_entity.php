@@ -24,6 +24,12 @@ class Call_task_entity extends Entity {
   protected $_id = NULL;
   
   /**
+   * The call task id.
+   * @var string
+   */
+  public $ctid = NULL;
+  
+  /**
    * Respondent number. 
    * @var string
    */
@@ -69,6 +75,14 @@ class Call_task_entity extends Entity {
    * @access public
    */
   public $updated = NULL;
+  
+  /**
+   * Assigned Date.
+   * When tha call task was assigned to a user.
+   * @var date
+   * @access public
+   */
+  public $assigned = NULL;
    
   /**
    * End of survey fields.

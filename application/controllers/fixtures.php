@@ -221,12 +221,15 @@ class Fixtures extends CI_Controller {
   private function _fix_call_tasks() {
     load_entity('call_task');
     
+    $this->mongo_db->addIndex('call_tasks', array('ctid' => 'asc'));
     // Add some respondents with very specific status.
     $this->mongo_db->batchInsert('call_tasks', array(
       array(
+        'ctid' => increment_counter('call_task_ctid'),
         'number' => "1000000000000",
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
         'author' => 1,
         'assignee_uid' => 1,
         'survey_sid' => 2,
@@ -246,9 +249,11 @@ class Fixtures extends CI_Controller {
         )
       ),
       array(
+        'ctid' => increment_counter('call_task_ctid'),
         'number' => "1000000000001",
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
         'author' => 1,
         'assignee_uid' => 3,
         'survey_sid' => 2,
@@ -262,9 +267,11 @@ class Fixtures extends CI_Controller {
         )
       ),
       array(
+        'ctid' => increment_counter('call_task_ctid'),
         'number' => "1000000000002",
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
         'author' => 1,
         'assignee_uid' => 3,
         'survey_sid' => 2,
@@ -283,11 +290,13 @@ class Fixtures extends CI_Controller {
     $respondents = array();
     for($r = 3; $r < 100; $r++) {
       $respondents[] =  array(
+        'ctid' => increment_counter('call_task_ctid'),
         'number' => (string)(1000000000000 + $r),
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date(),
+        'assigned' => NULL,
         'author' => 1,
-        'assignee_uid' => 3,
+        'assignee_uid' => NULL,
         'survey_sid' => 2,
         'activity' => array()
       );
