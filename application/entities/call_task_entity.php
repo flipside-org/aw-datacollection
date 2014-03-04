@@ -210,6 +210,8 @@ class Call_task_status {
     self::DISCARD => 'Discarded',
   );
   
+  const TRESHOLD_NO_REPLY = 5;
+  
   /**
    * Call task status code.
    * @var int
