@@ -250,7 +250,8 @@ class Call_task_model extends CI_Model {
             'ctid' => '$_id.ctid'
           )
         )
-      )));  
+      )
+    ));  
 
     foreach ($result['result'] as $r) {
       $call_tasks[] = $this->get($r['ctid']);
