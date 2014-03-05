@@ -9,9 +9,13 @@
          syntaxCheck="false"
          verbose="true">
 	<testsuites>
-		<testsuite name="TestSuite">
+		<testsuite name="default">
 			<directory>tests/phpunit</directory>
+			<exclude>tests/phpunit/stress_test</exclude>
 		</testsuite>
+		<!-- <testsuite name="stress">
+			<directory>tests/phpunit/stress_test</directory>
+		</testsuite> -->
 	</testsuites>
 	<php>
 		<const name="PHPUNIT_TEST" value="1" />

@@ -31,3 +31,18 @@ require_once dirname(__FILE__) . '/../../index.php';
 
 // Switch db immediately.
 get_instance()->mongo_db->switchDb('mongodb://localhost:27017/aw_datacollection_test');
+
+/*
+ *---------------------------------------------------------------
+ * HELPER FUNCTIONS
+ *---------------------------------------------------------------
+ *
+ * Some helper functions needed in the tests.
+ */
+function get_next(&$array) {
+    $current = current($array);
+    if (next($array) === FALSE) {
+      reset($array);
+    }
+    return $current;
+  }
