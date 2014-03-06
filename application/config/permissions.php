@@ -46,4 +46,8 @@ $config['permissions'] = array(
   'create survey' => array(ROLE_ADMINISTRATOR),
   'delete any survey' => array(ROLE_ADMINISTRATOR),
   'download survey files' => array(ROLE_LOGGED),
+  
+  'collect data with enketo' => array(ROLE_LOGGED),
+  
+  'api request csrf token' => array(ROLE_LOGGED),
 );

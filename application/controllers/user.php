@@ -173,7 +173,7 @@ class User extends CI_Controller {
    */
   public function user_add(){
     if (!has_permission('create account')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
     
     $this->_add_account();
@@ -342,7 +342,7 @@ class User extends CI_Controller {
    */
   public function users_list() {
     if (!has_permission('view user list')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
     
     $users = $this->user_model->get_all();

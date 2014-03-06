@@ -376,6 +376,8 @@ $config['aw_pyxform_lib'] = './application/third_party/pyxform/';
 
 $config['aw_enketo_xslt_lib'] = './application/third_party/enketo-xslt/';
 
+// Amount of respondent to assign to each call center operator at a given time.
+$config['aw_enketo_respondents_reserve'] = 5;
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
