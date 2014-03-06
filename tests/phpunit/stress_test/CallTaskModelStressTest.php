@@ -8,8 +8,8 @@ class CallTaskModelStressTest extends PHPUnit_Framework_TestCase {
     self::$CI = &get_instance();
     self::$CI->load->model('call_task_model');
 
-    self::_fix_data();
-    //self::_fix_data_random();
+    //self::_fix_data();
+    self::_fix_data_random();
   }
   
   public static function _fix_data_random() {
@@ -254,6 +254,18 @@ class CallTaskModelStressTest extends PHPUnit_Framework_TestCase {
         $resolved = self::$CI->call_task_model->get_unresolved($s, $u);
         $this->assertLessThan(1.000, microtime(true) - $time, "get_resolved for survey: $s and user: $u");
         unset($resolved);
+      }
+    }
+  }
+
+  public function test_assign_call_tasks() {
+    for ($s = 1; $s <= 5; $s++) {
+      for ($u = 1; $u <= 3; $u++) {
+        $time = microtime(true);
+        // Get for survey 1.
+        $assigned = self::$CI->call_task_model->reserve($s, $u, 1);
+        $this->assertLessThan(0.055, microtime(true) - $time, "reserve for survey: $s and user: $u");
+        unset($assigned);
       }
     }
   }

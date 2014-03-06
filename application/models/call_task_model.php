@@ -99,14 +99,6 @@ class Call_task_model extends CI_Model {
   public function get_resolved($sid, $uid) {
     $call_tasks = array();
     
-    $completed_statuses = array(
-      Call_task_status::INVALID_NUMBER,
-      Call_task_status::SUCCESSFUL,
-      Call_task_status::NO_INTEREST,
-      Call_task_status::NUMBER_CHANGE,
-      Call_task_status::DISCARD,
-    );
-    
     // A call should only be resolved when the last status in the activity
     // array matches one of the $complete_statues. However, we are searching
     // for one of those statuses anywhere in the array. We assume this is ok
@@ -115,7 +107,7 @@ class Call_task_model extends CI_Model {
     $result = $this->mongo_db
       ->where('assignee_uid', $uid)
       ->where('survey_sid', $sid)
-      ->whereIn('activity.code', $completed_statuses)
+      ->whereIn('activity.code', Call_task_status::$resolved_statuses)
       ->get(self::COLLECTION);
     
     foreach ($result as $value) {
@@ -131,7 +123,7 @@ class Call_task_model extends CI_Model {
           '$match' => array(
             'assignee_uid' => $uid,
             'survey_sid' => $sid,
-            'activity.code' => array('$in' => array(Call_task_status::NO_REPLY), '$nin' => $completed_statuses)
+            'activity.code' => array('$in' => array(Call_task_status::NO_REPLY), '$nin' => Call_task_status::$resolved_statuses)
           )
         ),
         // 2 - Unwind activity array.
@@ -307,6 +299,55 @@ class Call_task_model extends CI_Model {
     else {
       return FALSE;
     }
+  }
+
+  /**
+   * Assigns Call Tasks to user. (Reserves them)
+   * 
+   * Mongodb doesn't support limit on updates and the assignment of call tasks
+   * needs to be an atomic operation. For this the findAndModify command is
+   * being used.
+   * This is not a scalable solution, although is a valid one since the amount
+   * of call tasks to assign won't be that high.
+   * 
+   * @param int $sid
+   *   The survey id
+   * @param int $uid
+   *   The user to who the call tasks are going to be assigned
+   * @param int $amount
+   *  The amount of call tasks to assign.
+   * 
+   * @return mixed
+   *   Array of Call_task_entity or FALSE if no call tasks available
+   */
+  public function reserve($sid, $uid, $amount) {
+    $call_tasks = array();
+    for ($i = 0; $i < $amount; $i++) { 
+      $result = $this->mongo_db->command(array(
+        'findAndModify' => self::COLLECTION,
+        'query' => array(
+          'survey_sid' => (int) $sid,
+          'assignee_uid' => NULL
+        ),
+        'update' => array(
+          '$set' => array(
+            'assigned' => Mongo_db::date(),
+            'updated' => Mongo_db::date(),
+            'assignee_uid' => (int) $uid
+          )
+        ),
+        'new' => TRUE,
+        'sort' => array('created' => -1),
+      ));
+      
+      if (empty($result['value'])) {
+        break;
+      }
+      
+      $call_tasks[] = Call_task_entity::build($result['value']);
+    }
+    
+    return empty($call_tasks)? FALSE : $call_tasks;
   }
 }
 

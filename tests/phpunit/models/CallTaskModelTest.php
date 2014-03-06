@@ -491,13 +491,13 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
   
   public static function tearDownAfterClass() {
     // Clean up your mess.
-    self::$CI->mongo_db->dropDb('aw_datacollection_test');
+    //self::$CI->mongo_db->dropDb('aw_datacollection_test');
   }
 
   public function test_get_available_call_tasks() {
     $reserved = self::$CI->call_task_model->get_available(1);
 
-    $this->assertEquals(10, count($reserved));
+    $this->assertCount(10, $reserved);
   }
 
   public function test_get_call_tasks() {
@@ -516,7 +516,7 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
   public function test_get_user_resolved_call_tasks() {
     $resolved = self::$CI->call_task_model->get_resolved(1, 1);
     
-    $this->assertEquals(8, count($resolved));
+    $this->assertCount(8, $resolved);
     
     // The get_resolved leaves the no_reply (x5) status to the end
     // so the call tasks are not properly ordered. It is not an important issue
@@ -538,7 +538,7 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
   public function test_get_user_unresolved_call_tasks() {
     $unresolved = self::$CI->call_task_model->get_unresolved(1, 1);
 
-    $this->assertEquals(3, count($unresolved));
+    $this->assertCount(3, $unresolved);
     
     // The get_unresolved leaves the no_reply (<5) status to the end
     // so the call tasks are not properly ordered. It is not an important issue
@@ -546,6 +546,35 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
     $this->assertEquals('1000000000007', $unresolved[0]->number);
     $this->assertEquals('1000000000009', $unresolved[1]->number);
     $this->assertEquals('1000000000008', $unresolved[2]->number);
+  }
+  
+  public function test_assign_call_tasks() {
+    // This tests uses data added to the the database in setUpBeforeClass.
+    // It only uses the 10 call tasks added but not assigned.
+    
+    // Assign from survey 3. It doesn't exist.
+    $assigned = self::$CI->call_task_model->reserve(3, 1, 5);
+    $this->assertFalse($assigned);
+    
+    // Assign from survey 1.
+    $assigned = self::$CI->call_task_model->reserve(1, 1, 5);
+    $this->assertCount(5, $assigned);
+    $this->assertContainsOnlyInstancesOf('Call_task_entity', $assigned);
+    foreach ($assigned as $value) {
+      $this->assertEmpty($value->activity);
+      $this->assertEquals(1, $value->assignee_uid);
+      $this->assertNotNull($value->assigned);
+      $this->assertEquals(1, $value->survey_sid);
+    }
+    
+    // Assign to user 2. Only 5 are available.
+    // When trying to assign 6, only 5 should return.
+    $assigned = self::$CI->call_task_model->reserve(1, 2, 6);
+    $this->assertCount(5, $assigned);
+    
+    // Assign to user 1. There are no more so should return FALSE.
+    $assigned = self::$CI->call_task_model->reserve(1, 1, 5);
+    $this->assertFalse($assigned);
   }
   
 }
