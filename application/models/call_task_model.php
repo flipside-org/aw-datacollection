@@ -35,8 +35,10 @@ class Call_task_model extends CI_Model {
    * @return array of Call_task_entity
    */
   public function get_all($sid) {
+    $sid = (int) $sid;
+    
     $result = $this->mongo_db
-      ->where('survey_sid', (int) $sid)
+      ->where('survey_sid', $sid)
       ->orderBy(array('created' => 'desc'))
       ->get(self::COLLECTION);
     
@@ -58,8 +60,10 @@ class Call_task_model extends CI_Model {
    * @return array of Call_task_entity
    */
   public function get_available($sid) {
+    $sid = (int) $sid;
+    
     $result = $this->mongo_db
-      ->where('survey_sid', (int) $sid)
+      ->where('survey_sid', $sid)
       ->where('assignee_uid', NULL)
       ->orderBy(array('created' => 'desc'))
       ->get(self::COLLECTION);
@@ -97,6 +101,9 @@ class Call_task_model extends CI_Model {
    *   order to one's likes after returned.
    */
   public function get_resolved($sid, $uid) {
+    $sid = (int) $sid;
+    $uid = (int) $uid;
+    
     $call_tasks = array();
     
     // A call should only be resolved when the last status in the activity
@@ -183,6 +190,9 @@ class Call_task_model extends CI_Model {
    *   order to one's likes after returned.
    */
   public function get_unresolved($sid, $uid) {
+    $sid = (int) $sid;
+    $uid = (int) $uid;
+    
     $call_tasks = array();
     
     $completed_statuses = array(
@@ -266,6 +276,9 @@ class Call_task_model extends CI_Model {
    * @return array of Call_task_entity
    */
   public function get_reserved($sid, $uid) {
+    $sid = (int) $sid;
+    $uid = (int) $uid;
+    
     $result = $this->mongo_db
       ->where('assignee_uid', $uid)
       ->where('survey_sid', $sid)
@@ -289,8 +302,10 @@ class Call_task_model extends CI_Model {
    * @return Call_task_entity
    */
   public function get($ctid) {
+    $ctid = (int) $ctid;
+    
     $result = $this->mongo_db
-      ->where('ctid', (int) $ctid)
+      ->where('ctid', $ctid)
       ->get(self::COLLECTION);
     
     if (!empty($result)) {
@@ -321,6 +336,9 @@ class Call_task_model extends CI_Model {
    *   Array of Call_task_entity or FALSE if no call tasks available
    */
   public function reserve($sid, $uid, $amount) {
+    $sid = (int) $sid;
+    $uid = (int) $uid;
+    
     $call_tasks = array();
     for ($i = 0; $i < $amount; $i++) { 
       $result = $this->mongo_db->command(array(
