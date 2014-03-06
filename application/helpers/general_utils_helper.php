@@ -2,58 +2,58 @@
 
 // Store general helper functions.
 
-/**
- * Returns an object's property if is not null.
- * When null it will return the default value.
- * 
- * @param object $obj
- *   The object.
- * @param string $prop
- *   The property to check.
- * @param mixed $default
- *   The value to return if the property is null. Default to ''
- * 
- * @return mixed
- *   The property value or the default.
- * 
- */
 if ( ! function_exists('property_if_not_null')) {
+  /**
+   * Returns an object's property if is not null.
+   * When null it will return the default value.
+   * 
+   * @param object $obj
+   *   The object.
+   * @param string $prop
+   *   The property to check.
+   * @param mixed $default
+   *   The value to return if the property is null. Default to ''
+   * 
+   * @return mixed
+   *   The property value or the default.
+   * 
+   */
   function property_if_not_null($obj, $prop, $default = '') {
     return $obj !== NULL ? $obj->{$prop} : $default;
   }
 }
 
-/**
- * Checks whether the user is logged.
- * Alias of current_user()->is_logged()
- * 
- * @return boolean
- */
 if ( ! function_exists('is_logged')) {
+  /**
+   * Checks whether the user is logged.
+   * Alias of current_user()->is_logged()
+   * 
+   * @return boolean
+   */
   function is_logged() {
     return current_user()->is_logged() === TRUE;
   }
 }
 
-/**
- * Checks whether the logged user has a given permission.
- * Alias of current_user()->has_permission($perm)
- * 
- * @return boolean
- */
 if ( ! function_exists('has_permission')) {
+  /**
+   * Checks whether the logged user has a given permission.
+   * Alias of current_user()->has_permission($perm)
+   * 
+   * @return boolean
+   */
   function has_permission($perm) {
     return current_user()->has_permission($perm);
   }
 }
 
-/**
- * Returns the logged user.
- * 
- * @return mixed
- *   User entity if there's a logged user, FALSE otherwise
- */
 if ( ! function_exists('current_user')) {
+  /**
+   * Returns the logged user.
+   * 
+   * @return mixed
+   *   User entity if there's a logged user, FALSE otherwise
+   */
   function current_user() {
     static $current_user;
     
@@ -84,6 +84,16 @@ if ( ! function_exists('current_user')) {
     return $current_user;
   }
 }
+
+if ( ! function_exists('show_403')) {
+  /**
+   * Show a 403 Operation not allowed error
+   */
+  function show_403() {
+    show_403();
+  }
+}
+
 
 // ------------------------------------------------------------------------
 
