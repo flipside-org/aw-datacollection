@@ -49,7 +49,7 @@ class CallTaskModelStressTest extends PHPUnit_Framework_TestCase {
           if (rand(1,5) == 1) {
             // 5 no reply.
             $status['code'] = Call_task_status::NO_REPLY;
-            for ($i = 0; $i < Call_task_status::TRESHOLD_NO_REPLY; $i++) {
+            for ($i = 0; $i < Call_task_status::THRESHOLD_NO_REPLY; $i++) {
               $resp['activity'][] = $status;
             }
           }
@@ -158,7 +158,7 @@ class CallTaskModelStressTest extends PHPUnit_Framework_TestCase {
         // Some no-reply.
         if (get_next($no_reply_x5)) {
           $status['code'] = Call_task_status::NO_REPLY;
-          for ($i = 0; $i < Call_task_status::TRESHOLD_NO_REPLY; $i++) {
+          for ($i = 0; $i < Call_task_status::THRESHOLD_NO_REPLY; $i++) {
             $resp['activity'][] = $status;
           }
         }

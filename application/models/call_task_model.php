@@ -150,7 +150,7 @@ class Call_task_model extends CI_Model {
         array(
           '$match' => array(
             '_id.activity_code' => Call_task_status::NO_REPLY,
-            'activity_code_count' => Call_task_status::TRESHOLD_NO_REPLY
+            'activity_code_count' => Call_task_status::THRESHOLD_NO_REPLY
           )
         ),
         // 5 - Project. Only the ctid is needed.
@@ -240,7 +240,7 @@ class Call_task_model extends CI_Model {
         array(
           '$match' => array(
             '_id.activity_code' => Call_task_status::NO_REPLY,
-            'activity_code_count' => array('$lt' => Call_task_status::TRESHOLD_NO_REPLY)
+            'activity_code_count' => array('$lt' => Call_task_status::THRESHOLD_NO_REPLY)
           )
         ),
         // 5 - Project. Only the ctid is needed.
