@@ -167,6 +167,67 @@ class Call_task_entity extends Entity {
    ********************************
    * Start of Call Task's public methods.
    */
+  
+  /**
+   * Add a new status to the call Task activity.
+   * 
+   * @param Call_task_status $new_status
+   * 
+   * @throws Exception
+   *   if the call task is resolved and is not possible to add statuses.
+   * 
+   * @return $this
+   *   To allow chaining.
+   */
+  public function add_status(Call_task_status $new_status) {
+    // A new status can be added if the call task is not resolved.
+    if ($this->is_resolved()) {
+      throw new Exception("Is not possible to add a new status. The Call Task is resolved.");
+    }
+    else {
+      $this->activity[] = $new_status;
+    }
+    return $this;
+  }
+  
+  /**
+   * Checks whether the call task is resolved.
+   * A call task is resolved when:
+   * - Has reached the THRESHOLD_NO_REPLY
+   * - The last status in the activity array is a resolved one
+   *   (see list in Call_task_status::$resolved_statuses)
+   * 
+   * @return boolean
+   */
+  public function is_resolved() {
+    // Is empty?
+    if (empty($this->activity)) {
+      return FALSE;
+    }
+    
+    // Check if the no reply hit the threshold.
+    $no_reply_count = 0;
+    foreach ($this->activity as $status) {
+      if ($status->code == Call_task_status::NO_REPLY) {
+        $no_reply_count++;
+      }
+    }
+    if ($no_reply_count >= Call_task_status::THRESHOLD_NO_REPLY) {
+      return TRUE;
+    }
+    
+    // Check if the last status matches a resolved status.
+    // Since they are added sequentially, a resolved status is
+    // always the last one.
+    $last_status = end($this->activity);
+    // reset activity.
+    reset($this->activity);
+    if (in_array($last_status->code, Call_task_status::$resolved_statuses)) {
+      return TRUE;
+    }
+    
+    return FALSE;
+  }
    
   /**
    * End of public methods.
@@ -191,15 +252,49 @@ class Call_task_entity extends Entity {
  * Call Task Entity.
  */
 class Call_task_status {
-
+  
+  /**
+   * Resolved: Successful
+   * @const
+   */
   const SUCCESSFUL = 3;
-  const NO_REPLY = 991;
+  /**
+   * Resolved: Invalid Number 
+   * @const
+   */
   const INVALID_NUMBER = 992;
+  /**
+   * Resolved: No Interest 
+   * @const
+   */
   const NO_INTEREST = 993;
+  /**
+   * Resolved: Number Change 
+   * @const
+   */
   const NUMBER_CHANGE = 994;
-  const CANT_COMPLETE = 995;
+  /**
+   * Resolved: Discard 
+   * @const
+   */
   const DISCARD = 996;
   
+  /**
+   * No Reply (can be resolved if the Threshold is met.)
+   * @const
+   */
+  const NO_REPLY = 991;
+  
+  /**
+   * Unresolved: Can't Complete
+   * @const
+   */
+  const CANT_COMPLETE = 995;
+  
+  /**
+   * Labels for the statuses.
+   * @static
+   */
   static $labels = array(
     self::SUCCESSFUL => 'Successful',
     self::NO_REPLY => 'No reply',
@@ -210,7 +305,24 @@ class Call_task_status {
     self::DISCARD => 'Discarded',
   );
   
+  /**
+   * Threshold value for No Reply.
+   * When the number of no replies reach this value is considered resolved.
+   * @const
+   */
   const THRESHOLD_NO_REPLY = 5;
+  
+  /**
+   * List of statuses considered resolved.
+   * @static
+   */
+  static $resolved_statuses = array(
+    self::SUCCESSFUL,
+    self::INVALID_NUMBER,
+    self::NO_INTEREST,
+    self::NUMBER_CHANGE,
+    self::DISCARD
+  );
   
   /**
    * Call task status code.
@@ -257,6 +369,53 @@ class Call_task_status {
       
       $this->{$key} = $value;
     }
+  }
+  
+  /**
+   * Eases the creation of Call_task_status by setting some properties.
+   * 
+   * @access public
+   * @static
+   * 
+   * @param int $code
+   *   Call Task Status code
+   * @param string $msg
+   *   Call Task Status Message.
+   * 
+   * @throws Exception
+   *   If the given code is not valid.
+   * 
+   * @return Call_task_entity
+   */
+  static function create($code, $msg) {
+    $ct = new Call_task_status(array());
+    
+    $ct->set_code($code);
+    $ct->message = $msg;
+    $ct->created = Mongo_db::date();
+    $ct->author = current_user()->uid;
+    
+    return $ct;
+  }
+  
+  /**
+   * Validates the given Call Task Status code and sets it.
+   * 
+   * @param int $code
+   *   The Call Task Status code.
+   * 
+   * @throws Exception
+   *   If the given code is not valid.
+   * 
+   * @return $this
+   *   To allow chaining
+   */
+  public function set_code($code) {
+    if (!array_key_exists($code, Call_task_status::$labels)) {
+      throw new Exception("Invalid code for a call task status: $code");
+    }
+    $this->code = $code;
+    return $this;
   }
 }
 /* End of file call_task_entity.php */
