@@ -50,6 +50,8 @@ $route['survey/(:num)/edit'] = 'survey/survey_edit_by_id/$1';
 $route['survey/delete'] = 'survey/survey_delete_by_id';
 $route['survey/(:num)/files/(xls|xml)'] = 'survey/survey_file_download/$1/$2';
 $route['survey/(:num)/(testrun|data_collection)'] = 'survey/survey_enketo/$1/$2';
+// respondents
+$route['survey/(:num)/respondents'] = 'survey/survey_respondents/$1';
 
 $route['survey/(:num)/xslt_transform'] = 'survey/survey_xslt_transform/$1';
 
