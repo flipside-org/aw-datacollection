@@ -487,6 +487,56 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
       
     self::$CI->mongo_db->batchInsert(Call_task_model::COLLECTION, $fixture);
     
+    // More call tasks.
+    // These are used to test the clean reserved function and some call tasks
+    // with the assigned date far in the past are needed
+    $fixture = array();
+    for($r = 0; $r < 4; $r++) {
+      $fixture[] =  array(
+        'ctid' => increment_counter('call_task_ctid'),
+        'number' => (string)(3000000000000 + $r + 1000),
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(time() - 86400 * 4),
+        'author' => 1,
+        'assignee_uid' => 4,
+        'survey_sid' => 4,
+        'activity' => array()
+      );
+    }
+    // Not expired.
+    $fixture[] =  array(
+      'ctid' => increment_counter('call_task_ctid'),
+      'number' => (string)(3000000000000 + $r + 1  + 1000),
+      'created' => Mongo_db::date(),
+      'updated' => Mongo_db::date(),
+      'assigned' => Mongo_db::date(),
+      'author' => 1,
+      'assignee_uid' => 4,
+      'survey_sid' => 4,
+      'activity' => array()
+    );
+    // Old one but started.
+    $fixture[] =  array(
+      'ctid' => increment_counter('call_task_ctid'),
+      'number' => (string)(3000000000000 + $r + 1  + 1000),
+      'created' => Mongo_db::date(),
+      'updated' => Mongo_db::date(),
+      'assigned' => Mongo_db::date(time() - 86400 * 4),
+      'author' => 1,
+      'assignee_uid' => 4,
+      'survey_sid' => 4,
+      'activity' => array(
+        array(
+          'code' => Call_task_status::CANT_COMPLETE,
+          'message' => NULL,
+          'author' => 4,
+          'created' => Mongo_db::date()
+        )
+      )
+    );
+    self::$CI->mongo_db->batchInsert(Call_task_model::COLLECTION, $fixture);
+    
   }
   
   public static function tearDownAfterClass() {
@@ -611,6 +661,21 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
     self::$CI->call_task_model->save($ct);
     
     $this->assertEquals('123456789', $ct->number);
+  }
+  
+  public function test_get_reserved() {
+    $call_tasks = self::$CI->call_task_model->get_reserved(4, 4);
+    $this->assertCount(5, $call_tasks);
+  }
+  
+  /**
+   * @depends test_get_reserved 
+   */
+  public function test_clean_expired_reserve() {
+    $result = self::$CI->call_task_model->clean_expired_reserve(4);
+    $this->assertTrue($result);
+    $call_tasks = self::$CI->call_task_model->get_reserved(4, 4);
+    $this->assertCount(1, $call_tasks);
   }
   
 }

@@ -367,6 +367,31 @@ class Call_task_model extends CI_Model {
     
     return empty($call_tasks)? FALSE : $call_tasks;
   }
+  
+  /**
+   * Un-reserves tasks without activity that were assigned more than
+   * 3 days ago.
+   * 
+   * @param int $sid
+   *   Since all the call tasks are bound to a survey its id is needed.
+   * 
+   * @uses config item aw_enketo_respondents_reserve_exprire
+   * 
+   * @return bool
+   *   Whether something was updated or not.
+   */
+  public function clean_expired_reserve($sid) {
+    $sid = (int) $sid;
+    
+    $expire_time = $this->config->item('aw_enketo_respondents_reserve_exprire');    
+    return $this->mongo_db
+      ->where('survey_sid', $sid)
+      ->where('activity', array())
+      ->whereLte('assigned', Mongo_db::date(time() - $expire_time))
+      ->set('assigned', NULL)
+      ->set('assignee_uid', NULL)
+      ->updateAll(self::COLLECTION);
+  }
 
   /**
    * Saves a Call Task to the database.

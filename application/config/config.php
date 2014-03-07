@@ -378,6 +378,8 @@ $config['aw_enketo_xslt_lib'] = './application/third_party/enketo-xslt/';
 
 // Amount of respondent to assign to each call center operator at a given time.
 $config['aw_enketo_respondents_reserve'] = 5;
+// Keep respondents assigned for 3 days.
+$config['aw_enketo_respondents_reserve_exprire'] = 86400 * 3;
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
