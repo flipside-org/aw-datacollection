@@ -90,7 +90,7 @@ if ( ! function_exists('show_403')) {
    * Show a 403 Operation not allowed error
    */
   function show_403() {
-    show_403();
+    show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
   }
 }
 
