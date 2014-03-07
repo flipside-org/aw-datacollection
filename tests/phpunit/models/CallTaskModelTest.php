@@ -491,7 +491,7 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
   
   public static function tearDownAfterClass() {
     // Clean up your mess.
-    //self::$CI->mongo_db->dropDb('aw_datacollection_test');
+    self::$CI->mongo_db->dropDb('aw_datacollection_test');
   }
 
   public function test_get_available_call_tasks() {
