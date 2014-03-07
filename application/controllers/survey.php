@@ -559,7 +559,7 @@ class Survey extends CI_Controller {
     if ($survey) {
       $this->load->view('base/html_start');
       $this->load->view('navigation');
-      $this->load->view('surveys/survey_respondents', $data);
+      $this->load->view('surveys/survey_respondents_add', $data);
       $this->load->view('base/html_end');
     }
     else {
