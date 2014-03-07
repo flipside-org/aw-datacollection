@@ -268,6 +268,18 @@ class Survey_entity extends Entity {
   }
 
   /**
+   * Returns the url for respondents overview.
+   * @access public
+   * @return string
+   */
+  public function get_url_respondents_add() {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a non-existent survey.");
+    }
+    return base_url('survey/' . $this->sid . '/respondents/add') ;
+  }
+
+  /**
    * Returns the url to edit a survey.
    *
    * @access public

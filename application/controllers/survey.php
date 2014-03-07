@@ -504,12 +504,44 @@ class Survey extends CI_Controller {
 
 
   /**
-   * Summary page to list the respondents associated to a give survey.
+   * Summary page to list the respondents associated to a given survey.
    * @param $sid
    *
    * Route - /survey/:sid/respondents
    */
   public function survey_respondents($sid){
+    if (!has_permission('edit any survey')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+
+
+    $survey = $this->survey_model->get($sid);
+
+    $messages = Status_msg::get();
+    $data = array(
+      'survey' => $survey,
+      //'messages' => $messages,
+      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE)
+    );
+
+    if ($survey) {
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_respondents', $data);
+      $this->load->view('base/html_end');
+    }
+    else {
+     show_404();
+    }
+  }
+
+  /**
+   * Summary page to add respondents to a given survey.
+   * @param $sid
+   *
+   * Route - /survey/:sid/respondents
+   */
+  public function survey_respondents_add($sid){
     if (!has_permission('edit any survey')) {
       show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
     }
