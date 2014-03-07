@@ -42,7 +42,8 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   var loadErrors, form;
   
   // Perform request for form. Form will be returned in xml.
-  $.get(Connection.URL_XSLT_TRANSFORM, function(xml_form) {
+  $.get(Connection.URL_XSLT_TRANSFORM, function(response) {
+    var xml_form = response['xml_form'];
     // Request numbers.
     // Enketo form stuff.
     var $data = $(xml_form);
@@ -64,7 +65,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         alert('The form was correctly filled but since this is a test run, no data will be collected.');
       }
     });      
-  }, 'xml');
+  }, 'json');
   
   /**
    * Initialize the form.

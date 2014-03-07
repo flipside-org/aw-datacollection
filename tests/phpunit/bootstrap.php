@@ -19,18 +19,7 @@ function show_404($page = '', $log_error = TRUE)
 	throw new PHPUnit_Framework_Exception($page, 404);
 }
 
-/*
- *---------------------------------------------------------------
- * BOOTSTRAP
- *---------------------------------------------------------------
- *
- * Bootstrap CodeIgniter from index.php as usual
- */
- 
-require_once dirname(__FILE__) . '/../../index.php';
-
-// Switch db immediately.
-get_instance()->mongo_db->switchDb('mongodb://localhost:27017/aw_datacollection_test');
+define('ROOT_PATH', dirname(__FILE__) . '/../../');
 
 /*
  *---------------------------------------------------------------
@@ -40,9 +29,23 @@ get_instance()->mongo_db->switchDb('mongodb://localhost:27017/aw_datacollection_
  * Some helper functions needed in the tests.
  */
 function get_next(&$array) {
-    $current = current($array);
-    if (next($array) === FALSE) {
-      reset($array);
-    }
-    return $current;
+  $current = current($array);
+  if (next($array) === FALSE) {
+    reset($array);
   }
+  return $current;
+}
+
+/*
+ *---------------------------------------------------------------
+ * BOOTSTRAP
+ *---------------------------------------------------------------
+ *
+ * Bootstrap CodeIgniter from index.php as usual
+ */
+ 
+require_once ROOT_PATH . 'index.php';
+
+// Switch db immediately.
+get_instance()->mongo_db->switchDb('mongodb://localhost:27017/aw_datacollection_test');
+

@@ -126,7 +126,8 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   var current_respondent;
   
   // Perform request for form. Form will be returned in xml.
-  $.get(Connection.URL_XSLT_TRANSFORM, function(xml_form) {
+  $.get(Connection.URL_XSLT_TRANSFORM, function(response) {
+    var xml_form = response['xml_form'];
     // Request numbers.
     RespondentQueue.requestNumbers(function(respondents) {
       // Initialize connection. Although this could be initialized before
@@ -223,7 +224,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       whatsGoingOn.bootstrapping = false;
       
     });
-  }, 'xml');
+  }, 'json');
   
   function init() {
     initializeForm();
