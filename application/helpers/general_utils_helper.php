@@ -51,13 +51,18 @@ if ( ! function_exists('current_user')) {
   /**
    * Returns the logged user.
    * 
+   * @param boolean $reset
+   *   If TREU fetches the userdata from the database. (default FALSE)
+   *   To increase performance once the user is fetched it is stored in a
+   *   static variable.
+   * 
    * @return mixed
    *   User entity if there's a logged user, FALSE otherwise
    */
-  function current_user() {
+  function current_user($reset = FALSE) {
     static $current_user;
     
-    if (!isset($current_user)) {
+    if (!isset($current_user) || $reset) {
       $CI = get_instance();
       $uid = $CI->session->userdata('user_uid');
       
