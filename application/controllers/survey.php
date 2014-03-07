@@ -246,6 +246,53 @@ class Survey extends CI_Controller {
   }
 
   /**
+   * Handles form to add and edit survey.
+   *
+   * @param $sid
+   * @param $action "edit|add"
+   */
+  protected function _survey_respondents_form_handle($sid, $action = 'edit') {
+
+    $survey = $this->survey_model->get($sid);
+
+    if ($survey) {
+      // Config data for the file upload.
+      $file_upload_config = array(
+        'upload_path' => '/tmp/',
+        'allowed_types' => 'csv',
+        'file_name' => md5(microtime(true))
+      );
+
+      // Load needed libraries
+      $this->load->library('upload', $file_upload_config);
+
+      $this->form_validation->set_rules('survey_respondents_file', 'Respondents File', 'callback__cb_survey_respondents_add_file_handle');
+      $this->form_validation->set_rules('survey_respondents_text', 'Respondents Text', 'xss_clean');
+
+      // If no data submitted show the form.
+      if ($this->form_validation->run() == FALSE) {
+
+        $messages = Status_msg::get();
+
+        $this->load->view('base/html_start');
+        $this->load->view('navigation');
+        $this->load->view('surveys/survey_respondents_add', array('survey' => $survey, 'messages' => $messages));
+        $this->load->view('base/html_end');
+      }
+      else {
+        // If it reaches this point the survey was saved.
+        Status_msg::success('Respondents successfully added.');
+
+        redirect('/survey/' . $survey->sid . '/respondents');
+      }
+    }
+    else {
+     show_404();
+    }
+
+  }
+
+  /**
    * Delete handler for surveys.
    * Route (POST data)
    * /survey/delete
@@ -502,6 +549,33 @@ class Survey extends CI_Controller {
     }
   }
 
+  /**
+   * The file upload library does not interact with the form validation.
+   * To trigger an error if something went wrong we use the approach
+   * specified at:
+   * http://keighl.com/post/codeigniter-file-upload-validation/
+   * Form validation callback.
+   */
+  public function _cb_survey_respondents_add_file_handle() {
+    if (isset($_FILES['survey_respondents_file']) && !empty($_FILES['survey_respondents_file']['name'])) {
+      if ($this->upload->do_upload('survey_respondents_file')) {
+        // Set a $_POST value with the results of the upload to use later.
+        $upload_data = $this->upload->data();
+        $_POST['survey_respondents_file'] = $upload_data;
+        return true;
+      }
+      else {
+        // possibly do some clean up ... then throw an error
+        $this->form_validation->set_message('_cb_survey_respondents_add_file_handle', $this->upload->display_errors());
+        return false;
+      }
+    }
+    else  {
+      // Nothing was uploaded. That's ok.
+      $_POST['survey_respondents_file'] = FALSE;
+    }
+  }
+
 
   /**
    * Summary page to list the respondents associated to a given survey.
@@ -546,25 +620,7 @@ class Survey extends CI_Controller {
       show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
     }
 
-
-    $survey = $this->survey_model->get($sid);
-
-    $messages = Status_msg::get();
-    $data = array(
-      'survey' => $survey,
-      //'messages' => $messages,
-      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE)
-    );
-
-    if ($survey) {
-      $this->load->view('base/html_start');
-      $this->load->view('navigation');
-      $this->load->view('surveys/survey_respondents_add', $data);
-      $this->load->view('base/html_end');
-    }
-    else {
-     show_404();
-    }
+    $this->_survey_respondents_form_handle($sid, 'add');
   }
 }
 
