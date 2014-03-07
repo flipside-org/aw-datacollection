@@ -169,6 +169,15 @@ class Call_task_entity extends Entity {
    */
   
   /**
+   * Check whether the call task is new or it exists.
+   * @access public
+   * @return boolean
+   */
+  public function is_new() {
+    return $this->ctid == NULL;
+  }
+  
+  /**
    * Add a new status to the call Task activity.
    * 
    * @param Call_task_status $new_status

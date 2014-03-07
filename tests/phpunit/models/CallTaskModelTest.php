@@ -576,6 +576,42 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
     $assigned = self::$CI->call_task_model->reserve(1, 1, 5);
     $this->assertFalse($assigned);
   }
+
+  /**
+   * @depends test_get_call_tasks 
+   */
+  public function test_add_call_tasks() {
+    $call_task_data = array(
+      'number' => "2000000000007",
+      'assigned' => NULL,
+      'author' => 1,
+      'assignee_uid' => NULL,
+      'survey_sid' => 1,
+    );
+    
+    $new_call_task = new Call_task_entity($call_task_data);
+    self::$CI->call_task_model->save($new_call_task);
+    
+    $ct = self::$CI->call_task_model->get($new_call_task->ctid);
+    
+    $this->assertEquals('2000000000007', $ct->number);
+    $this->assertNull($ct->assigned);
+    $this->assertEmpty($ct->activity);
+  }
+
+  /**
+   * @depends test_get_call_tasks 
+   */
+  public function test_edit_call_tasks() {
+    $ct = self::$CI->call_task_model->get(1);
+    $this->assertEquals('1000000000000', $ct->number);
+    $this->assertCount(5, $ct->activity);
+    
+    $ct->number = '123456789';
+    self::$CI->call_task_model->save($ct);
+    
+    $this->assertEquals('123456789', $ct->number);
+  }
   
 }
 

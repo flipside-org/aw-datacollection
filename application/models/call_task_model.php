@@ -367,6 +367,46 @@ class Call_task_model extends CI_Model {
     
     return empty($call_tasks)? FALSE : $call_tasks;
   }
+
+  /**
+   * Saves a Call Task to the database.
+   * If the call task is not saved yet, its id will be added to the 
+   * call_task_entity.
+   * @param Call_task_entity (by reference)
+   * 
+   * @return boolean
+   *   Whether or not the save was successful.
+   */
+  public function save(Call_task_entity &$entity) {
+    // Set update date:
+    $entity->updated = Mongo_db::date();
+    
+    $prepared_data = array();
+    foreach ($entity as $field_name => $field_value) {
+      $prepared_data[$field_name] = $field_value;
+    }
+    
+    if ($entity->is_new()) {
+      $entity->ctid = increment_counter(self::COUNTER_COLLECTION);
+      $prepared_data['ctid'] = $entity->ctid;
+      // Set creation date:
+      $prepared_data['created'] = Mongo_db::date();
+      
+      $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
+      
+      return $result !== FALSE ? TRUE : FALSE;
+      
+    }
+    else {
+      $result = $this->mongo_db
+        ->set($prepared_data)
+        ->where('ctid', $entity->ctid)
+        ->update(self::COLLECTION);
+      
+      return $result !== FALSE ? TRUE : FALSE;
+    }
+    
+  }
 }
 
 /* End of file user_model.php */
