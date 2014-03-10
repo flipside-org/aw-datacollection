@@ -178,6 +178,15 @@ class Call_task_entity extends Entity {
   }
   
   /**
+   * Check whether the call task is assigned.
+   * @access public
+   * @return boolean
+   */
+  public function is_assigned() {
+    return $this->assignee_uid !== NULL;
+  }
+  
+  /**
    * Add a new status to the call Task activity.
    * 
    * @param Call_task_status $new_status

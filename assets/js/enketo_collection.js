@@ -128,6 +128,48 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   // Perform request for form. Form will be returned in xml.
   $.get(Connection.URL_XSLT_TRANSFORM, function(response) {
     var xml_form = response['xml_form'];
+    
+    
+    // If the computer is shared by multiple users it may happen that a user
+    // submits data left by another user. That data should not be lost so
+    // when a user starts data collection the system tries to submit it.
+    // If the system replies with a "Submitting another user's data" we store
+    // the data in another queue.
+    // 
+    // Before initializing queues, merge the localstorage. When the submit
+    // routing runs the values will be separated again. Bu doing this we ensure
+    // a default status to start.
+    // Scenario:
+    // User A receives numbers [1,2,3,4,5] connection drops, the user collects
+    // data for [1,2,3] and goes away.
+    // User B starts data collection making the data collected for [1,2,3]
+    // shift to the aw_submission_queue_skipped.
+    // User A comes back, and since no data was submitted the server sends the
+    // same numbers again [1,2,3,4,5]. We need to take the skipped values
+    // into account so that the user starts data collection with [4].
+    var stored_data = [];
+    // Get stored data and convert it to JSON.
+    try {
+      stored_data = JSON.parse(localStorage.getItem('aw_submission_queue'));
+      if (stored_data == null) {
+        stored_data = [];
+      }
+    } catch(e) {}
+    
+    var stored_data_skipped = [];
+    try {
+      stored_data_skipped = JSON.parse(localStorage.getItem('aw_submission_queue_skipped'));
+      if (stored_data_skipped == null) {
+        stored_data_skipped = [];
+      }
+    } catch(e) {}
+    
+    stored_data = stored_data.concat(stored_data_skipped);
+    localStorage.setItem('aw_submission_queue', JSON.stringify(stored_data));
+    // Clean skipped queue.
+    localStorage.removeItem('aw_submission_queue_skipped');
+    
+    
     // Request numbers.
     RespondentQueue.requestNumbers(function(respondents) {
       // Initialize connection. Although this could be initialized before
@@ -203,7 +245,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         current_respondent.new_status = {
           code : call_task_status_code,
           msg : call_task_status_msg,
-        }
+        };
         
         // Add the respondent to the submission queue.
         submission_queue.add(current_respondent);

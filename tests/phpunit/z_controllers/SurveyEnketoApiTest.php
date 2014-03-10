@@ -104,69 +104,6 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     ));
     
     self::$CI->mongo_db->addIndex('call_tasks', array('ctid' => 'asc'));
-    // Add some respondents with very specific status.
-    self::$CI->mongo_db->batchInsert('call_tasks', array(
-      array(
-        'ctid' => increment_counter('call_task_ctid'),
-        'number' => "1000000000000",
-        'created' => Mongo_db::date(),
-        'updated' => Mongo_db::date(),
-        'assigned' => Mongo_db::date(),
-        'author' => 1,
-        'assignee_uid' => 1,
-        'survey_sid' => 2,
-        'activity' => array(
-          array(
-            'code' => Call_task_status::NO_REPLY,
-            'message' => NULL,
-            'author' => 1,
-            'created' => Mongo_db::date()
-          ),
-          array(
-            'code' => Call_task_status::NO_REPLY,
-            'message' => NULL,
-            'author' => 1,
-            'created' => Mongo_db::date()
-          )
-        )
-      ),
-      array(
-        'ctid' => increment_counter('call_task_ctid'),
-        'number' => "1000000000001",
-        'created' => Mongo_db::date(),
-        'updated' => Mongo_db::date(),
-        'assigned' => Mongo_db::date(),
-        'author' => 1,
-        'assignee_uid' => 3,
-        'survey_sid' => 2,
-        'activity' => array(
-          array(
-            'code' => Call_task_status::CANT_COMPLETE,
-            'message' => 'Not to be done right now. Maybe later.',
-            'author' => 3,
-            'created' => Mongo_db::date()
-          )
-        )
-      ),
-      array(
-        'ctid' => increment_counter('call_task_ctid'),
-        'number' => "1000000000002",
-        'created' => Mongo_db::date(),
-        'updated' => Mongo_db::date(),
-        'assigned' => Mongo_db::date(),
-        'author' => 1,
-        'assignee_uid' => 3,
-        'survey_sid' => 2,
-        'activity' => array(
-          array(
-            'code' => Call_task_status::INVALID_NUMBER,
-            'message' => NULL,
-            'author' => 3,
-            'created' => Mongo_db::date()
-          )
-        )
-      )
-    ));
     
     // Add some respondents to be used for data collection.
     $respondents = array();
@@ -269,7 +206,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     $this->assertArrayHasKey('respondents', $result);
   }
   
-  public function test_api_survey_enketo_form_submit() {
+  public function test_api_survey_enketo_form_submit_logged_out() {
     // Logout user
     self::$CI->session->set_userdata(array('user_uid' => NULL));
     // Force user reloading.
@@ -279,13 +216,15 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     self::$CI->api_survey_enketo_form_submit();
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
-    
-    /*************************************************************************/
-    
+  }
+  
+  public function test_api_survey_enketo_form_submit_logged_in() {   
     // Login user.
     self::$CI->session->set_userdata(array('user_uid' => 1));
     // Force user reloading.
     current_user(TRUE);
+    
+    /*************************************************************************/
     
     // Call task doesn't exist.
     $_POST = array(
@@ -299,13 +238,25 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     /*************************************************************************/
     
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1001,
+        'number' => "1100100000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => NULL,
+        'author' => 1,
+        'assignee_uid' => NULL,
+        'survey_sid' => 2,
+        'activity' => array()
+      )
+    );    
     // TODO: User 1 assigned to survey.
     // User not assigned to call task.
     // The assigned user here is 3
     $_POST = array(
       'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
-      'respondent' => array('ctid' => 2)
+      'respondent' => array('ctid' => 1001)
     );
     self::$CI->api_survey_enketo_form_submit();
     $result = json_decode(self::$CI->output->get_output(), TRUE);
@@ -313,11 +264,23 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     /*************************************************************************/
     
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1002,
+        'number' => "1100200000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 1,
+        'survey_sid' => 2,
+        'activity' => array()
+      )
+    );   
     // Call task not assigned to survey.
     $_POST = array(
       'sid' => 1,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
-      'respondent' => array('ctid' => 1)
+      'respondent' => array('ctid' => 1002)
     );
     self::$CI->api_survey_enketo_form_submit();
     $result = json_decode(self::$CI->output->get_output(), TRUE);
@@ -330,7 +293,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
       'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
-        'ctid' => 1
+        'ctid' => 1002
       )
     );
     self::$CI->api_survey_enketo_form_submit();
@@ -344,7 +307,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
       'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
-        'ctid' => 1,
+        'ctid' => 1002,
         'new_status' => array(
           'code' => 12345,
           'msg' => 'Adding invalid status'
@@ -362,10 +325,28 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
       'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
-        'ctid' => 1,
+        'ctid' => 1002,
         'new_status' => array(
           'code' => Call_task_status::SUCCESSFUL,
           'msg' => 'Adding valid status.'
+        )
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit();
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Successful status can not be set manually.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Adding Invalid number status.
+    $_POST = array(
+      'sid' => 2,
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1002,
+        'new_status' => array(
+          'code' => Call_task_status::INVALID_NUMBER,
+          'msg' => 'Adding a valid status.'
         )
       )
     );
@@ -375,12 +356,31 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     /*************************************************************************/
     
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1003,
+        'number' => "110030000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 1,
+        'survey_sid' => 2,
+        'activity' => array(
+          array(
+            'code' => Call_task_status::NO_INTEREST,
+            'message' => NULL,
+            'author' => 1,
+            'created' => Mongo_db::date()
+          )
+        )
+      )
+    );   
     // Adding Discard status to an already resolved call task
     $_POST = array(
       'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
-        'ctid' => 1,
+        'ctid' => 1003,
         'new_status' => array(
           'code' => Call_task_status::DISCARD,
           'msg' => 'Adding valid status.'
@@ -390,6 +390,49 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     self::$CI->api_survey_enketo_form_submit();
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 500, 'message' => 'Invalid call task status.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Submitting data for an already resolved call task.
+    // TODO: Review once implemented data save method.
+    $_POST = array(
+      'sid' => 2,
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1003,
+        'form_data' => 'the data'
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit();
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Trying to submit data for a resolved call task.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1004,
+        'number' => "110040000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 3,
+        'survey_sid' => 2,
+        'activity' => array()
+      )
+    ); 
+    // Submitting data for another user.
+    $_POST = array(
+      'sid' => 2,
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1004,
+        'form_data' => 'the data'
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit();
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 201, 'message' => 'Submitting data for another user.'), $result['status']);
     
     /*************************************************************************/
   }

@@ -336,7 +336,7 @@ class Survey extends CI_Controller {
     // TODO: Collect Data: Check for other restrictions (like cc_op assigned) 
     if ($survey && $survey->has_xml()) {
       $this->load->helper('xslt_transformer');
-      
+
       $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
       $result = $xslt_transformer->get_transform_result_sxe()->asXML();
       
@@ -424,16 +424,28 @@ class Survey extends CI_Controller {
       return $this->api_output(500, 'Invalid call task.');
     }
     
-    // TODO : api_survey_enketo_form_submit : adittional checks (user assigned, survey in right status)
+    // Is the call task assigned to the provided survey?
+    if ($sid != $call_task->survey_sid) {
+      return $this->api_output(500, 'Call task not assigned to survey.');
+    }
+    
+    // If the same computer is shared by different users it may happen
+    // that an user uploads data another user left in the localStorage.
+    // We do not save that data, but we send a response to keep it in
+    // the localstorage.
+    // The call task can't be resolved.
+    // There has to be someone assigned to it.
+    // It can't be the logged in user.
+    if (!$call_task->is_resolved() && $call_task->is_assigned() && current_user()->uid != $call_task->assignee_uid) {
+      return $this->api_output(201, 'Submitting data for another user.');
+    }
+    
+    // TODO : api_survey_enketo_form_submit : additional checks (user assigned, survey in right status)
     
     if (current_user()->uid != $call_task->assignee_uid) {
       return $this->api_output(500, 'User not assigned to call task.');
     }
     
-    if ($sid != $call_task->survey_sid) {
-      return $this->api_output(500, 'Call task not assigned to survey.');
-    }
-        
     // Was the survey completed?
     // If there's a form_data it's finished
     if (isset($respondent['form_data'])) {
@@ -442,10 +454,19 @@ class Survey extends CI_Controller {
       // TODO: api_survey_enketo_form_submit : Save the data.
       
       // Set successful status.
-      $call_task->add_status(Call_task_status::create(Call_task_status::SUCCESSFUL, ''));
+      try {
+        $call_task->add_status(Call_task_status::create(Call_task_status::SUCCESSFUL, ''));
+      } catch (Exception $e) {
+        return $this->api_output(500, 'Trying to submit data for a resolved call task.');
+      }
       
     }
     elseif (isset($respondent['new_status']['code']) && isset($respondent['new_status']['msg'])) {
+      
+      if ($respondent['new_status']['code'] == Call_task_status::SUCCESSFUL) {
+        return $this->api_output(500, 'Successful status can not be set manually.');
+      }
+      
       try {
         $new_status = Call_task_status::create($respondent['new_status']['code'], xss_clean($respondent['new_status']['msg']));
         $call_task->add_status($new_status);
