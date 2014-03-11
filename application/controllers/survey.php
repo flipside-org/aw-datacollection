@@ -23,14 +23,6 @@ class Survey extends CI_Controller {
    * Controller index.
    */
 	public function index() {
-	  print "Available";
-    krumo($this->call_task_model->get_available(2));
-	  print "Reserved";
-    krumo($this->call_task_model->get_reserved(2, current_user()->uid));
-	  print "Resolved";
-    krumo($this->call_task_model->get_resolved(2, current_user()->uid));
-	  print "Unresolved";
-    krumo($this->call_task_model->get_unresolved(2, current_user()->uid));
 	}
   
   /**
@@ -291,7 +283,11 @@ class Survey extends CI_Controller {
    * /survey/:sid/(testrun|data_collection)
    */
    // TODO: Permissions for enketo.
-  public function survey_enketo($sid, $type) {    
+  public function survey_enketo($sid, $type) {
+    if ($type == 'data_collection' && !has_permission('collect data with enketo')) {
+      show_403();
+    }
+    
     $survey = $this->survey_model->get($sid);
     if ($survey) {      
       // Needed urls.
@@ -312,6 +308,62 @@ class Survey extends CI_Controller {
       $this->load->view('navigation');
       $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'enketo_action' => $type));
       $this->load->view('base/html_end');
+    }
+    else {
+     show_404();
+    }
+  }
+  
+  public function survey_call_activity($sid) {
+    $survey = $this->survey_model->get($sid);
+    if ($survey) {
+      print "Available";
+      krumo($this->call_task_model->get_available($sid));
+      print "Reserved";
+      krumo($this->call_task_model->get_reserved($sid, current_user()->uid));
+      print "Resolved";
+      krumo($this->call_task_model->get_resolved($sid, current_user()->uid));
+      print "Unresolved";
+      krumo($this->call_task_model->get_unresolved($sid, current_user()->uid));
+    }
+    else {
+     show_404();
+    }
+  }
+  
+  public function survey_enketo_single($sid, $ctid) {
+    if (!has_permission('collect data with enketo')) {
+      show_403();
+    }
+    
+    $call_task = $this->call_task_model->get($ctid);
+    if ($call_task) {
+      // Can only collect directly if:
+      // - Call task is assigned to current user
+      // - Call task is not resolved but it was started (unresolved).
+      if ($call_task->is_assigned(current_user()->uid) && $call_task->is_unresolved()) {
+        krumo($call_task);
+      }
+    /*
+      // Needed urls.
+      $settings = array(
+        'current_survey' => array(
+          'sid' => $sid,
+        ),
+        'url' => array(
+          'request_csrf' => base_url('api/survey/request_csrf_token'),
+          'xslt_transform' => base_url('api/survey/' . $sid . '/xslt_transform'),
+          'request_respondents' => base_url('api/survey/' . $sid . '/request_respondents'),
+          'enketo_submit' => base_url('api/survey/enketo_submit'),
+        )
+      );
+      $this->js_settings->add($settings);
+      
+      $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_action' => $type));
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'enketo_action' => $type));
+      $this->load->view('base/html_end');
+     */
     }
     else {
      show_404();

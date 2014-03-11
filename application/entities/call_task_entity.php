@@ -178,12 +178,16 @@ class Call_task_entity extends Entity {
   }
   
   /**
-   * Check whether the call task is assigned.
+   * Check whether the call task is assigned to some user
+   * 
+   * @param int $uid (default null)
+   *  If provided returns whether the call task is assigned to given user.
+   * 
    * @access public
    * @return boolean
    */
-  public function is_assigned() {
-    return $this->assignee_uid !== NULL;
+  public function is_assigned($uid = NULL) {
+    return $uid == NULL ? $this->assignee_uid !== NULL : $this->assignee_uid == $uid;
   }
   
   /**
@@ -215,11 +219,14 @@ class Call_task_entity extends Entity {
    * - The last status in the activity array is a resolved one
    *   (see list in Call_task_status::$resolved_statuses)
    * 
+   * NOTE: being resolved is very different from being not unresolved
+   * is_resolved() != !is_unresolved()
+   * 
    * @return boolean
    */
   public function is_resolved() {
-    // Is empty?
-    if (empty($this->activity)) {
+    // Is started?
+    if (empty($this->activity) || !$this->is_assigned()) {
       return FALSE;
     }
     
@@ -245,6 +252,34 @@ class Call_task_entity extends Entity {
     }
     
     return FALSE;
+  }
+  
+  /**
+   * Checks whether the call task is unresolved.
+   * A call task is unresolved if:
+   *  - It is assigned
+   *  - The activity is not empty
+   *  - It is not resolved.
+   * 
+   * NOTE: being unresolved is very different from being not resolved
+   * is_unresolved() != !is_resolved()
+   * 
+   * @return boolean
+   */
+  public function is_unresolved() {
+    return !$this->is_resolved() && !empty($this->activity) && $this->is_assigned();
+  }
+  
+  /**
+   * Checks whether the call task is reserved.
+   * A call task is reserved when:
+   *  - Is assigned
+   *  - The activity is empty
+   *  
+   * @return boolean
+   */
+  public function is_reserved() {
+    return empty($this->activity) && $this->is_assigned();
   }
    
   /**

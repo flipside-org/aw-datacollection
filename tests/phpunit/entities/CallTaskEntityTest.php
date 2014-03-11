@@ -50,6 +50,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
     // 5 no-reply
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array(
         array(
           'code' => Call_task_status::NO_REPLY,
@@ -80,6 +81,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
     // 4 no-reply + successfull
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array(
         array(
           'code' => Call_task_status::NO_REPLY,
@@ -110,6 +112,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
     // 1 cant complete + 4 no-reply + Discard
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array(
         array(
           'code' => Call_task_status::CANT_COMPLETE,
@@ -140,6 +143,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
     // 4 no-reply
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array(
         array(
           'code' => Call_task_status::NO_REPLY,
@@ -166,6 +170,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
     // 1 cant complete
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array(
         array(
           'code' => Call_task_status::CANT_COMPLETE,
@@ -180,6 +185,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
     // emoty
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array()
     );
     $call_task = new Call_task_entity($data);
@@ -194,6 +200,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
   public function test_add_status_resolved_call_task() {
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array(
         array(
           'code' => Call_task_status::DISCARD,
@@ -208,6 +215,7 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
   public function test_add_status_resolved_call_task_multiple_times() {
     $data = array(
       'number' => '00000000000000',
+      'assignee_uid' => 1,
       'activity' => array()
     );
     $call_task = new Call_task_entity($data);
@@ -223,6 +231,126 @@ class CallTaskEntityTest extends PHPUnit_Framework_TestCase {
     
     $this->assertEquals(Call_task_status::SUCCESSFUL, $call_task->activity[7]->code);
     $this->assertEquals('SUCCESSFUL', $call_task->activity[7]->message);
+  }
+
+  public function test_call_task_is_assigned() {
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => 1,
+      'activity' => array()
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertTrue($call_task->is_assigned());
+    $this->assertFalse($call_task->is_assigned(2));
+    
+    $data = array(
+      'number' => '00000000000000',
+      'activity' => array()
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertFalse($call_task->is_assigned());
+    $this->assertFalse($call_task->is_assigned(NULL));  
+  }
+
+  /**
+   * @depends test_call_task_is_resolved
+   */
+  public function test_call_task_is_unresolved() {
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => NULL,
+      'activity' => array()
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertFalse($call_task->is_unresolved());
+    
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => 1,
+      'activity' => array()
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertFalse($call_task->is_unresolved());
+    
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => NULL,
+      'activity' => array(
+        array(
+          'code' => Call_task_status::DISCARD,
+          'message' => 'A message.'
+        )
+      )
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertFalse($call_task->is_unresolved());
+    
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => 1,
+      'activity' => array(
+        array(
+          'code' => Call_task_status::DISCARD,
+          'message' => 'A message.'
+        )
+      )
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertFalse($call_task->is_unresolved());
+    
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => 1,
+      'activity' => array(
+        array(
+          'code' => Call_task_status::CANT_COMPLETE,
+          'message' => 'A message.'
+        )
+      )
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertTrue($call_task->is_unresolved());
+  }
+
+  public function test_call_task_is_reserved() {
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => NULL,
+      'activity' => array()
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertFalse($call_task->is_reserved());
+    
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => 1,
+      'activity' => array(
+        array(
+          'code' => Call_task_status::CANT_COMPLETE,
+          'message' => 'A message.'
+        )
+      )
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertFalse($call_task->is_reserved());
+    
+    $data = array(
+      'number' => '00000000000000',
+      'assignee_uid' => 1,
+      'activity' => array()
+    );
+    
+    $call_task = new Call_task_entity($data);    
+    $this->assertTrue($call_task->is_reserved());
   }
 }
 ?>
