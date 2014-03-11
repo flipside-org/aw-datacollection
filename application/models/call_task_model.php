@@ -195,19 +195,11 @@ class Call_task_model extends CI_Model {
     
     $call_tasks = array();
     
-    $completed_statuses = array(
-      Call_task_status::INVALID_NUMBER,
-      Call_task_status::SUCCESSFUL,
-      Call_task_status::NO_INTEREST,
-      Call_task_status::NUMBER_CHANGE,
-      Call_task_status::DISCARD
-    );
-    
     $result = $this->mongo_db
       ->where('assignee_uid', $uid)
       ->where('survey_sid', $sid)
       ->whereIn('activity.code', array(Call_task_status::CANT_COMPLETE))
-      ->whereNotIn('activity.code', array_merge($completed_statuses, array(Call_task_status::NO_REPLY)))
+      ->whereNotIn('activity.code', array_merge(Call_task_status::$resolved_statuses, array(Call_task_status::NO_REPLY)))
       ->get(self::COLLECTION);
     
     foreach ($result as $value) {
@@ -223,7 +215,7 @@ class Call_task_model extends CI_Model {
           '$match' => array(
             'assignee_uid' => $uid,
             'survey_sid' => $sid,
-            'activity.code' => array('$in' => array(Call_task_status::NO_REPLY), '$nin' => $completed_statuses)
+            'activity.code' => array('$in' => array(Call_task_status::NO_REPLY), '$nin' => Call_task_status::$resolved_statuses)
           )
         ),
         // 2 - Unwind activity array.

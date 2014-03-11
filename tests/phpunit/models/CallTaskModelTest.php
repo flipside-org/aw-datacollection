@@ -172,7 +172,7 @@ class CallTaskModelTest extends PHPUnit_Framework_TestCase
             'created' => Mongo_db::date()
           ),
           array(
-            'code' => Call_task_status::NO_INTEREST,
+            'code' => Call_task_status::NO_CONSENT,
             'message' => NULL,
             'author' => 1,
             'created' => Mongo_db::date()

@@ -285,7 +285,7 @@ class Call_task_status {
    * Resolved: No Interest 
    * @const
    */
-  const NO_INTEREST = 993;
+  const NO_CONSENT = 993;
   /**
    * Resolved: Number Change 
    * @const
@@ -317,7 +317,7 @@ class Call_task_status {
     self::SUCCESSFUL => 'Successful',
     self::NO_REPLY => 'No reply',
     self::INVALID_NUMBER => 'Invalid number',
-    self::NO_INTEREST => 'No interest',
+    self::NO_CONSENT => 'No interest',
     self::NUMBER_CHANGE => 'Number changed',
     self::CANT_COMPLETE => "Can't complete",
     self::DISCARD => 'Discarded',
@@ -337,7 +337,7 @@ class Call_task_status {
   static $resolved_statuses = array(
     self::SUCCESSFUL,
     self::INVALID_NUMBER,
-    self::NO_INTEREST,
+    self::NO_CONSENT,
     self::NUMBER_CHANGE,
     self::DISCARD
   );

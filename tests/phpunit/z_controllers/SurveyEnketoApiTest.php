@@ -367,7 +367,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'survey_sid' => 2,
         'activity' => array(
           array(
-            'code' => Call_task_status::NO_INTEREST,
+            'code' => Call_task_status::NO_CONSENT,
             'message' => NULL,
             'author' => 1,
             'created' => Mongo_db::date()

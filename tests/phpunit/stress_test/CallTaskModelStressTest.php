@@ -94,7 +94,7 @@ class CallTaskModelStressTest extends PHPUnit_Framework_TestCase {
     $amount_no_reply = array(0, 0, 1, 0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0, 0, 0, 1, 3, 0, 0, 0);
     $final_status = array(
       Call_task_status::SUCCESSFUL,
-      Call_task_status::NO_INTEREST,
+      Call_task_status::NO_CONSENT,
       Call_task_status::NUMBER_CHANGE,
       Call_task_status::DISCARD,
       Call_task_status::INVALID_NUMBER,
@@ -104,10 +104,10 @@ class CallTaskModelStressTest extends PHPUnit_Framework_TestCase {
       Call_task_status::DISCARD,
       Call_task_status::SUCCESSFUL,
       Call_task_status::SUCCESSFUL,
-      Call_task_status::NO_INTEREST,
+      Call_task_status::NO_CONSENT,
       Call_task_status::SUCCESSFUL,
       Call_task_status::SUCCESSFUL,
-      Call_task_status::NO_INTEREST,
+      Call_task_status::NO_CONSENT,
       Call_task_status::SUCCESSFUL,
     );
     
