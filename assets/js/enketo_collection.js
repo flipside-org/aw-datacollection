@@ -241,6 +241,11 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         console.log('Call task status CODE: ' + call_task_status_code);
         console.log('Call task status MSG: ' + call_task_status_msg);
         
+        if (call_task_status_code == '--') {
+          alert('Please select a valid status.');
+          return false;
+        }
+        
         // Do something with the data.
         current_respondent.new_status = {
           code : call_task_status_code,

@@ -468,7 +468,7 @@ class Survey extends CI_Controller {
       }
       
       try {
-        $new_status = Call_task_status::create($respondent['new_status']['code'], xss_clean($respondent['new_status']['msg']));
+        $new_status = Call_task_status::create($respondent['new_status']['code'], xss_clean(trim($respondent['new_status']['msg'])));
         $call_task->add_status($new_status);
         
       } catch (Exception $e) {
