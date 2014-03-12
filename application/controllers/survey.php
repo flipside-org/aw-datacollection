@@ -323,8 +323,14 @@ class Survey extends CI_Controller {
       krumo($this->call_task_model->get_reserved($sid, current_user()->uid));
       print "Resolved";
       krumo($this->call_task_model->get_resolved($sid, current_user()->uid));
-      print "Unresolved";
-      krumo($this->call_task_model->get_unresolved($sid, current_user()->uid));
+      print "Unresolved<br/>";
+      
+      $unresolved = $this->call_task_model->get_unresolved($sid, current_user()->uid);
+      krumo($unresolved);
+      foreach ($unresolved as $value) {
+        print anchor('survey/' . $sid . '/data_collection/' . $value->ctid, 'collect');
+        print "<br/>";
+      }
     }
     else {
      show_404();
@@ -337,33 +343,34 @@ class Survey extends CI_Controller {
     }
     
     $call_task = $this->call_task_model->get($ctid);
-    if ($call_task) {
+    $survey = $this->survey_model->get($sid);
+    if ($call_task && $survey && $survey->sid == $call_task->survey_sid) {
       // Can only collect directly if:
       // - Call task is assigned to current user
       // - Call task is not resolved but it was started (unresolved).
       if ($call_task->is_assigned(current_user()->uid) && $call_task->is_unresolved()) {
-        krumo($call_task);
+        // Needed urls.
+        $settings = array(
+          'current_survey' => array(
+            'sid' => $sid,
+          ),
+          'single_call_task' => $call_task,
+          'url' => array(
+            'request_csrf' => base_url('api/survey/request_csrf_token'),
+            'xslt_transform' => base_url('api/survey/' . $sid . '/xslt_transform'),
+            'enketo_submit' => base_url('api/survey/enketo_submit'),
+          )
+        );
+        $this->js_settings->add($settings);
+        
+        $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_action' => 'data_collection_single'));
+        $this->load->view('navigation');
+        $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'call_task' => $call_task, 'enketo_action' => 'data_collection_single'));
+        $this->load->view('base/html_end');
       }
-    /*
-      // Needed urls.
-      $settings = array(
-        'current_survey' => array(
-          'sid' => $sid,
-        ),
-        'url' => array(
-          'request_csrf' => base_url('api/survey/request_csrf_token'),
-          'xslt_transform' => base_url('api/survey/' . $sid . '/xslt_transform'),
-          'request_respondents' => base_url('api/survey/' . $sid . '/request_respondents'),
-          'enketo_submit' => base_url('api/survey/enketo_submit'),
-        )
-      );
-      $this->js_settings->add($settings);
-      
-      $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_action' => $type));
-      $this->load->view('navigation');
-      $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'enketo_action' => $type));
-      $this->load->view('base/html_end');
-     */
+      else {
+        show_403();
+      }
     }
     else {
      show_404();
