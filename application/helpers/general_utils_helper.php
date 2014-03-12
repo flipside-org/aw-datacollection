@@ -95,6 +95,10 @@ if ( ! function_exists('show_403')) {
    * Show a 403 Operation not allowed error
    */
   function show_403() {
+    if (!is_logged()) {
+      $login_link = '<a href="' . base_url('login') . '" title="Login Page">login</a>';
+      show_error("The requested operation is not allowed. Please $login_link and try again.", 403, 'Operation not allowed');
+    }
     show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
   }
 }
