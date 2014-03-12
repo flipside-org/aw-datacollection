@@ -281,7 +281,28 @@ class Call_task_entity extends Entity {
   public function is_reserved() {
     return empty($this->activity) && $this->is_assigned();
   }
-   
+  
+  /**
+   * Returns the url to do data collection for a specific call task.
+   * @access public
+   * @return string
+   */
+  public function get_url_single_data_collection() {
+    if ($this->ctid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent call task.");
+    }    
+    return base_url('survey/' . $this->survey_sid . '/data_collection/' . $this->ctid);
+  }
+  
+  /**
+   * Returns the call task activity array.
+   * 
+   * @return array Call_task_status
+   */
+  public function get_activity() {
+    return $this->activity;
+  }
+  
   /**
    * End of public methods.
    *******************************/

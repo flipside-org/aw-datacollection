@@ -254,6 +254,18 @@ class Survey_entity extends Entity {
       return base_url('survey/' . $this->sid . '/data_collection') ;
     }
   }
+
+  /**
+   * Returns the url to edit a survey.
+   * @access public
+   * @return string
+   */
+  public function get_url_call_activity() {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent survey.");       
+    }    
+    return base_url('survey/' . $this->sid . '/call_activity') ;
+  }
   
   /**
    * Returns the url to edit a survey.

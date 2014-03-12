@@ -315,22 +315,21 @@ class Survey extends CI_Controller {
   }
   
   public function survey_call_activity($sid) {
+    if (!has_permission('collect data with enketo')) {
+      show_403();
+    }
+    
     $survey = $this->survey_model->get($sid);
     if ($survey) {
-      print "Available";
-      krumo($this->call_task_model->get_available($sid));
-      print "Reserved";
-      krumo($this->call_task_model->get_reserved($sid, current_user()->uid));
-      print "Resolved";
-      krumo($this->call_task_model->get_resolved($sid, current_user()->uid));
-      print "Unresolved<br/>";
       
+      $resolved = $this->call_task_model->get_resolved($sid, current_user()->uid);
       $unresolved = $this->call_task_model->get_unresolved($sid, current_user()->uid);
-      krumo($unresolved);
-      foreach ($unresolved as $value) {
-        print anchor('survey/' . $sid . '/data_collection/' . $value->ctid, 'collect');
-        print "<br/>";
-      }
+      
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_call_activity', array('survey' => $survey, 'call_tasks_resolved' => $resolved, 'call_tasks_unresolved' => $unresolved));
+      $this->load->view('base/html_end');
+      
     }
     else {
      show_404();
