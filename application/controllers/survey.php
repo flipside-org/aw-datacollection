@@ -314,6 +314,13 @@ class Survey extends CI_Controller {
     }
   }
   
+  /**
+   * Call task activity page. Shows a list of completed call tasks
+   * and call tasks still to complete.
+   * 
+   * Route:
+   * /survey/:sid/call_activity
+   */
   public function survey_call_activity($sid) {
     if (!has_permission('collect data with enketo')) {
       show_403();
@@ -336,6 +343,12 @@ class Survey extends CI_Controller {
     }
   }
   
+  /**
+   * Enketo data collection for a specific call task.
+   * 
+   * Route:
+   * /survey/:sid/data_collection/:ctid
+   */
   public function survey_enketo_single($sid, $ctid) {
     if (!has_permission('collect data with enketo')) {
       show_403();
@@ -383,7 +396,12 @@ class Survey extends CI_Controller {
    * @param int $sid
    *   The survey id
    * 
-   * Output as text/xml
+   * JSON output:
+   * status : {
+   *   code : ,
+   *   message:
+   * },
+   * xml_form : the xml form
    */
   public function api_survey_xslt_transform($sid) {
     if (!has_permission('collect data with enketo')) {
@@ -414,7 +432,11 @@ class Survey extends CI_Controller {
    *   The survey id
    * 
    * JSON output:
-   *  respondents : Call_task_entity[]
+   * status : {
+   *   code : ,
+   *   message:
+   * },
+   * respondents : Call_task_entity[]
    */
   public function api_survey_request_respondents($sid) {
     if (!has_permission('collect data with enketo')) {
@@ -453,7 +475,11 @@ class Survey extends CI_Controller {
    * a CSRF token is required.
    * 
    * JSON output:
-   *  csrf : string token
+   * status : {
+   *   code : ,
+   *   message:
+   * },
+   * csrf : string token
    */
   public function api_survey_request_csrf_token() {
     if (has_permission('api request csrf token')) {
@@ -465,7 +491,14 @@ class Survey extends CI_Controller {
   }
   
   /**
-   * TODO: Survey::survey_submit_enketo_form Docs
+   * Enekto API
+   * Enketo submission handler.
+   * 
+   * JSON output:
+   * status : {
+   *   code : ,
+   *   message:
+   * }
    */
   public function api_survey_enketo_form_submit() {
     
