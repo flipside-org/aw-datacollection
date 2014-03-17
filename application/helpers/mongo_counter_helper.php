@@ -1,14 +1,14 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-/**
- * Increment Counter
- * Increments given counter by one and returns new value.
- * Atomic operation. Guaranteed to be unique.
- * 
- * @param string $counter
- * @return int 
- */
 if ( ! function_exists('increment_counter')) {
+  /**
+   * Increment Counter
+   * Increments given counter by one and returns new value.
+   * Atomic operation. Guaranteed to be unique.
+   * 
+   * @param string $counter
+   * @return int 
+   */
   function increment_counter($counter) {
     $CI =& get_instance();
     $collection = $CI->config->item('aw_mongo_counter_collection');
@@ -25,13 +25,13 @@ if ( ! function_exists('increment_counter')) {
   }
 }
 
-/**
- * Reset Counter
- * Resets the counter value to 0.
- * 
- * @param string $counter
- */
 if ( ! function_exists('reset_counter')) {
+  /**
+   * Reset Counter
+   * Resets the counter value to 0.
+   * 
+   * @param string $counter
+   */
   function reset_counter($counter) {
     $CI =& get_instance();
     $collection = $CI->config->item('aw_mongo_counter_collection');

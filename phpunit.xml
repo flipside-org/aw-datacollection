@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<phpunit bootstrap="tests/bootstrap.php"
+<phpunit bootstrap="tests/phpunit/bootstrap.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -9,9 +9,13 @@
          syntaxCheck="false"
          verbose="true">
 	<testsuites>
-		<testsuite name="TestSuite">
-			<directory>tests</directory>
+		<testsuite name="default">
+			<directory>tests/phpunit</directory>
+			<exclude>tests/phpunit/stress_test</exclude>
 		</testsuite>
+		<!-- <testsuite name="stress">
+			<directory>tests/phpunit/stress_test</directory>
+		</testsuite> -->
 	</testsuites>
 	<php>
 		<const name="PHPUNIT_TEST" value="1" />

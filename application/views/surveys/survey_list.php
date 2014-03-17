@@ -38,6 +38,7 @@
             <?php if ($survey_entity->has_xml()) : ?>
               <li><a href="<?= $survey_entity->get_url_survey_enketo('testrun') ?>" class="button tiny secondary">Test Run</a></li>
               <li><a href="<?= $survey_entity->get_url_survey_enketo('collection') ?>" class="button tiny success">Collect Data</a></li>
+              <li><a href="<?= $survey_entity->get_url_call_activity() ?>" class="button tiny">Call activity</a></li>
             <?php endif; ?>
           </ul>
         </td>

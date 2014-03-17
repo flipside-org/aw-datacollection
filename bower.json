@@ -1,0 +1,6 @@
+{
+  "name": "aw-datacollection",
+  "dependencies": {
+    "foundation": "~5.0.3"
+  }
+} 

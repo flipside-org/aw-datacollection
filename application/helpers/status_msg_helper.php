@@ -32,7 +32,7 @@ class Status_msg {
   private static $error = array();
   
   /**
-   * Sets a success message.v
+   * Sets a success message.
    * 
    * @static
    */

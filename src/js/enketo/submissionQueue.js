@@ -16,6 +16,9 @@
  */
 SubmissionQueue = function() {
   this.queue = [];
+  // Stores the data that belongs to another user
+  // and was left on the localstorage.
+  this.queue_skipped = [];
   this.is_uploading = false;
   
   if (Connection.supportsLocalStorage() == false) {
@@ -81,11 +84,30 @@ SubmissionQueue.prototype.add = function(value) {
  * Triggers Event submission_queue_change
  *   After removing respondent from localStorage.
  * 
- * @param {array} value
  */
 SubmissionQueue.prototype.shift = function() {
   console.log('Shifting value from submission queue.');
   this.queue.shift();
+  this.store();
+  $(window).trigger('submission_queue_change', this);
+};
+
+/**
+ * Shifts the first respondent from the submission queue and adds it to
+ * the end of the array.
+ * The changes will be written to the localStorage.
+ * This method is called when the server returns a response saying 
+ * that the submitted data belongs to another user. The data should not be lost
+ * it is instead moved to the end, over and over again.
+ * 
+ * Triggers Event submission_queue_change
+ *   After removing respondent from localStorage.
+ * 
+ */
+SubmissionQueue.prototype.shiftToSkippedQueue = function() {
+  console.log('Shifting value to skipped queue.');
+  var shifted = this.queue.shift();
+  this.queue_skipped.push(shifted);
   this.store();
   $(window).trigger('submission_queue_change', this);
 };
@@ -107,6 +129,8 @@ SubmissionQueue.prototype.store = function() {
   console.log('Storing on localStorage.');
   var to_store = JSON.stringify(this.queue);
   localStorage.setItem('aw_submission_queue', to_store);
+  var to_store_skipped = JSON.stringify(this.queue_skipped);
+  localStorage.setItem('aw_submission_queue_skipped', to_store_skipped);
 };
 
 /**
@@ -179,10 +203,18 @@ SubmissionQueue.prototype.submit = function() {
     }, function(res) {
       console.log('Submission successful.');
       console.log(res);
-      // The operation succeeded.
-      // Remove the respondent and trigger change.
-      self.shift();
-      $(window).trigger('submission_queue_submit_success');
+      if (res.status.code == 201) {
+        // Submitting data for another user.
+        // Shift the respondent to the end of the queue.
+        self.shiftToSkippedQueue();
+      }
+      else {
+        // Could be response code 200 or 500. Either case remove the respondent.
+        // If it succeeded the data is stored.
+        // Remove the respondent and trigger change.
+        self.shift();
+        $(window).trigger('submission_queue_submit_success');
+      }
             
     }).fail(function(res) {
       console.log('Submission failed.');
@@ -202,7 +234,8 @@ SubmissionQueue.prototype.submit = function() {
         con.setOnlineStatus( false );
       }
       
-    }).always(function() {
+      
+    }).always(function(){
       self.is_uploading = false;
       // Submit again. If there are no more items in the queue
       // the submission is not going to run.
