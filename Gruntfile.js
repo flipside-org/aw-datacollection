@@ -5,7 +5,7 @@ module.exports = function(grunt) {
       // Delete everything.
       reset: ['assets/styles/*', 'assets/scripts/*', 'assets/images/vendor/*'],
       // Delete build files.
-      build: ['assets/styles/path_override.css']
+      build: ['src/temp/*']
     },
     
     // https://github.com/gruntjs/grunt-contrib-compass
@@ -13,7 +13,7 @@ module.exports = function(grunt) {
       // Default options.
       options : {
           sassDir : 'src/styles',
-          cssDir : 'assets/styles',
+          cssDir : 'src/temp',
           raw : 'add_import_path "src/bower_components/foundation/scss"'
       },
       
@@ -106,8 +106,8 @@ module.exports = function(grunt) {
         files : {
           'assets/styles/main.css' : [
             'src/vendor/chosen/chosen.css',
-            'assets/styles/path_override.css',
-            'assets/styles/main.css'
+            'src/temp/path_override.css',
+            'src/temp/main.css'
           ]
         }
       },
@@ -115,8 +115,8 @@ module.exports = function(grunt) {
         files : {
           'assets/styles/main.css' : [
             'src/vendor/chosen/chosen.min.css',
-            'assets/styles/path_override.css',
-            'assets/styles/main.css'
+            'src/temp/path_override.css',
+            'src/temp/main.css'
           ]
         }
       }
@@ -152,7 +152,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   
   // Register tasks.
-  grunt.registerTask('build', ['compass:dev', 'jshint:dev', 'uglify', 'concat:dev', 'clean:build']);
+  grunt.registerTask('build', ['compass:dev', 'jshint:dev', 'uglify', 'concat:dev']);
   
   grunt.registerTask('default', ['build', 'watch']);
   
