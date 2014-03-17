@@ -19,7 +19,7 @@ $ chmod -R 777 files
 
 Update git submodules (**This should be also done after pulling changes**):
 ```
-$ git submdodule update --recursive
+$ git submodule update --recursive
 ```
 The enketo library needs to be built. Change into its directory:
 ```
