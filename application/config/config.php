@@ -246,7 +246,7 @@ $config['encryption_key'] = 'T1H4e6&&E87nc#3r4y$Pti%%on';
 |
 */
 $config['sess_cookie_name']		= 'ci_session';
-$config['sess_expiration']		= 7200;
+$config['sess_expiration']		= 86400 * 3;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= TRUE;
 $config['sess_use_database']	= TRUE;
@@ -378,6 +378,7 @@ $config['aw_enketo_xslt_lib'] = './application/third_party/enketo-xslt/';
 
 // Amount of respondent to assign to each call center operator at a given time.
 $config['aw_enketo_respondents_reserve'] = 5;
+
 // Keep respondents assigned for 3 days.
 $config['aw_enketo_respondents_reserve_exprire'] = 86400 * 3;
 
