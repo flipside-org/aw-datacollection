@@ -1,14 +1,19 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     // https://github.com/gruntjs/grunt-contrib-clean
-    clean : ['assets/css/*', 'assets/scripts/*'],
+    clean : {
+      // Delete everything.
+      reset: ['assets/styles/*', 'assets/scripts/*', 'assets/images/vendor/*'],
+      // Delete build files.
+      build: ['assets/styles/path_override.css']
+    },
     
     // https://github.com/gruntjs/grunt-contrib-compass
     compass : {
       // Default options.
       options : {
-          sassDir : 'src/sass',
-          cssDir : 'assets/css',
+          sassDir : 'src/styles',
+          cssDir : 'assets/styles',
           raw : 'add_import_path "src/bower_components/foundation/scss"'
       },
       
@@ -38,39 +43,18 @@ module.exports = function(grunt) {
         options : {
           force : true
         },
-        src : ['src/js/*.js']
+        src : ['src/scripts/**.js']
       },
       
-      prod: ['src/js/*.js']
+      prod: ['src/scripts/**.js']
     },
     
     // https://github.com/gruntjs/grunt-contrib-uglify
     uglify: {
       prod: {
         files: {
-          'assets/scripts/website.min.js': [
-            'src/js/libs/chosen/chosen.jquery.min.js',
-            'src/js/*.js'
-           ],
-          
           'assets/scripts/media.min.js': [
             'src/bower_components/modernizr/modernizr.js',
-          ],
-          
-          // Enketo stuff
-          'assets/scripts/enketo_base.min.js' : [
-            'src/js/enketo/connection.js',
-            'src/js/enketo/respondentQueue.js',
-            'src/js/enketo/submissionQueue.js',
-          ],
-          'assets/scripts/enketo_collection_single.min.js' : [
-            'src/js/enketo/enketo_collection_single.js'
-          ],
-          'assets/scripts/enketo_collection.min.js' : [
-            'src/js/enketo/enketo_collection.js'
-          ],
-          'assets/scripts/enketo_testrun.min.js' : [
-            'src/js/enketo/enketo_testrun.js'
           ],
           
           'assets/scripts/foundation.min.js': [
@@ -90,7 +74,60 @@ module.exports = function(grunt) {
             //'src/bower_components/foundation/js/foundation/foundation.tab.js',
             //'src/bower_components/foundation/js/foundation/foundation.tooltips.js',
             'src/bower_components/foundation/js/foundation/foundation.topbar.js'
+          ],
+
+          // Enketo stuff.
+          'assets/scripts/enketo_base.min.js' : [
+            'src/scripts/enketo/connection.js',
+            'src/scripts/enketo/respondentQueue.js',
+            'src/scripts/enketo/submissionQueue.js',
+          ],
+          'assets/scripts/enketo_collection_single.min.js' : [
+            'src/scripts/enketo/enketo_collection_single.js'
+          ],
+          'assets/scripts/enketo_collection.min.js' : [
+            'src/scripts/enketo/enketo_collection.js'
+          ],
+          'assets/scripts/enketo_testrun.min.js' : [
+            'src/scripts/enketo/enketo_testrun.js'
+          ],
+
+          'assets/scripts/website.min.js': [
+            'src/vendor/chosen/chosen.jquery.min.js',
+            'src/scripts/*.js'
+           ],
+        }
+      }
+    },
+    
+    // https://github.com/gruntjs/grunt-contrib-concat
+    concat : {
+      dev : {
+        files : {
+          'assets/styles/main.css' : [
+            'src/vendor/chosen/chosen.css',
+            'assets/styles/path_override.css',
+            'assets/styles/main.css'
           ]
+        }
+      },
+      prod : {
+        files : {
+          'assets/styles/main.css' : [
+            'src/vendor/chosen/chosen.min.css',
+            'assets/styles/path_override.css',
+            'assets/styles/main.css'
+          ]
+        }
+      }
+    },
+    
+    // https://github.com/gruntjs/grunt-contrib-copy
+    copy: {
+      main: {
+        files: {
+          'assets/images/vendor/chosen-sprite.png' : 'src/vendor/chosen/chosen-sprite.png',
+          'assets/images/vendor/chosen-sprite@2x.png' : 'src/vendor/chosen/chosen-sprite@2x.png'
         }
       }
     },
@@ -98,14 +135,9 @@ module.exports = function(grunt) {
     // https://npmjs.org/package/grunt-contrib-watch
     watch : {
       src: {
-        files: ['src/js/*.js', 'src/sass/*.scss'],
-        tasks: ['default']
+        files: ['src/scripts/**.js', 'src/styles/*.scss'],
+        tasks: ['build']
       }
-    },
-    
-    // https://github.com/gruntjs/grunt-contrib-concat
-    concat : {
-      
     }
     
   });
@@ -117,12 +149,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   
   // Register tasks.
-  grunt.registerTask('build', ['compass:dev', 'jshint:dev', 'uglify']);
+  grunt.registerTask('build', ['compass:dev', 'jshint:dev', 'uglify', 'concat:dev', 'clean:build']);
   
   grunt.registerTask('default', ['build', 'watch']);
   
-  grunt.registerTask('prod', ['clean', 'compass:prod', 'jshint:prod', 'uglify']);
+  grunt.registerTask('prod', ['clean', 'compass:prod', 'jshint:prod', 'uglify', 'concat:prod', 'copy']);
 
 };
