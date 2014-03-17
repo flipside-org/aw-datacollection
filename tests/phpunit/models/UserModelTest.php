@@ -21,7 +21,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
         'name' => 'Admin',
         'username' => 'admin',
         'password' => hash_password('admin'),
-        'roles' => array('administrator'),
+        'roles' => array(ROLE_ADMINISTRATOR),
         'author' => null,
         'status' => 2,
         
@@ -36,6 +36,19 @@ class User_model_test extends PHPUnit_Framework_TestCase
         'username' => 'test_user',
         'password' => hash_password('test_user'),
         'roles' => array(),
+        'author' => null,
+        'status' => 2,
+        
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => 99,
+        'email' => 'multiple@airwolf.dev',
+        'name' => 'multiple roles user',
+        'username' => 'multiple',
+        'password' => hash_password('multiple'),
+        'roles' => array(ROLE_ADMINISTRATOR, ROLE_CC_OPERATOR),
         'author' => null,
         'status' => 2,
         
@@ -92,6 +105,25 @@ class User_model_test extends PHPUnit_Framework_TestCase
     $this->assertFalse($user_two);
   }
   
+  public function test_get_with_role() {
+    $users = self::$CI->user_model->get_with_role(ROLE_CC_OPERATOR);
+    $this->assertCount(1, $users);
+    $this->assertEquals(99, $users[0]->uid);
+    
+    $users = self::$CI->user_model->get_with_role(array(ROLE_CC_OPERATOR));
+    $this->assertCount(1, $users);
+    $this->assertEquals(99, $users[0]->uid);
+    
+    $users = self::$CI->user_model->get_with_role(array(ROLE_ADMINISTRATOR, ROLE_CC_OPERATOR));
+    $this->assertCount(1, $users);
+    
+    $users = self::$CI->user_model->get_with_role(ROLE_ADMINISTRATOR);
+    $this->assertCount(2, $users);
+    
+    $users = self::$CI->user_model->get_with_role(array());
+    $this->assertCount(1, $users);
+  }
+  
   /**
    * @depends test_get_user_by_uid
    */
@@ -137,7 +169,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
     // We have two test users. This one will be added with uid 3.
     self::$CI->user_model->save($user);
     
-    $saved_user = self::$CI->user_model->get(3);    
+    $saved_user = self::$CI->user_model->get(3);
     $this->assertEquals('A new test user', $saved_user->name);
     $this->assertEquals('new_test_user', $saved_user->username);
     $this->assertEquals('test@testing.com', $saved_user->email);

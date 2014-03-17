@@ -102,6 +102,11 @@ class Survey_entity extends Entity {
   );
   
   /**
+   * Operators assigned to this survey.
+   */
+  public $agents = array();
+  
+  /**
    * End of survey fields.
    *******************************/
   

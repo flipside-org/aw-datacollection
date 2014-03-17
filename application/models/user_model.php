@@ -45,6 +45,8 @@ class User_model extends CI_Model {
   
   /**
    * Returns the user with the given username
+   * @param string username
+   * 
    * @return User_entity
    */
   public function get_by_username($username) {
@@ -62,6 +64,8 @@ class User_model extends CI_Model {
   
   /**
    * Returns the user with the given email
+   * @param string email
+   * 
    * @return User_entity
    */
   public function get_by_email($email) {
@@ -79,6 +83,8 @@ class User_model extends CI_Model {
   
   /**
    * Returns the user with the given uid
+   * @param int uid
+   * 
    * @return User_entity
    */
   public function get($uid) {
@@ -92,6 +98,36 @@ class User_model extends CI_Model {
     else {
       return FALSE;
     }
+  }
+  
+  /**
+   * Returns the users with the given roles.
+   * @param mixed roles
+   *   Single role or array of roles the user has to have.
+   *   If an empty array is provided it will return users without roles.
+   * 
+   * @return User_entity
+   */
+  public function get_with_role($roles) {
+    if (!is_array($roles)) {
+      $roles = array($roles);
+    }
+    
+    if (empty($roles)) {
+      $this->mongo_db->where('roles', array());
+    }
+    else {
+      $this->mongo_db->whereInAll('roles', $roles);
+    }
+    
+    $result = $this->mongo_db->get(self::COLLECTION);
+    
+    $users = array();
+    foreach ($result as $value) {
+      $users[] = User_entity::build($value);
+    }
+    
+    return $users;
   }
   
   /**

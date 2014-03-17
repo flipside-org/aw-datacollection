@@ -89,7 +89,8 @@ class Fixtures extends CI_Controller {
             'warnings' => NULL
           )
         ),
-        'created' => Mongo_db::date()
+        'created' => Mongo_db::date(),
+        'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
@@ -105,6 +106,8 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
+        // Assign user 1 (admin)
+        'agents' => array(1)
       ),
       array(
         'sid' => increment_counter('survey_sid'),
@@ -119,7 +122,8 @@ class Fixtures extends CI_Controller {
             'warnings' => NULL
           )
         ),
-        'created' => Mongo_db::date()
+        'created' => Mongo_db::date(),
+        'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
@@ -134,7 +138,8 @@ class Fixtures extends CI_Controller {
             'warnings' => NULL
           )
         ),
-        'created' => Mongo_db::date()
+        'created' => Mongo_db::date(),
+        'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
@@ -149,7 +154,8 @@ class Fixtures extends CI_Controller {
             'warnings' => NULL
           )
         ),
-        'created' => Mongo_db::date()
+        'created' => Mongo_db::date(),
+        'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
@@ -164,7 +170,8 @@ class Fixtures extends CI_Controller {
             'warnings' => NULL
           )
         ),
-        'created' => Mongo_db::date()
+        'created' => Mongo_db::date(),
+        'agents' => array(),
       ),
     ));
   }
@@ -181,7 +188,7 @@ class Fixtures extends CI_Controller {
         'name' => 'Admin',
         'username' => 'admin',
         'password' => hash_password('admin'),
-        'roles' => array('administrator'),
+        'roles' => array('administrator', 'cc_operator'),
         'author' => null,
         'status' => 2,
         'created' => Mongo_db::date(),

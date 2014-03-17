@@ -64,6 +64,25 @@ class Survey extends CI_Controller {
     );
     
     if ($survey) {
+      
+      // Agents. Each array element contains the user and
+      // properties for the select. (selected, disabled)
+      $agents = array();
+      // Prepare users
+      $all_operators = $this->user_model->get_with_role(ROLE_CC_OPERATOR);
+      foreach ($all_operators as $index => $user) {
+        $agents[$index]['user'] = $user;
+        $agents[$index]['properties'] = array();
+        
+        if (in_array($user->uid, $survey->agents)) {
+          $agents[$index]['properties'][] = 'selected';
+          
+          // TODO: Check if the user can be unassigned.          
+        }
+      }
+      
+      $data['agents'] = $agents;
+      
       $this->load->view('base/html_start');
       $this->load->view('navigation');
       $this->load->view('surveys/survey_page', $data);
