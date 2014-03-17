@@ -7,6 +7,7 @@ Built using [Codeigniter](http://ellislab.com/codeigniter)
 ### Requirements
 - Node & Npm
 - Grunt ( $ npm install -g grunt-cli )
+- Bower ($ npm install -g bower)
 
 ### Setup
 **This is to be done in the local machine, not on vagrant**
@@ -29,10 +30,16 @@ $ grunt
 ```
 
 ### Task automation
-After these basic requirements are met, run the following command in the website's folder:
+After these basic requirements are met, run the following commands in the website's folder:
 ```
 $ npm install
+
 ```
+```
+$ bower install
+```
+Bower will create a ```bower_components``` directory in the src with all the sass and js needed for foundation. Nothing needs to be done there.
+
 You might have to run these as sudo.
 
 #### Getting started
@@ -74,6 +81,7 @@ $ mongod
 
 
 ## Testing
+Testing should be done from within the vagrant machine.
 
 ### Code testing
 
