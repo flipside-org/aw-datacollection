@@ -260,7 +260,7 @@ class Survey extends CI_Controller {
       $file_upload_config = array(
         'upload_path' => '/tmp/',
         'allowed_types' => 'csv',
-        'file_name' => md5(microtime(true))
+        'file_name' => 'respondents_' . md5(microtime(true))
       );
 
       // Load needed libraries
