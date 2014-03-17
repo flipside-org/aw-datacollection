@@ -15,3 +15,12 @@ files/*
 
 # Other
 document-it
+
+#Task automation
+.sass-cache
+node_modules
+src/bower_components
+
+#Scripts and css
+assets/css
+assets/scripts

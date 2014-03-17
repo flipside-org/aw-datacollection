@@ -1,7 +1,6 @@
-<!-- If you are using CSS version, only link these 2 files, you may add app.css to use for your overrides if you like. -->
-<link rel="stylesheet" href="<?= base_url('assets/css/normalize.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/css/foundation.css') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/css/overrides.css') ?>">
-<!-- If you are using the gem version, you need this only -->
-<!-- <link rel="stylesheet" href="css/app.css">
-<script src="js/vendor/modernizr.js"></script> -->
+<?php if (isset($enketo_action)) : ?>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,600&subset=latin,cyrillic-ext,cyrillic,greek-ext,greek,vietnamese,latin-ext' rel='stylesheet' type='text/css'>
+  <link type="text/css" href="<?= base_url('assets/libs/enketo-core/build/css/formhub.css'); ?>" media="all" rel="stylesheet" />
+<?php endif; ?>
+
+<link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>" />
