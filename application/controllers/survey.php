@@ -13,29 +13,16 @@ class Survey extends CI_Controller {
     // Load stuff needed for this controller.
     $this->load->helper('form');
     $this->load->helper('typography');
+    $this->load->helper('security');
     $this->load->library('form_validation');
     $this->load->model('survey_model');
-    load_entity('call_task');
+    $this->load->model('call_task_model');
   }
   
   /**
    * Controller index.
    */
 	public function index() {
-		//redirect('surveys', 'location', 301);
-		/*
-		$data = array(
-      'pool' => array(),
-      'requested' => array(),
-      'submitted' => array(),
-    );
-    for ($i=0;$i<1000;$i++) {
-      $data['pool'][$i] = array();
-      $data['pool'][$i]['number'] = 100000000 + $i;
-    }
-    $this->session->set_userdata('resp', $data);
-    //*/
-    krumo($this->session->userdata('resp'));
 	}
   
   /**
@@ -45,7 +32,7 @@ class Survey extends CI_Controller {
    */
   public function surveys_list(){
     if (!has_permission('view survey list')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
     
     $surveys = $this->survey_model->get_all();
@@ -64,7 +51,7 @@ class Survey extends CI_Controller {
    */
   public function survey_by_id($sid){
     if (!has_permission('view survey page')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
     
     $survey = $this->survey_model->get($sid);
@@ -94,7 +81,7 @@ class Survey extends CI_Controller {
    */
   public function survey_add(){
     if (!has_permission('create survey')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
     
     $this->_survey_form_handle('add');
@@ -107,7 +94,7 @@ class Survey extends CI_Controller {
    */
   public function survey_edit_by_id($sid){
     if (!has_permission('edit any survey')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
     
     $survey = $this->survey_model->get($sid);
@@ -251,7 +238,7 @@ class Survey extends CI_Controller {
    */
   public function survey_delete_by_id(){
     if (!has_permission('delete any survey')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
     
     $this->form_validation->set_rules('survey_sid', 'Survey ID', 'required|callback__cb_survey_exists');
@@ -274,7 +261,7 @@ class Survey extends CI_Controller {
    */
   public function survey_file_download($sid, $type) {
     if (!has_permission('download survey files')) {
-      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+      show_403();
     }
         
     $survey = $this->survey_model->get($sid);
@@ -296,7 +283,11 @@ class Survey extends CI_Controller {
    * /survey/:sid/(testrun|data_collection)
    */
    // TODO: Permissions for enketo.
-  public function survey_enketo($sid, $type) {    
+  public function survey_enketo($sid, $type) {
+    if ($type == 'data_collection' && !has_permission('collect data with enketo')) {
+      show_403();
+    }
+    
     $survey = $this->survey_model->get($sid);
     if ($survey) {      
       // Needed urls.
@@ -324,20 +315,28 @@ class Survey extends CI_Controller {
   }
   
   /**
-   * TODO: Survey::survey_xml_transform Docs
+   * Call task activity page. Shows a list of completed call tasks
+   * and call tasks still to complete.
+   * 
+   * Route:
+   * /survey/:sid/call_activity
    */
-  public function api_survey_xslt_transform($sid) {
+  public function survey_call_activity($sid) {
+    if (!has_permission('collect data with enketo')) {
+      show_403();
+    }
+    
     $survey = $this->survey_model->get($sid);
-    if ($survey && $survey->has_xml()) {
+    if ($survey) {
       
-      $this->load->helper('xslt_transformer');
+      $resolved = $this->call_task_model->get_resolved($sid, current_user()->uid);
+      $unresolved = $this->call_task_model->get_unresolved($sid, current_user()->uid);
       
-      $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
-      $result = $xslt_transformer->get_transform_result_sxe();
-
-      $this->output
-      ->set_content_type('text/xml')
-      ->set_output($result->asXML());
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_call_activity', array('survey' => $survey, 'call_tasks_resolved' => $resolved, 'call_tasks_unresolved' => $unresolved));
+      $this->load->view('base/html_end');
+      
     }
     else {
      show_404();
@@ -345,92 +344,235 @@ class Survey extends CI_Controller {
   }
   
   /**
-   * TODO: Survey::survey_request_numbers Docs
+   * Enketo data collection for a specific call task.
+   * 
+   * Route:
+   * /survey/:sid/data_collection/:ctid
    */
-  public function api_survey_request_respondents($sid) {
-    
-    /***** MOCK ***/
-    $all_resp = $this->session->userdata('resp');
-    if ($all_resp == FALSE) {
-      $all_resp = array(
-        'pool' => array(),
-        'requested' => array(),
-        'submitted' => array(),
-      );
-      for ($i=0;$i<1000;$i++) {
-        $all_resp['pool'][$i] = array();
-        $all_resp['pool'][$i]['number'] = 100000000 + $i;
-      }
-      $this->session->set_userdata('resp', $all_resp);
-      
-    }    
-    $REQUEST_MAX = 5;
-    
-    
-    $to_request = $REQUEST_MAX - count($all_resp['requested']);
-    
-    if ($to_request > 0) {
-      $pool_resp = $all_resp['pool'];
-      $requested = array_splice($pool_resp, 0, $to_request);
-      
-      $all_resp['pool'] = $pool_resp;
-      $all_resp['requested'] = array_merge($all_resp['requested'], $requested);
+  public function survey_enketo_single($sid, $ctid) {
+    if (!has_permission('collect data with enketo')) {
+      show_403();
     }
     
-    $this->session->set_userdata('resp', $all_resp);
-    /***** END MOCK ***/
-    
-    
-    
-    $res = array(
-      'respondents' => $all_resp['requested'],
-    );
-    
-    $this->output
-    ->set_content_type('text/json')
-    ->set_output(json_encode($res));
-  }
-  /**
-   * TODO: Survey::survey_request_csrf_token Docs
-   */
-  public function api_survey_request_csrf_token() {
-    $res = array(
-      'csrf' => $this->security->get_csrf_hash(),
-    );    
-    $this->output
-    ->set_content_type('text/json')
-    ->set_output(json_encode($res));
+    $call_task = $this->call_task_model->get($ctid);
+    $survey = $this->survey_model->get($sid);
+    if ($call_task && $survey && $survey->sid == $call_task->survey_sid) {
+      // Can only collect directly if:
+      // - Call task is assigned to current user
+      // - Call task is not resolved but it was started (unresolved).
+      if ($call_task->is_assigned(current_user()->uid) && $call_task->is_unresolved()) {
+        // Needed urls.
+        $settings = array(
+          'current_survey' => array(
+            'sid' => $sid,
+          ),
+          'single_call_task' => $call_task,
+          'url' => array(
+            'request_csrf' => base_url('api/survey/request_csrf_token'),
+            'xslt_transform' => base_url('api/survey/' . $sid . '/xslt_transform'),
+            'enketo_submit' => base_url('api/survey/enketo_submit'),
+          )
+        );
+        $this->js_settings->add($settings);
+        
+        $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_action' => 'data_collection_single'));
+        $this->load->view('navigation');
+        $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'call_task' => $call_task, 'enketo_action' => 'data_collection_single'));
+        $this->load->view('base/html_end');
+      }
+      else {
+        show_403();
+      }
+    }
+    else {
+     show_404();
+    }
   }
   
   /**
-   * TODO: Survey::survey_submit_enketo_form Docs
+   * Enketo API
+   * Converts the survey xml file to html for enketo to use
+   * 
+   * @param int $sid
+   *   The survey id
+   * 
+   * JSON output:
+   * status : {
+   *   code : ,
+   *   message:
+   * },
+   * xml_form : the xml form
+   */
+  public function api_survey_xslt_transform($sid) {
+    if (!has_permission('collect data with enketo')) {
+      return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
+    }
+      
+    $survey = $this->survey_model->get($sid);
+    // TODO: Collect Data: Check for other restrictions (like cc_op assigned) 
+    if ($survey && $survey->has_xml()) {
+      $this->load->helper('xslt_transformer');
+
+      $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
+      $result = $xslt_transformer->get_transform_result_sxe()->asXML();
+      
+      return $this->api_output(200, 'Ok!', array('xml_form' => $result));
+    }
+    else {
+      return $this->api_output(404, 'Invalid survey.', array('xml_form' => NULL));
+    }
+  }
+  
+  /**
+   * Enekto API
+   * Requests respondents for enketo. It will always send all the reserved
+   * numbers. It's needed to they are filtered against the ones in localstorage.
+   * 
+   * @param int $sid
+   *   The survey id
+   * 
+   * JSON output:
+   * status : {
+   *   code : ,
+   *   message:
+   * },
+   * respondents : Call_task_entity[]
+   */
+  public function api_survey_request_respondents($sid) {
+    if (!has_permission('collect data with enketo')) {
+      return $this->api_output(403, 'Not allowed.', array('respondents' => NULL));
+    }
+      
+    $survey = $this->survey_model->get($sid);
+    // TODO: Collect Data: Check for other restrictions (like cc_op assigned) 
+    if ($survey) {
+      // Max to reserve - from config.
+      $max_to_reserve = $this->config->item('aw_enketo_respondents_reserve');
+      
+      // Already reserved.
+      $reserved = $this->call_task_model->get_reserved($sid, current_user()->uid);
+      
+      // Extra to reserve.
+      $to_reserve = $max_to_reserve - count($reserved);
+      if ($to_reserve > 0) {
+        $newly_reserved = $this->call_task_model->reserve($sid, current_user()->uid, $to_reserve);
+        
+        // If false means that there are no respondents.        
+        if ($newly_reserved !== FALSE) {
+          $reserved = array_merge($reserved, $newly_reserved);
+        }
+      }
+      return $this->api_output(200, 'Ok!', array('respondents' => $reserved));
+    }
+    else {
+      return $this->api_output(404, 'Invalid survey.', array('respondents' => NULL));
+    }
+  }
+  
+  /**
+   * Enekto API
+   * Enketo submits data through AJAX but since it is a form submission
+   * a CSRF token is required.
+   * 
+   * JSON output:
+   * status : {
+   *   code : ,
+   *   message:
+   * },
+   * csrf : string token
+   */
+  public function api_survey_request_csrf_token() {
+    if (has_permission('api request csrf token')) {
+      return $this->api_output(200, 'Ok!', array('csrf' => $this->security->get_csrf_hash()));
+    }
+    else {
+      return $this->api_output(403, 'Not allowed.', array('csrf' => NULL));
+    }
+  }
+  
+  /**
+   * Enekto API
+   * Enketo submission handler.
+   * 
+   * JSON output:
+   * status : {
+   *   code : ,
+   *   message:
+   * }
    */
   public function api_survey_enketo_form_submit() {
-    $data = $this->input->post('respondent');
     
-    
-    $filepath = APPPATH.'logs/enketo-submit-' . date('Y-m-d') . '.txt';
-    file_put_contents($filepath, print_r($data, TRUE) . "\n", FILE_APPEND);
-    
-    
-    $resp_number = $data['number'];
-    $all_resp = $this->session->userdata('resp');
-
-    foreach ($all_resp['requested'] as $key => $value) {
-      if ($resp_number == $value['number']){
-        
-        $all_resp['submitted'][] = $all_resp['requested'][$key];
-        unset($all_resp['requested'][$key]);
-        
-        break;
-      }
+    if (!has_permission('collect data with enketo')) {
+      return $this->api_output(403, 'Not allowed.');
     }
-    $this->session->set_userdata('resp', $all_resp);
+
+    $sid = (int) $this->input->post('sid');
+    $respondent = $this->input->post('respondent');
+    $ctid = (int) $respondent['ctid'];
     
-    sleep(1);
-    $this->output
-    ->set_content_type('text')
-    ->set_output('OK from server ' . $resp_number . ' | ' . $this->input->post('sid'));
+    $call_task = $this->call_task_model->get($ctid);
+    if (!$call_task) {
+      return $this->api_output(500, 'Invalid call task.');
+    }
+    
+    // Is the call task assigned to the provided survey?
+    if ($sid != $call_task->survey_sid) {
+      return $this->api_output(500, 'Call task not assigned to survey.');
+    }
+    
+    // If the same computer is shared by different users it may happen
+    // that an user uploads data another user left in the localStorage.
+    // We do not save that data, but we send a response to keep it in
+    // the localstorage.
+    // The call task can't be resolved.
+    // There has to be someone assigned to it.
+    // It can't be the logged in user.
+    if (!$call_task->is_resolved() && $call_task->is_assigned() && current_user()->uid != $call_task->assignee_uid) {
+      return $this->api_output(201, 'Submitting data for another user.');
+    }
+    
+    // TODO : api_survey_enketo_form_submit : additional checks (user assigned, survey in right status)
+    
+    if (current_user()->uid != $call_task->assignee_uid) {
+      return $this->api_output(500, 'User not assigned to call task.');
+    }
+    
+    // Was the survey completed?
+    // If there's a form_data it's finished
+    if (isset($respondent['form_data'])) {
+      // TODO: api_survey_enketo_form_submit : Check if the data is valid.
+      
+      // TODO: api_survey_enketo_form_submit : Save the data.
+      
+      // Set successful status.
+      try {
+        $call_task->add_status(Call_task_status::create(Call_task_status::SUCCESSFUL, ''));
+      } catch (Exception $e) {
+        return $this->api_output(500, 'Trying to submit data for a resolved call task.');
+      }
+      
+    }
+    elseif (isset($respondent['new_status']['code']) && isset($respondent['new_status']['msg'])) {
+      
+      if ($respondent['new_status']['code'] == Call_task_status::SUCCESSFUL) {
+        return $this->api_output(500, 'Successful status can not be set manually.');
+      }
+      
+      try {
+        $new_status = Call_task_status::create($respondent['new_status']['code'], xss_clean(trim($respondent['new_status']['msg'])));
+        $call_task->add_status($new_status);
+        
+      } catch (Exception $e) {
+        return $this->api_output(500, 'Invalid call task status.');
+      }      
+    }
+    else {
+      // No form_data or new_status found. Error.
+      return $this->api_output(500, 'Missing data form_data and new_status.');
+    }
+    
+    $this->call_task_model->save($call_task);
+    return $this->api_output();
   }
   
   // TODO: Survey. Delete delay function.
@@ -448,6 +590,22 @@ class Survey extends CI_Controller {
    * Callback for form validation
    * etc
    */
+   
+   protected function api_output($code = 200, $msg = 'Ok!', $extra = array()) {
+     $res = array(
+      'status' => array(
+        'code' => $code,
+        'message' => $msg,
+      )
+    );
+    $res = array_merge($res, $extra);
+    
+    $this->output
+    ->set_content_type('text/json')
+    ->set_output(json_encode($res));
+
+    return TRUE;
+   }
   
   /**
    * Checks if the submitted status is valid
@@ -490,7 +648,7 @@ class Survey extends CI_Controller {
         return true;
       }
       else {
-        // possibly do some clean up ... then throw an error
+        // Possibly do some clean up ... then throw an error
         $this->form_validation->set_message('_cb_survey_file_handle', $this->upload->display_errors());
         return false;
       }

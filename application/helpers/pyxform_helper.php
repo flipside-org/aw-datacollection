@@ -1,17 +1,17 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-/**
- * xls2xform
- * Converts xls form into xml using pyxform library.
- * 
- * @param string $source
- *   The source
- * @param string $destination
- * 
- * @return array
- *   Result of conversion.
- */
 if ( ! function_exists('xls2xform')) {
+  /**
+   * xls2xform
+   * Converts xls form into xml using pyxform library.
+   * 
+   * @param string $source
+   *   The source
+   * @param string $destination
+   * 
+   * @return array
+   *   Result of conversion.
+   */
   function xls2xform($source, $destination) {
     $pyxform_lib = get_instance()->config->item('aw_pyxform_lib');
     

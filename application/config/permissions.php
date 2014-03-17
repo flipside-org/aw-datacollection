@@ -24,24 +24,30 @@
 // Some constants to define roles.
 define('ROLE_ANONYMOUS', 'anonymous');
 define('ROLE_LOGGED', 'authenticated');
+define('ROLE_ADMINISTRATOR', 'administrator');
+define('ROLE_CC_OPERATOR', 'cc_operator');
 
 $config['roles'] = array(
-  'administrator' => 'Administrator',
-  'cc_operator' => 'CC Operator'
+  ROLE_ADMINISTRATOR => 'Administrator',
+  ROLE_CC_OPERATOR => 'CC Operator'
 );
 
 $config['permissions'] = array(
   // Users.
   'edit own account' => array(ROLE_LOGGED),
-  'edit any account' => array('administrator'),
-  'create account' => array('administrator'),
-  'view user list' => array('administrator'),
+  'edit any account' => array(ROLE_ADMINISTRATOR),
+  'create account' => array(ROLE_ADMINISTRATOR),
+  'view user list' => array(ROLE_ADMINISTRATOR),
   
   // Surveys.
   'view survey list' => array(ROLE_LOGGED),
   'view survey page' => array(ROLE_LOGGED),
-  'edit any survey' => array('administrator'),
-  'create survey' => array('administrator'),
-  'delete any survey' => array('administrator'),
+  'edit any survey' => array(ROLE_ADMINISTRATOR),
+  'create survey' => array(ROLE_ADMINISTRATOR),
+  'delete any survey' => array(ROLE_ADMINISTRATOR),
   'download survey files' => array(ROLE_LOGGED),
+  
+  'collect data with enketo' => array(ROLE_LOGGED),
+  
+  'api request csrf token' => array(ROLE_LOGGED),
 );

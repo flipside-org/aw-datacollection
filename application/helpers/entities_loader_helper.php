@@ -4,14 +4,14 @@
 // Load entity base class.
 require_once ENTITIES_DIR . 'entity.php';
 
-/**
- * Loads given entity.
- * _entity.php should be ommited.
- * 
- * @param string $entity
- * @return int 
- */
 if ( ! function_exists('load_entity')) {
+  /**
+   * Loads given entity.
+   * _entity.php should be ommited.
+   * 
+   * @param string $entity
+   * @return int 
+   */
   function load_entity($entity_name) {
     require_once ENTITIES_DIR . "{$entity_name}_entity.php";
   }

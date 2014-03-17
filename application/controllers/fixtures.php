@@ -1,6 +1,12 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Fixtures extends CI_Controller {
+  
+  function __construct() {
+    parent::__construct();
+    $this->_env_check();
+    $this->load->helper('password_hashing');
+  }
 
   public function index() {
 
@@ -8,6 +14,7 @@ class Fixtures extends CI_Controller {
     echo anchor('fixtures/all', 'All') . '<br/>';
     echo anchor('fixtures/surveys', 'Surveys') . '<br/>';
     echo anchor('fixtures/users', 'Users') . '<br/>';
+    echo anchor('fixtures/call_tasks', 'Call tasks') . '<br/>';
   }
 
   private function _env_check() {
@@ -20,28 +27,30 @@ class Fixtures extends CI_Controller {
    * Populate db.
    */
   public function all() {
-    $this->_env_check();
     // Down with the DB.
     $this->_tear_down();
 
     $this->_fix_surveys();
     $this->_fix_users();
+    $this->_fix_call_tasks();
     redirect('/');
   }
 
   public function surveys() {
-    $this->_env_check();
     $this->mongo_db->dropCollection('aw_datacollection', 'surveys');
     $this->_fix_surveys();
     redirect('/');
   }
 
   public function users() {
-    $this->_env_check();
-
-    $this->load->helper('password_hashing');
     $this->mongo_db->dropCollection('aw_datacollection', 'users');
     $this->_fix_users();
+    redirect('/');
+  }
+
+  public function call_tasks() {
+    $this->mongo_db->dropCollection('aw_datacollection', 'call_tasks');
+    $this->_fix_call_tasks();
     redirect('/');
   }
 
@@ -61,6 +70,10 @@ class Fixtures extends CI_Controller {
     // Copy files for survey : Meteor usage
     copy('resources/valid_survey/survey_1_xls.xls', 'files/surveys/survey_1_xls.xls');
     copy('resources/valid_survey/survey_1_xml.xml', 'files/surveys/survey_1_xml.xml');
+    
+    // Copy files for survey : Handlebars vs something else
+    copy('resources/valid_survey/survey_2_xls.xls', 'files/surveys/survey_2_xls.xls');
+    copy('resources/valid_survey/survey_2_xml.xml', 'files/surveys/survey_2_xml.xml');
 
     $this->mongo_db->batchInsert('surveys', array(
       array(
@@ -72,7 +85,7 @@ class Fixtures extends CI_Controller {
           'xls' => "survey_1_xls.xls",
           'xml' => "survey_1_xml.xml",
           'last_conversion' => array(
-            'date' => 1390493562,
+            'date' => Mongo_db::date(),
             'warnings' => NULL
           )
         ),
@@ -84,10 +97,10 @@ class Fixtures extends CI_Controller {
         'status' => 1,
         'introduction' => 'The text the user has to read.',
         'files' => array(
-          'xls' => NULL,
-          'xml' => NULL,
+          'xls' => "survey_2_xls.xls",
+          'xml' => "survey_2_xml.xml",
           'last_conversion' => array(
-            'date' => NULL,
+            'date' => Mongo_db::date(),
             'warnings' => NULL
           )
         ),
@@ -164,7 +177,7 @@ class Fixtures extends CI_Controller {
     $this->mongo_db->batchInsert('users', array(
       array(
         'uid' => increment_counter('user_uid'),
-        'email' => 'admin@localhost',
+        'email' => 'admin@localhost.dev',
         'name' => 'Admin',
         'username' => 'admin',
         'password' => hash_password('admin'),
@@ -176,7 +189,7 @@ class Fixtures extends CI_Controller {
       ),
       array(
         'uid' => increment_counter('user_uid'),
-        'email' => 'regular@localhost',
+        'email' => 'regular@localhost.dev',
         'name' => 'Regular user',
         'username' => 'regular',
         'password' => hash_password('regular'),
@@ -185,8 +198,110 @@ class Fixtures extends CI_Controller {
         'status' => 2,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'operator@localhost.dev',
+        'name' => 'The Operator',
+        'username' => 'operator',
+        'password' => hash_password('operator'),
+        'roles' => array('cc_operator'),
+        'author' => 1,
+        'status' => 2,
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
       )
     ));
+  }
+
+  /**
+   * Fixtures
+   * Sets up demo call tasks.
+   */
+  private function _fix_call_tasks() {
+    load_entity('call_task');
+    
+    $this->mongo_db->addIndex('call_tasks', array('ctid' => 'asc'));
+    // Add some respondents with very specific status.
+    $this->mongo_db->batchInsert('call_tasks', array(
+      array(
+        'ctid' => increment_counter('call_task_ctid'),
+        'number' => "1000000000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 1,
+        'survey_sid' => 2,
+        'activity' => array(
+          array(
+            'code' => Call_task_status::NO_REPLY,
+            'message' => NULL,
+            'author' => 1,
+            'created' => Mongo_db::date()
+          ),
+          array(
+            'code' => Call_task_status::NO_REPLY,
+            'message' => NULL,
+            'author' => 1,
+            'created' => Mongo_db::date()
+          )
+        )
+      ),
+      array(
+        'ctid' => increment_counter('call_task_ctid'),
+        'number' => "1000000000001",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 3,
+        'survey_sid' => 2,
+        'activity' => array(
+          array(
+            'code' => Call_task_status::CANT_COMPLETE,
+            'message' => 'Not to be done right now. Maybe later.',
+            'author' => 3,
+            'created' => Mongo_db::date()
+          )
+        )
+      ),
+      array(
+        'ctid' => increment_counter('call_task_ctid'),
+        'number' => "1000000000002",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 3,
+        'survey_sid' => 2,
+        'activity' => array(
+          array(
+            'code' => Call_task_status::INVALID_NUMBER,
+            'message' => NULL,
+            'author' => 3,
+            'created' => Mongo_db::date()
+          )
+        )
+      )
+    ));
+    
+    // Add some respondents to be used for data collection.
+    $respondents = array();
+    for($r = 3; $r < 100; $r++) {
+      $respondents[] =  array(
+        'ctid' => increment_counter('call_task_ctid'),
+        'number' => (string)(1000000000000 + $r),
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => NULL,
+        'author' => 1,
+        'assignee_uid' => NULL,
+        'survey_sid' => 2,
+        'activity' => array()
+      );
+    }
+    $this->mongo_db->batchInsert('call_tasks', $respondents);
   }
 
 }
