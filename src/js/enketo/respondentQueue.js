@@ -57,14 +57,15 @@ RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queu
   catch(e) {
     stored_data = [];
   }
-
+  
   // Remove from new_respondents the respondents that are already
   // scheduled for submission.
   if ($.isArray(stored_data) && stored_data.length > 0) {
 
     var filtered = $.grep(new_respondents, function(n, index) {
       for (var i in stored_data) {
-        if (n.number == stored_data[i].number) { return false; }
+        // ctid is the call task id.
+        if (n.ctid == stored_data[i].ctid) { return false; }
       }
       return true;
     });
@@ -96,7 +97,8 @@ RespondentQueue.prepareQueue = function(new_respondents, current_respondent_queu
     // previous queue. In the end we will be left only with the new numbers.
     var filtered = $.grep(new_respondents, function(n, index) {
       for (var i in current_queue) {
-        if (n.number == current_queue[i].number) { return false; }
+        // ctid is the call task id.
+        if (n.ctid == current_queue[i].ctid) { return false; }
       }
       return true;
     });

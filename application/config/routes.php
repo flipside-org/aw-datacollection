@@ -56,6 +56,9 @@ $route['survey/(:num)/respondents/add'] = 'survey/survey_respondents_add/$1';
 
 $route['survey/(:num)/xslt_transform'] = 'survey/survey_xslt_transform/$1';
 
+$route['survey/(:num)/call_activity'] = 'survey/survey_call_activity/$1';
+$route['survey/(:num)/data_collection/(:num)'] = 'survey/survey_enketo_single/$1/$2';
+
 // URLs for enketo. To avoid confusion will call them api
 // Every method that is related to an API should start with api_[name]
 $route['api/survey/request_csrf_token'] = 'survey/api_survey_request_csrf_token';

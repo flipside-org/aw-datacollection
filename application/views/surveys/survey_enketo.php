@@ -25,10 +25,11 @@
 
 
 
-<?php if ($enketo_action == 'data_collection'): ?>
+<?php if ($enketo_action == 'data_collection' || $enketo_action == 'data_collection_single'): ?>
 <div class="row">
   <div class="small-12 columns">
     <h2>Number: <small id="respondent_number">Waiting for number...</small></h2>
+    
     <div class="intro-text"><?= nl2br_except_pre($survey->introduction) ?></div>
     
     <div class="call-actions hide" style="margin-top: 20px">
