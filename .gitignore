@@ -22,5 +22,6 @@ node_modules
 src/bower_components
 
 #Scripts and css
-assets/css
+assets/styles
 assets/scripts
+assets/images/vendor
