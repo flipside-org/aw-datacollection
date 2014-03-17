@@ -48,7 +48,10 @@ module.exports = function(grunt) {
     uglify: {
       prod: {
         files: {
-          'assets/scripts/website.min.js': ['src/js/*.js'],
+          'assets/scripts/website.min.js': [
+            'src/js/libs/chosen/chosen.jquery.min.js',
+            'src/js/*.js'
+           ],
           
           'assets/scripts/media.min.js': [
             'src/bower_components/modernizr/modernizr.js',
@@ -98,6 +101,11 @@ module.exports = function(grunt) {
         files: ['src/js/*.js', 'src/sass/*.scss'],
         tasks: ['default']
       }
+    },
+    
+    // https://github.com/gruntjs/grunt-contrib-concat
+    concat : {
+      
     }
     
   });
@@ -108,6 +116,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   
   // Register tasks.
   grunt.registerTask('build', ['compass:dev', 'jshint:dev', 'uglify']);
