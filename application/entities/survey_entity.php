@@ -74,7 +74,7 @@ class Survey_entity extends Entity {
   
   /**
    * Survey introduction.
-   * Text presented to the CC operator when collecting data.
+   * Text presented to the CC Agent when collecting data.
    * @var int
    * @access public
    */
@@ -102,7 +102,7 @@ class Survey_entity extends Entity {
   );
   
   /**
-   * Operators assigned to this survey.
+   * Agents assigned to this survey.
    */
   public $agents = array();
   

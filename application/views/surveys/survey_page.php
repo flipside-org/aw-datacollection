@@ -19,7 +19,7 @@
     <?php endif; ?>
   <?php endif; ?>
   
-  <h2>Operators</h2>
+  <h2>Agents</h2>
   
   <?= form_open($survey->get_url_assign_agents(), array('id' => 'assign-agents')); ?>
   <select data-placeholder="Assign Call Center Agents" class="chosen-select" style="width:350px;" multiple>

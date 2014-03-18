@@ -52,7 +52,7 @@ class Call_task_model extends CI_Model {
   
   /**
    * Returns all the Call tasks of a given survey that are not yet
-   * assigned to an operator.
+   * assigned to an agent.
    *  
    * @param int $sid
    *  Since all the call tasks are bound to a survey its id is needed.
@@ -77,7 +77,7 @@ class Call_task_model extends CI_Model {
   }
   
   /**
-   * Returns all the Call tasks of a given operator for a given survey that
+   * Returns all the Call tasks of a given agent for a given survey that
    * are resolved.
    * A call task is resolved when:
    * - 1. The last status in the activity array is:
@@ -169,7 +169,7 @@ class Call_task_model extends CI_Model {
   }
 
   /**
-   * Returns all the Call tasks of a given operator for a given survey that
+   * Returns all the Call tasks of a given agent for a given survey that
    * are unresolved.
    * A call task is unresolved when:
    * - 1. The last status in the activity array is:
@@ -255,7 +255,7 @@ class Call_task_model extends CI_Model {
   }
 
   /**
-   * Returns all the Call tasks of a given operator for a given survey that
+   * Returns all the Call tasks of a given agent for a given survey that
    * are reserved.
    * A call task is reserved when:
    * - It ws assigned to a user but there's no activity.
@@ -367,7 +367,7 @@ class Call_task_model extends CI_Model {
    * @param int $sid
    *   Since all the call tasks are bound to a survey its id is needed.
    * 
-   * @uses config item aw_enketo_respondents_reserve_exprire
+   * @uses config item aw_enketo_call_tasks_reserve_exprire
    * 
    * @return bool
    *   Whether something was updated or not.
@@ -375,7 +375,7 @@ class Call_task_model extends CI_Model {
   public function clean_expired_reserve($sid) {
     $sid = (int) $sid;
     
-    $expire_time = $this->config->item('aw_enketo_respondents_reserve_exprire');    
+    $expire_time = $this->config->item('aw_enketo_call_tasks_reserve_exprire');    
     return $this->mongo_db
       ->where('survey_sid', $sid)
       ->where('activity', array())

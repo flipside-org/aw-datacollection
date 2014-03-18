@@ -48,7 +48,7 @@ class User_model_test extends PHPUnit_Framework_TestCase
         'name' => 'multiple roles user',
         'username' => 'multiple',
         'password' => hash_password('multiple'),
-        'roles' => array(ROLE_ADMINISTRATOR, ROLE_CC_OPERATOR),
+        'roles' => array(ROLE_ADMINISTRATOR, ROLE_CC_AGENT),
         'author' => null,
         'status' => 2,
         
@@ -106,15 +106,15 @@ class User_model_test extends PHPUnit_Framework_TestCase
   }
   
   public function test_get_with_role() {
-    $users = self::$CI->user_model->get_with_role(ROLE_CC_OPERATOR);
+    $users = self::$CI->user_model->get_with_role(ROLE_CC_AGENT);
     $this->assertCount(1, $users);
     $this->assertEquals(99, $users[0]->uid);
     
-    $users = self::$CI->user_model->get_with_role(array(ROLE_CC_OPERATOR));
+    $users = self::$CI->user_model->get_with_role(array(ROLE_CC_AGENT));
     $this->assertCount(1, $users);
     $this->assertEquals(99, $users[0]->uid);
     
-    $users = self::$CI->user_model->get_with_role(array(ROLE_ADMINISTRATOR, ROLE_CC_OPERATOR));
+    $users = self::$CI->user_model->get_with_role(array(ROLE_ADMINISTRATOR, ROLE_CC_AGENT));
     $this->assertCount(1, $users);
     
     $users = self::$CI->user_model->get_with_role(ROLE_ADMINISTRATOR);

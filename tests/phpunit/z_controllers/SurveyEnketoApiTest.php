@@ -71,7 +71,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'name' => 'Admin',
         'username' => 'admin',
         'password' => hash_password('admin'),
-        'roles' => array('administrator'),
+        'roles' => array(ROLE_ADMINISTRATOR),
         'author' => null,
         'status' => 2,
         'created' => Mongo_db::date(),
@@ -91,11 +91,11 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
       ),
       array(
         'uid' => increment_counter('user_uid'),
-        'email' => 'operator@localhost.dev',
-        'name' => 'The Operator',
-        'username' => 'operator',
-        'password' => hash_password('operator'),
-        'roles' => array('cc_operator'),
+        'email' => 'agent@localhost.dev',
+        'name' => 'The Agent',
+        'username' => 'agent',
+        'password' => hash_password('agent'),
+        'roles' => array(ROLE_CC_AGENT),
         'author' => 1,
         'status' => 2,
         'created' => Mongo_db::date(),
@@ -481,7 +481,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     /*************************************************************************/
     
-    // User is not an operator.
+    // User is not an agent.
     $_POST = array(
       'uid' => 2,
       'action' => 'assign',
@@ -490,7 +490,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     self::$CI->api_survey_assign_agents(2);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
-    $this->assertEquals(array('code' => 500, 'message' => 'User is not an operator.'), $result['status']);
+    $this->assertEquals(array('code' => 500, 'message' => 'User is not an agent.'), $result['status']);
     
     /*************************************************************************/
     

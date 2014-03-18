@@ -11,7 +11,7 @@
 | - anonymous (This is a role assigned by the system.)
 | - authenticated (This is a role assigned by the system.)
 |
-| - cc_operator
+| - cc_agent
 | - administrator
 |
 |
@@ -25,11 +25,11 @@
 define('ROLE_ANONYMOUS', 'anonymous');
 define('ROLE_LOGGED', 'authenticated');
 define('ROLE_ADMINISTRATOR', 'administrator');
-define('ROLE_CC_OPERATOR', 'cc_operator');
+define('ROLE_CC_AGENT', 'cc_agent');
 
 $config['roles'] = array(
   ROLE_ADMINISTRATOR => 'Administrator',
-  ROLE_CC_OPERATOR => 'CC Operator'
+  ROLE_CC_AGENT => 'CC Agent'
 );
 
 $config['permissions'] = array(

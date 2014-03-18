@@ -68,9 +68,9 @@ class Survey extends CI_Controller {
       // Agents. Each array element contains the user and
       // properties for the select. (selected, disabled)
       $agents = array();
-      // Prepare users
-      $all_operators = $this->user_model->get_with_role(ROLE_CC_OPERATOR);
-      foreach ($all_operators as $index => $user) {
+      // Prepare users.
+      $all_agents = $this->user_model->get_with_role(ROLE_CC_AGENT);
+      foreach ($all_agents as $index => $user) {
         $agents[$index]['user'] = $user;
         $agents[$index]['properties'] = array();
         
@@ -466,7 +466,7 @@ class Survey extends CI_Controller {
     // TODO: Collect Data: Check for other restrictions (like cc_op assigned) 
     if ($survey) {
       // Max to reserve - from config.
-      $max_to_reserve = $this->config->item('aw_enketo_respondents_reserve');
+      $max_to_reserve = $this->config->item('aw_enketo_call_tasks_reserve');
       
       // Already reserved.
       $reserved = $this->call_task_model->get_reserved($sid, current_user()->uid);
@@ -613,8 +613,8 @@ class Survey extends CI_Controller {
       return $this->api_output(500, 'Invalid user.');
     }
     
-    if (!$user->has_role(ROLE_CC_OPERATOR)) {
-      return $this->api_output(500, 'User is not an operator.');
+    if (!$user->has_role(ROLE_CC_AGENT)) {
+      return $this->api_output(500, 'User is not an agent.');
     }
     
     $needs_saving = FALSE;
