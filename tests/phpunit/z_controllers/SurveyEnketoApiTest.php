@@ -455,6 +455,18 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     // Force user reloading.
     current_user(TRUE);
     
+    // Missing user id.
+    $_POST = array(
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_assign_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid user.'), $result['status']);
+    
+    /*************************************************************************/
+    
     // Non existent user and survey.
     $_POST = array(
       'uid' => 999,
