@@ -122,6 +122,9 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $users = self::$CI->user_model->get_with_role(array());
     $this->assertCount(1, $users);
+    
+    $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED);
+    $this->assertCount(3, $users);
   }
   
   /**

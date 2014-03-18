@@ -105,6 +105,7 @@ class User_model extends CI_Model {
    * @param mixed roles
    *   Single role or array of roles the user has to have.
    *   If an empty array is provided it will return users without roles.
+   *   If ROLE_REGISTERED is provided, all users will be returned.
    * 
    * @return User_entity
    */
@@ -113,11 +114,13 @@ class User_model extends CI_Model {
       $roles = array($roles);
     }
     
-    if (empty($roles)) {
-      $this->mongo_db->where('roles', array());
-    }
-    else {
-      $this->mongo_db->whereInAll('roles', $roles);
+    if (!in_array(ROLE_REGISTERED, $roles)) {
+      if (empty($roles)) {
+        $this->mongo_db->where('roles', array());
+      }
+      else {
+        $this->mongo_db->whereInAll('roles', $roles);
+      }
     }
     
     $result = $this->mongo_db->get(self::COLLECTION);
