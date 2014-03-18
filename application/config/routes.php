@@ -63,6 +63,9 @@ $route['api/survey/(:num)/xslt_transform'] = 'survey/api_survey_xslt_transform/$
 $route['api/survey/(:num)/request_respondents'] = 'survey/api_survey_request_respondents/$1';
 $route['api/survey/enketo_submit'] = 'survey/api_survey_enketo_form_submit';
 
+// Other API's
+$route['api/survey/(:num)/assign_agents'] = 'survey/api_survey_assign_agents/$1';
+
 // Users
 $route['login'] = 'user/user_login';
 $route['logout'] = 'user/user_logout';

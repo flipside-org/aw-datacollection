@@ -437,6 +437,96 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     /*************************************************************************/
   }
 
+  public function test_api_survey_assign_agents_logged_out() {
+    // Logout user
+    self::$CI->session->set_userdata(array('user_uid' => NULL));
+    // Force user reloading.
+    current_user(TRUE);
+    
+    // Not logged
+    self::$CI->api_survey_assign_agents(999);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
+  }
+
+  public function test_api_survey_assign_agents() {
+    // Login user.
+    self::$CI->session->set_userdata(array('user_uid' => 1));
+    // Force user reloading.
+    current_user(TRUE);
+    
+    // Non existent user and survey.
+    $_POST = array(
+      'uid' => 999,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_assign_agents(999);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid survey.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Non existent user.
+    $_POST = array(
+      'uid' => 999,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_assign_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid user.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // User is not an operator.
+    $_POST = array(
+      'uid' => 2,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_assign_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'User is not an operator.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Assign Ok!.
+    $_POST = array(
+      'uid' => 3,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_assign_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    
+    $survey = self::$CI->survey_model->get(2);
+    $this->assertEquals(array(3), $survey->agents);
+    
+    /*************************************************************************/
+    
+    // Unassign Ok!.
+    $_POST = array(
+      'uid' => 3,
+      'action' => 'unassign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_assign_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    
+    $survey = self::$CI->survey_model->get(2);
+    $this->assertEmpty($survey->agents);
+    
+    /*************************************************************************/
+    
+  }
 }
 
 ?>

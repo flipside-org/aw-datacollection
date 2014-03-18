@@ -594,6 +594,52 @@ class Survey extends CI_Controller {
     return $this->api_output();
   }
   
+  public function api_survey_assign_agents($sid) {
+    if (!has_permission('assign agents')) {
+      return $this->api_output(403, 'Not allowed.');
+    }
+    
+    $uid = (int) $this->input->post('uid');
+    $action = $this->input->post('action');
+    
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      return $this->api_output(500, 'Invalid survey.');
+    }
+    // TODO : api_survey_assign_agents : additional checks (survey in right status, the user can be assigned | unassigned)
+    
+    $user = $this->user_model->get($uid);
+    if (!$user) {
+      return $this->api_output(500, 'Invalid user.');
+    }
+    
+    if (!$user->has_role(ROLE_CC_OPERATOR)) {
+      return $this->api_output(500, 'User is not an operator.');
+    }
+    
+    $needs_saving = FALSE;
+    if($action == 'assign') {
+      // Returns true if agent is actually added.
+      if ($survey->assign_agent($user->uid)) {
+        $needs_saving = TRUE;
+      }
+    }
+    else {
+      // Returns true if agent is actually removed.
+      if ($survey->unassign_agent($user->uid)) {
+        $needs_saving = TRUE;
+      }
+    }
+    
+    // Only save if needed
+    if ($needs_saving && !$this->survey_model->save($survey)) {
+      return $this->api_output(500, 'Failed saving the survey.');
+    }
+    
+    return $this->api_output(200, 'Ok!');
+    
+  }
+  
   // TODO: Survey. Delete delay function.
   public function delay($sec) {
     sleep($sec);

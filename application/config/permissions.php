@@ -46,6 +46,7 @@ $config['permissions'] = array(
   'create survey' => array(ROLE_ADMINISTRATOR),
   'delete any survey' => array(ROLE_ADMINISTRATOR),
   'download survey files' => array(ROLE_LOGGED),
+  'assign agents' => array(ROLE_ADMINISTRATOR),
   
   'collect data with enketo' => array(ROLE_LOGGED),
   

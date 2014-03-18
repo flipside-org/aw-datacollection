@@ -1,29 +1,47 @@
 $(document).ready(function() {
   $(".chosen-select").chosen();
-  
+
   $(".chosen-select").on('change', function(evt, params) {
-    if (typeof params.selected != 'undefined') {
+    if ( typeof params.selected != 'undefined') {
       var action = 'assign';
       var uid = params.selected;
-    }
-    else if (typeof params.deselected != 'undefined') {
+    } else if ( typeof params.deselected != 'undefined') {
       var action = 'unassign';
       var uid = params.deselected;
-    }
-    else {
+    } else {
       // Nothing to do here.
       return false;
     }
-    
-    
-    console.log(action);
-    console.log(uid);
-    // To unselect
-    /*
-      console.log('fire!');
-      $(".chosen-select option[value=" + uid + "]").prop("selected", false);
+
+    var submit_url = $('#assign-agents').attr('action');
+    var CSRF_token = $('#assign-agents input[name=csrf_aw_datacollection]').val();
+
+    // Submit data
+    $.post(submit_url, {
+      uid : uid,
+      action : action,
+      csrf_aw_datacollection : CSRF_token
+    }, function(res) {
+      if (res.status.code == 500) {
+        console.log(res);
+        alert('An error occurred. Try again later.');
+        agent_assign_revert(action, uid);
+      }
+    }).fail(function(res) {
+      // TODO: Replace alert.
+      alert('An error occurred. Try again later.');
+      agent_assign_revert(action, uid);
+    });
+
+    function agent_assign_revert(action, uid) {
+      var $opt = $(".chosen-select option[value=" + uid + "]");
+      if (action == 'assign') {
+        $opt.prop("selected", false);
+      } else {
+        $opt.prop("selected", true);
+      }
       $(".chosen-select").trigger('chosen:updated');
-    // To unselect */
-    
+    }
+
   });
 });

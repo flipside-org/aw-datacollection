@@ -20,6 +20,7 @@ document-it
 .sass-cache
 node_modules
 src/bower_components
+src/temp
 
 #Scripts and css
 assets/styles
