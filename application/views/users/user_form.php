@@ -26,8 +26,11 @@
   <?php if ($action == 'edit_other' || $action == 'add'): ?>
     <?= form_label('Roles', 'user_roles'); ?>
     <?php foreach ($this->config->item('roles') as $key => $role_name): ?>
+      <?php
+        $checked_role = isset($user) ? $user->has_role($key) : FALSE;
+      ?>
       <div>
-      <?= form_checkbox('user_roles[]', $key, in_array($key, property_if_not_null($user, 'roles', array()))); ?>
+      <?= form_checkbox('user_roles[]', $key, set_value('user_roles', $checked_role)); ?>
       <?= $role_name; ?>
       </div>
     <?php endforeach; ?>
