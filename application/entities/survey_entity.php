@@ -24,7 +24,14 @@ class Survey_entity extends Entity {
   const STATUS_CLOSED = 3;
   const STATUS_CANCELED = 99;
   
-  static $status_labels = array(
+  /**
+   * Statuses of a survey.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses = array(
     Survey_entity::STATUS_DRAFT => 'Draft',
     Survey_entity::STATUS_OPEN => 'Open',
     Survey_entity::STATUS_CLOSED => 'Closed',
@@ -133,20 +140,6 @@ class Survey_entity extends Entity {
    */
   protected $settings = array(
     'file_loc' => ''
-  );
-  
-  /**
-   * Allowed statuses of a survey.
-   * 
-   * @var array
-   * @access public
-   * @static
-   */
-  static $allowed_status = array(
-    1 => 'Draft',
-    2 => 'Open',
-    3 => 'Closed',
-    99 => 'Canceled'
   );
   
   /**
@@ -289,11 +282,11 @@ class Survey_entity extends Entity {
    * @access public
    * @return string
    */
-  public function get_url_assign_agents() {
+  public function get_url_manage_agents() {
     if ($this->sid == NULL) {
       throw new Exception("Trying to get link for a nonexistent survey.");
     }
-    return base_url('api/survey/' . $this->sid . '/assign_agents') ;
+    return base_url('api/survey/' . $this->sid . '/manage_agents') ;
   }
   
   /**
@@ -370,7 +363,7 @@ class Survey_entity extends Entity {
   }
   
   public static function is_valid_status($status) {
-    return array_key_exists($status, self::$allowed_status);
+    return array_key_exists($status, self::$statuses);
   }
   
   /**

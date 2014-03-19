@@ -37,8 +37,21 @@
             
             <?php if ($survey_entity->has_xml()) : ?>
               <li><a href="<?= $survey_entity->get_url_survey_enketo('testrun') ?>" class="button tiny secondary">Test Run</a></li>
-              <li><a href="<?= $survey_entity->get_url_survey_enketo('collection') ?>" class="button tiny success">Collect Data</a></li>
-              <li><a href="<?= $survey_entity->get_url_call_activity() ?>" class="button tiny">Call activity</a></li>
+              
+              <?php
+              $show_actions_enketo_data_collection = FALSE;
+              if (has_permission('enketo collect data any')) {
+                $show_actions_enketo_data_collection = TRUE;
+              }
+              else if (has_permission('enketo collect data assigned') && $survey_entity->is_assigned_agent(current_user()->uid)){
+                $show_actions_enketo_data_collection = TRUE;
+              }
+              
+              if ($show_actions_enketo_data_collection) :?>
+                <li><a href="<?= $survey_entity->get_url_survey_enketo('collection') ?>" class="button tiny success">Collect Data</a></li>
+                <li><a href="<?= $survey_entity->get_url_call_activity() ?>" class="button tiny">Call activity</a></li>
+              <?php endif; ?>
+              
             <?php endif; ?>
           </ul>
         </td>
