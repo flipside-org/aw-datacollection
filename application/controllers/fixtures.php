@@ -16,6 +16,14 @@ class Fixtures extends CI_Controller {
     echo anchor('fixtures/users', 'Users') . '<br/>';
     echo anchor('fixtures/call_tasks', 'Call tasks') . '<br/>';
   }
+  
+  public function switch_user($uid) {
+    // Login user.
+    $this->session->set_userdata(array('user_uid' => $uid));
+    // Force user reloading.
+    current_user(TRUE);
+    redirect($this->input->get('current'));
+  }
 
   private function _env_check() {
     if (ENVIRONMENT != 'development') {
@@ -106,8 +114,8 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
-        // Assign user 1 (admin)
-        'agents' => array(1)
+        // Assign user 3 (agent)
+        'agents' => array(3)
       ),
       array(
         'sid' => increment_counter('survey_sid'),
@@ -188,9 +196,9 @@ class Fixtures extends CI_Controller {
         'name' => 'Admin',
         'username' => 'admin',
         'password' => hash_password('admin'),
-        'roles' => array(ROLE_ADMINISTRATOR, ROLE_CC_AGENT),
+        'roles' => array(ROLE_ADMINISTRATOR),
         'author' => null,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
       ),
@@ -202,7 +210,7 @@ class Fixtures extends CI_Controller {
         'password' => hash_password('regular'),
         'roles' => array(),
         'author' => 1,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
       ),
@@ -214,7 +222,55 @@ class Fixtures extends CI_Controller {
         'password' => hash_password('agent'),
         'roles' => array(ROLE_CC_AGENT),
         'author' => 1,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'moderator@localhost.dev',
+        'name' => 'The Moderator',
+        'username' => 'moderator',
+        'password' => hash_password('moderator'),
+        'roles' => array(ROLE_MODERATOR),
+        'author' => 1,
+        'status' => User_entity::STATUS_ACTIVE,
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'blocked@localhost.dev',
+        'name' => 'The Blocked Agent',
+        'username' => 'blocked',
+        'password' => hash_password('clocked'),
+        'roles' => array(ROLE_CC_AGENT),
+        'author' => 1,
+        'status' => User_entity::STATUS_BLOCKED,
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'deleted@localhost.dev',
+        'name' => 'The Deleted',
+        'username' => 'deleted',
+        'password' => hash_password('deleted'),
+        'roles' => array(),
+        'author' => 1,
+        'status' => User_entity::STATUS_DELETED,
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'all_roles@localhost.dev',
+        'name' => 'The All Roles',
+        'username' => 'all_roles',
+        'password' => hash_password('all_roles'),
+        'roles' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR, ROLE_CC_AGENT),
+        'author' => 1,
+        'status' => User_entity::STATUS_ACTIVE,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
       )
