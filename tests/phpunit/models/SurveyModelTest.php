@@ -19,29 +19,31 @@ class Survey_model_test extends PHPUnit_Framework_TestCase
       array(
         'sid' => 1,
         'title' => 'Meteor usage',
-        'status' => 1,      
+        'status' => Survey_entity::STATUS_DRAFT,
         'files' => array(
           'xls' => NULL,
-          'xml'=> NULL,        
+          'xml'=> NULL,
           'last_conversion' => array(
             'date' => 1390493562,
             'warnings' => NULL
           )
-        ),      
+        ),
+        'agents' => array(1, 2, 3),
         'created' => Mongo_db::date()
       ),
       array(
         'sid' => 123456,
         'title' => 'Second survey',
-        'status' => 99,      
+        'status' => Survey_entity::STATUS_CANCELED,
         'files' => array(
           'xls' => NULL,
-          'xml'=> NULL,        
+          'xml'=> NULL,
           'last_conversion' => array(
             'date' => NULL,
             'warnings' => NULL
           )
-        ),      
+        ),
+        'agents' => array(1, 2),
         'created' => Mongo_db::date()
       )
     );
@@ -73,6 +75,29 @@ class Survey_model_test extends PHPUnit_Framework_TestCase
     
     $survey_two = self::$CI->survey_model->get('abc');
     $this->assertFalse($survey_two);
+  }
+  
+  public function test_get_by_status() {
+    $result = self::$CI->survey_model->get_by_status(NULL);
+    $this->assertEmpty($result);
+    
+    $result = self::$CI->survey_model->get_by_status('abc');
+    $this->assertEmpty($result);
+    
+    $result = self::$CI->survey_model->get_by_status(array());
+    $this->assertEmpty($result);
+    
+    $result = self::$CI->survey_model->get_by_status(Survey_entity::STATUS_DRAFT);
+    $this->assertCount(1, $result);
+    
+    $result = self::$CI->survey_model->get_by_status(array(Survey_entity::STATUS_DRAFT, Survey_entity::STATUS_CANCELED));
+    $this->assertCount(2, $result);
+    
+    $result = self::$CI->survey_model->get_by_status(array(Survey_entity::STATUS_DRAFT, Survey_entity::STATUS_CANCELED), 3);
+    $this->assertCount(1, $result);
+    
+    $result = self::$CI->survey_model->get_by_status(Survey_entity::STATUS_CANCELED, 3);
+    $this->assertEmpty($result);
   }
 
   /**

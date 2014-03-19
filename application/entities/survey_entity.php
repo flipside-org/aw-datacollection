@@ -19,6 +19,18 @@
  */
 class Survey_entity extends Entity {
   
+  const STATUS_DRAFT = 1;
+  const STATUS_OPEN = 2;
+  const STATUS_CLOSED = 3;
+  const STATUS_CANCELED = 99;
+  
+  static $status_labels = array(
+    Survey_entity::STATUS_DRAFT => 'Draft',
+    Survey_entity::STATUS_OPEN => 'Open',
+    Survey_entity::STATUS_CLOSED => 'Closed',
+    Survey_entity::STATUS_CANCELED => 'Canceled',
+  );
+  
   /********************************
    ********************************
    * Start of survey fields.

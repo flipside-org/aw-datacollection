@@ -25,7 +25,7 @@ class Survey_model extends CI_Model {
   function __construct() {
       parent::__construct();
   }
-  
+
   /**
    * Returns all the surveys as Survey_entity
    * @return array of Survey_entity
@@ -36,6 +36,44 @@ class Survey_model extends CI_Model {
       ->get(self::COLLECTION);
     
     $surveys = array();
+    foreach ($result as $value) {
+      $surveys[] = Survey_entity::build($value);
+    }
+    
+    return $surveys;
+  }
+
+  /**
+   * Returns all the surveys with a give status and
+   * optionally assigned to a user.
+   * 
+   * @param mixed $status
+   *    Single survey status or array of statuses.
+   * @param $uid
+   *   Assigned user (optional). If not provided it will return all the
+   *   surveys that match the given status.
+   * 
+   * @return array of Survey_entity
+   */
+  public function get_by_status($status, $uid = NULL) {
+    $surveys = array();
+    if (empty($status)) {
+      return $surveys;
+    }
+    
+    if (!is_array($status)) {
+      $status = array($status);
+    }
+    
+    if ($uid) {
+      $this->mongo_db->where('agents', $uid);
+    }
+    
+    $result = $this->mongo_db
+      ->whereIn('status', $status)
+      ->orderBy(array('created' => 'desc'))
+      ->get(self::COLLECTION);
+    
     foreach ($result as $value) {
       $surveys[] = Survey_entity::build($value);
     }
