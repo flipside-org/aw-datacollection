@@ -32,11 +32,21 @@ class Survey extends CI_Controller {
    * /surveys
    */
   public function surveys_list(){
-    if (!has_permission('view survey list')) {
+    if (!has_permission('view survey list any') && !has_permission('view survey list assigned')) {
       show_403();
     }
     
-    $surveys = $this->survey_model->get_all();
+    if (has_permission('view survey list any')) {
+      $surveys = $this->survey_model->get_all();
+    }
+    else if (has_permission('view survey list assigned')) {
+      $allowed_statuses = array(
+        Survey_entity::STATUS_OPEN,
+        Survey_entity::STATUS_CLOSED,
+        Survey_entity::STATUS_CANCELED
+      );
+      $surveys = $this->survey_model->get_all($allowed_statuses, current_user()->uid);
+    }
     
     $this->load->view('base/html_start');
     $this->load->view('navigation');

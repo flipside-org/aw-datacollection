@@ -66,6 +66,39 @@ class Survey_model_test extends PHPUnit_Framework_TestCase
     
   }
   
+  public function test_get_all__with_restrictions() {
+    // Status abc.
+    $result = self::$CI->survey_model->get_all('abc');
+    $this->assertEmpty($result);
+    
+    // Status empty array.
+    $result = self::$CI->survey_model->get_all(array());
+    $this->assertEmpty($result);
+    
+    // Status draft.
+    $result = self::$CI->survey_model->get_all(Survey_entity::STATUS_DRAFT);
+    $this->assertCount(1, $result);
+    
+    // Status draft and canceled.
+    $result = self::$CI->survey_model->get_all(array(Survey_entity::STATUS_DRAFT, Survey_entity::STATUS_CANCELED));
+    $this->assertCount(2, $result);
+    
+    // Status draft and canceled.
+    // Assigned agent 3
+    $result = self::$CI->survey_model->get_all(array(Survey_entity::STATUS_DRAFT, Survey_entity::STATUS_CANCELED), 3);
+    $this->assertCount(1, $result);
+    
+    // Status canceled.
+    // Assigned agent 3
+    $result = self::$CI->survey_model->get_all(Survey_entity::STATUS_CANCELED, 3);
+    $this->assertEmpty($result);
+    
+    // All statuses.
+    // Assigned agent 3
+    $result = self::$CI->survey_model->get_all(NULL, 3);
+    $this->assertCount(1, $result);
+  }
+  
   public function test_get_one_surveys() {
     $sid = 1;
     $survey_one = self::$CI->survey_model->get($sid);
@@ -75,29 +108,6 @@ class Survey_model_test extends PHPUnit_Framework_TestCase
     
     $survey_two = self::$CI->survey_model->get('abc');
     $this->assertFalse($survey_two);
-  }
-  
-  public function test_get_by_status() {
-    $result = self::$CI->survey_model->get_by_status(NULL);
-    $this->assertEmpty($result);
-    
-    $result = self::$CI->survey_model->get_by_status('abc');
-    $this->assertEmpty($result);
-    
-    $result = self::$CI->survey_model->get_by_status(array());
-    $this->assertEmpty($result);
-    
-    $result = self::$CI->survey_model->get_by_status(Survey_entity::STATUS_DRAFT);
-    $this->assertCount(1, $result);
-    
-    $result = self::$CI->survey_model->get_by_status(array(Survey_entity::STATUS_DRAFT, Survey_entity::STATUS_CANCELED));
-    $this->assertCount(2, $result);
-    
-    $result = self::$CI->survey_model->get_by_status(array(Survey_entity::STATUS_DRAFT, Survey_entity::STATUS_CANCELED), 3);
-    $this->assertCount(1, $result);
-    
-    $result = self::$CI->survey_model->get_by_status(Survey_entity::STATUS_CANCELED, 3);
-    $this->assertEmpty($result);
   }
 
   /**

@@ -2,12 +2,14 @@ $(document).ready(function() {
   $(".chosen-select").chosen();
 
   $(".chosen-select").on('change', function(evt, params) {
+    var action = null;
+    var uid = null;
     if ( typeof params.selected != 'undefined') {
-      var action = 'assign';
-      var uid = params.selected;
+      action = 'assign';
+      uid = params.selected;
     } else if ( typeof params.deselected != 'undefined') {
-      var action = 'unassign';
-      var uid = params.deselected;
+      action = 'unassign';
+      uid = params.deselected;
     } else {
       // Nothing to do here.
       return false;
@@ -22,7 +24,7 @@ $(document).ready(function() {
       action : action,
       csrf_aw_datacollection : CSRF_token
     }, function(res) {
-      if (res.status.code == 500) {
+      if (typeof res.status == 'undefined' || res.status.code != 200) {
         console.log(res);
         alert('An error occurred. Try again later.');
         agent_assign_revert(action, uid);
@@ -30,6 +32,7 @@ $(document).ready(function() {
     }).fail(function(res) {
       // TODO: Replace alert.
       alert('An error occurred. Try again later.');
+      console.log(res);
       agent_assign_revert(action, uid);
     });
 

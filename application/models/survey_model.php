@@ -27,53 +27,37 @@ class Survey_model extends CI_Model {
   }
 
   /**
-   * Returns all the surveys as Survey_entity
+   * Returns all the surveys as Survey_entity.
+   * It is possible to restrict the query by passing some params.
+   * 
+   * @param mixed $statuses (optional)
+   *   Status or array of statuses to query for. Providing NULL is the same as
+   *   providing all the statuses.
+   *   Default : NULL
+   * 
+   * @param int $agent_uid (optional)
+   *   Assigned agent.
+   * 
    * @return array of Survey_entity
    */
-  public function get_all() {
+  public function get_all($statuses = NULL, $agent_uid = NULL) {
+    if ($statuses !== NULL) {
+      if (empty($statuses)) {
+        return array();
+      }
+      $statuses = !is_array($statuses) ? array($statuses) : $statuses;
+      $this->mongo_db->whereIn('status', $statuses);
+    }
+    
+    if ($agent_uid) {
+      $this->mongo_db->where('agents', (int) $agent_uid);
+    }
+    
     $result = $this->mongo_db
       ->orderBy(array('created' => 'desc'))
       ->get(self::COLLECTION);
     
     $surveys = array();
-    foreach ($result as $value) {
-      $surveys[] = Survey_entity::build($value);
-    }
-    
-    return $surveys;
-  }
-
-  /**
-   * Returns all the surveys with a give status and
-   * optionally assigned to a user.
-   * 
-   * @param mixed $status
-   *    Single survey status or array of statuses.
-   * @param $uid
-   *   Assigned user (optional). If not provided it will return all the
-   *   surveys that match the given status.
-   * 
-   * @return array of Survey_entity
-   */
-  public function get_by_status($status, $uid = NULL) {
-    $surveys = array();
-    if (empty($status)) {
-      return $surveys;
-    }
-    
-    if (!is_array($status)) {
-      $status = array($status);
-    }
-    
-    if ($uid) {
-      $this->mongo_db->where('agents', $uid);
-    }
-    
-    $result = $this->mongo_db
-      ->whereIn('status', $status)
-      ->orderBy(array('created' => 'desc'))
-      ->get(self::COLLECTION);
-    
     foreach ($result as $value) {
       $surveys[] = Survey_entity::build($value);
     }

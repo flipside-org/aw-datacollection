@@ -103,7 +103,7 @@ class Fixtures extends CI_Controller {
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Handlebars vs something else',
-        'status' => 1,
+        'status' => 2,
         'introduction' => 'The text the user has to read.',
         'files' => array(
           'xls' => "survey_2_xls.xls",
