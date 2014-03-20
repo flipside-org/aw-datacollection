@@ -28,9 +28,19 @@ class User_model extends CI_Model {
   
   /**
    * Returns all the users as User_entity
+   * @param mixed $statuses
+   *   Status or array of statuses to query for. Providing NULL is the same as
+   *   providing all the statuses.
+   *   By default only returns all users.
+   * 
    * @return array of User_entity
    */
-  public function get_all() {
+  public function get_all($statuses = NULL) {
+    if ($statuses != NULL) {
+      $statuses = !is_array($statuses) ? array($statuses) : $statuses;
+      $this->mongo_db->whereIn('status', $statuses);
+    }
+    
     $result = $this->mongo_db
       ->orderBy(array('created' => 'desc'))
       ->get(self::COLLECTION);
@@ -44,8 +54,8 @@ class User_model extends CI_Model {
   }
   
   /**
-   * Returns the user with the given username
-   * @param string username
+   * Returns the user with the given username.
+   * @param string $username
    * 
    * @return User_entity
    */
@@ -106,12 +116,21 @@ class User_model extends CI_Model {
    *   Single role or array of roles the user has to have.
    *   If an empty array is provided it will return users without roles.
    *   If ROLE_REGISTERED is provided, all users will be returned.
+   * @param mixed $statuses
+   *   Status or array of statuses to query for. Providing NULL is the same as
+   *   providing all the statuses.
+   *   By default only returns all users.
    * 
    * @return User_entity
    */
-  public function get_with_role($roles) {
+  public function get_with_role($roles, $statuses = User_entity::STATUS_ACTIVE) {
     if (!is_array($roles)) {
       $roles = array($roles);
+    }
+    
+    if ($statuses != NULL) {
+      $statuses = !is_array($statuses) ? array($statuses) : $statuses;
+      $this->mongo_db->whereIn('status', $statuses);
     }
     
     if (!in_array(ROLE_REGISTERED, $roles)) {

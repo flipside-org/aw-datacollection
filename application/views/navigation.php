@@ -42,13 +42,11 @@
         <li class="has-dropdown">
           <a href="#">Switch user</a>
           <ul class="dropdown">
-            <li><a href="<?= base_url('fixtures/switch_user/1?current=' . current_url()) ?>">Admin (1)</a></li>
-            <li><a href="<?= base_url('fixtures/switch_user/4?current=' . current_url()) ?>">Moderator (4)</a></li>
-            <li><a href="<?= base_url('fixtures/switch_user/3?current=' . current_url()) ?>">CC Agent (3)</a></li>
-            <li><a href="<?= base_url('fixtures/switch_user/2?current=' . current_url()) ?>">Regular (2)</a></li>
-            <li><a href="<?= base_url('fixtures/switch_user/5?current=' . current_url()) ?>">Blocked (5)</a></li>
-            <li><a href="<?= base_url('fixtures/switch_user/6?current=' . current_url()) ?>">Deleted (6)</a></li>
-            <li><a href="<?= base_url('fixtures/switch_user/7?current=' . current_url()) ?>">All Roles (7)</a></li>
+            <?php foreach ($this->user_model->get_all() as $user): ?>
+            <li>
+              <a href="<?= base_url('fixtures/switch_user/' . $user->uid . '?current=' . current_url()) ?>"><?= $user->name; ?> [<?= $user->uid; ?>] (<?= implode(',', $user->roles); ?>)</a>
+            </li>
+            <?php endforeach; ?>
           </ul>
         </li>
         <li class="divider"></li>

@@ -103,6 +103,18 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'status' => User_entity::STATUS_ACTIVE,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'blocked_agent@localhost.dev',
+        'name' => 'The Blocked Agent',
+        'username' => 'bloked_agent',
+        'password' => hash_password('blocked_agent'),
+        'roles' => array(ROLE_CC_AGENT),
+        'author' => 1,
+        'status' => User_entity::STATUS_BLOCKED,
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
       )
     ));
     
@@ -603,6 +615,19 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     $survey = self::$CI->survey_model->get(2);
     $this->assertEmpty($survey->agents);
+    
+    /*************************************************************************/
+    
+    // Assigning a blocked agent.
+    $_POST = array(
+      'uid' => 4,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid user.'), $result['status']);
     
     /*************************************************************************/
     

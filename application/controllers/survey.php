@@ -698,7 +698,7 @@ class Survey extends CI_Controller {
     // TODO : api_survey_assign_agents : additional checks (survey in right status, the user can be assigned | unassigned)
     
     $user = $this->user_model->get($uid);
-    if (!$user) {
+    if (!$user || !$user->is_active()) {
       return $this->api_output(500, 'Invalid user.');
     }
     
