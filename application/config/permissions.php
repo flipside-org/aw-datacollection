@@ -45,7 +45,8 @@ $config['permissions'] = array(
   'view user list'    => array(ROLE_ADMINISTRATOR),
   
   // Surveys.
-  'view survey list'          => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  'view survey list any'      => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  'view survey list assigned' => array(ROLE_CC_AGENT),
   'view any survey page'      => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'view assigned survey page' => array(ROLE_CC_AGENT),
   'edit any survey'           => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),

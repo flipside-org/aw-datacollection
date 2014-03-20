@@ -16,13 +16,15 @@
       <!-- Right Nav Section -->
       <ul class="left">
         
-        <?php if (has_permission('view survey list')) : ?>
+        <?php if (has_permission('view survey list any') || has_permission('view survey list assigned')) : ?>
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('surveys'); ?>">Surveys</a>
+          <?php if (has_permission('create survey')) : ?>
           <ul class="dropdown">
             <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>            
           </ul>
+          <?php endif; ?>
         </li>
         <?php endif; ?>
         
