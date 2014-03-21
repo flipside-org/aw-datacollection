@@ -1,12 +1,13 @@
 # Airwolf data-collection app
 
-The Airwolf application that handles data collection. 
+The Airwolf application that handles data collection.
 Built using [Codeigniter](http://ellislab.com/codeigniter)
 
 ## Local Machine
 ### Requirements
 - Node & Npm
 - Grunt ( $ npm install -g grunt-cli )
+- Bower ($ npm install -g bower)
 
 ### Setup
 **This is to be done in the local machine, not on vagrant**
@@ -19,7 +20,7 @@ $ chmod -R 777 files
 
 Update git submodules (**This should be also done after pulling changes**):
 ```
-$ git submdodule update --recursive
+$ git submodule update --recursive
 ```
 The enketo library needs to be built. Change into its directory:
 ```
@@ -29,15 +30,21 @@ $ grunt
 ```
 
 ### Task automation
-After these basic requirements are met, run the following command in the website's folder:
+After these basic requirements are met, run the following commands in the website's folder:
 ```
 $ npm install
+
 ```
+```
+$ bower install
+```
+Bower will create a ```bower_components``` directory in the src with all the sass and js needed for foundation. Nothing needs to be done there.
+
 You might have to run these as sudo.
 
 #### Getting started
 ```
-$ grunt watch
+$ grunt
 ```
 Compiles the compass files, javascripts and generates the website.
 The system will watch files and execute tasks whenever one of them changes.
@@ -48,9 +55,9 @@ Clean the compiled sass and javascript:
 $ grunt clean
 ```
 
-Compile the compass files, javascripts and generate the website. Use this instead of ```grunt watch``` if you just want to render it once:
+Compile the compass files, javascripts and generate the website. Use this instead of ```grunt``` if you just want to render it once:
 ```
-$ grunt
+$ grunt build
 ```
 
 Compile the compass files and javascripts prepared for production (minified, uglyfied). Every time changes will be pushed to production, this command needs to be run:
@@ -72,9 +79,22 @@ $ mongod
 ### Requirements
 - No requirements (Everything needed is installed during bootstrap)
 
-### Project Testing
-Server side testing is being done with phpunit. 
+
+## Testing
+Testing should be done from within the vagrant machine.
+
+### Code testing
+
+Server side testing is being done with phpunit.
 Check the documentation for more.
 
-Testing is also done with casper.
-`@todo`
+### Behaviour testing
+
+This is implemented with [CasperJS](http://casperjs.org/) and currently living under `tests/casperjs`.
+
+```
+@todo
+- integration with grunt
+- document usage
+```
+
