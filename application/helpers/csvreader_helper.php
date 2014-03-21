@@ -79,4 +79,3 @@ class CSVReader {
         return $content;
     }
 }
-?>
