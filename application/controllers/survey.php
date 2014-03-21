@@ -271,6 +271,15 @@ class Survey extends CI_Controller {
         // If it reaches this point the survey was saved.
         Status_msg::success('Respondents successfully added.');
 
+        // read file
+        $file = $this->input->post('survey_respondents_file');
+
+        // load CSVReader library
+        $this->load->helper('csvreader');;
+        $csv = new CSVReader();
+        $csv->separator = ',';
+        $csv_data = $csv->parse_file($file['full_path']);
+
         redirect('/survey/' . $survey->sid . '/respondents');
       }
     }
