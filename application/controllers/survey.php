@@ -278,9 +278,12 @@ class Survey extends CI_Controller {
         $this->load->helper('csvreader');;
         $csv = new CSVReader();
         $csv->separator = ',';
-        $csv_data = $csv->parse_file($file['full_path']);
+        $_POST['csv_data'] = $csv->parse_file($file['full_path']);
 
-        redirect('/survey/' . $survey->sid . '/respondents');
+        // @todo
+        // Now we need to run the verification for repeated phone numbers here too.
+
+        // redirect('/survey/' . $survey->sid . '/respondents');
       }
     }
     else {
