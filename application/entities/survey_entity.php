@@ -19,6 +19,25 @@
  */
 class Survey_entity extends Entity {
   
+  const STATUS_DRAFT = 1;
+  const STATUS_OPEN = 2;
+  const STATUS_CLOSED = 3;
+  const STATUS_CANCELED = 99;
+  
+  /**
+   * Statuses of a survey.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses = array(
+    Survey_entity::STATUS_DRAFT => 'Draft',
+    Survey_entity::STATUS_OPEN => 'Open',
+    Survey_entity::STATUS_CLOSED => 'Closed',
+    Survey_entity::STATUS_CANCELED => 'Canceled',
+  );
+  
   /********************************
    ********************************
    * Start of survey fields.
@@ -74,7 +93,7 @@ class Survey_entity extends Entity {
   
   /**
    * Survey introduction.
-   * Text presented to the CC operator when collecting data.
+   * Text presented to the CC Agent when collecting data.
    * @var int
    * @access public
    */
@@ -102,6 +121,11 @@ class Survey_entity extends Entity {
   );
   
   /**
+   * Agents assigned to this survey.
+   */
+  public $agents = array();
+  
+  /**
    * End of survey fields.
    *******************************/
   
@@ -116,20 +140,6 @@ class Survey_entity extends Entity {
    */
   protected $settings = array(
     'file_loc' => ''
-  );
-  
-  /**
-   * Allowed statuses of a survey.
-   * 
-   * @var array
-   * @access public
-   * @static
-   */
-  static $allowed_status = array(
-    1 => 'Draft',
-    2 => 'Open',
-    3 => 'Closed',
-    99 => 'Canceled'
   );
   
   /**
@@ -221,7 +231,7 @@ class Survey_entity extends Entity {
    */
   public function get_url_view() {
     if ($this->sid == NULL) {
-      throw new Exception("Trying to get link for a nonexistent survey.");       
+      throw new Exception("Trying to get link for a nonexistent survey.");
     }    
     return base_url('survey/' . $this->sid);
   }
@@ -233,7 +243,7 @@ class Survey_entity extends Entity {
    */
   public function get_url_edit() {
     if ($this->sid == NULL) {
-      throw new Exception("Trying to get link for a nonexistent survey.");       
+      throw new Exception("Trying to get link for a nonexistent survey.");
     }    
     return base_url('survey/' . $this->sid . '/edit') ;
   }
@@ -245,7 +255,7 @@ class Survey_entity extends Entity {
    */
   public function get_url_survey_enketo($type) {
     if ($this->sid == NULL) {
-      throw new Exception("Trying to get link for a nonexistent survey.");       
+      throw new Exception("Trying to get link for a nonexistent survey.");
     }
     if ($type == 'testrun') {
       return base_url('survey/' . $this->sid . '/testrun') ;
@@ -262,9 +272,21 @@ class Survey_entity extends Entity {
    */
   public function get_url_call_activity() {
     if ($this->sid == NULL) {
-      throw new Exception("Trying to get link for a nonexistent survey.");       
-    }    
+      throw new Exception("Trying to get link for a nonexistent survey.");
+    }
     return base_url('survey/' . $this->sid . '/call_activity') ;
+  }
+
+  /**
+   * Returns the url to assign agents.
+   * @access public
+   * @return string
+   */
+  public function get_url_manage_agents() {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent survey.");
+    }
+    return base_url('api/survey/' . $this->sid . '/manage_agents') ;
   }
   
   /**
@@ -341,7 +363,7 @@ class Survey_entity extends Entity {
   }
   
   public static function is_valid_status($status) {
-    return array_key_exists($status, self::$allowed_status);
+    return array_key_exists($status, self::$statuses);
   }
   
   /**
@@ -384,6 +406,54 @@ class Survey_entity extends Entity {
    */
   public function get_xml_full_path() {
     return $this->has_xml() ? $this->settings['file_loc'] . $this->files['xml'] : false;
+  }
+  
+  /**
+   * Checks if an agent is assigned to the survey.
+   * @access public
+   * 
+   * @param int $uid
+   * @return boolean
+   */
+  public function is_assigned_agent($uid) {
+    return in_array($uid, $this->agents);
+  }
+  
+  /**
+   * Assigns agent to survey if not there.
+   * @access public
+   * 
+   * @param int $uid
+   * @return boolean
+   *   True if added otherwise false.
+   */
+  public function assign_agent($uid) {
+    if (!$this->is_assigned_agent($uid)) {
+      $this->agents[] = $uid;
+      return TRUE;
+    }
+    return FALSE;
+  }
+  
+  /**
+   * Unassigns agent from survey if there.
+   * @access public
+   * 
+   * @param int $uid
+   * @return boolean
+   *   True if added otherwise false.
+   */
+  public function unassign_agent($uid) {
+    if ($this->is_assigned_agent($uid)) {
+      $pos = array_search($uid, $this->agents);
+      unset($this->agents[$pos]);
+
+      // Re-order
+      $this->agents = array_values($this->agents);
+
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**

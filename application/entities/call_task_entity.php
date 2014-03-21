@@ -42,7 +42,7 @@ class Call_task_entity extends Entity {
   public $survey_sid = NULL;
   
   /**
-   * Operator to whom this call was assigned.
+   * Agent to whom this call was assigned.
    * @var int
    */
   public $assignee_uid = NULL;

@@ -30,6 +30,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
             'warnings' => NULL
           )
         ),
+        'agents' => array(3),
         'created' => Mongo_db::date()
       ),
       array(
@@ -45,6 +46,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
             'warnings' => NULL
           )
         ),
+        'agents' => array(),
         'created' => Mongo_db::date(),
       ),
       array(
@@ -53,13 +55,14 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'status' => 2,
         'introduction' => 'The text the user has to read.',
         'files' => array(
-          'xls' => NULL,
-          'xml' => NULL,
+          'xls' => NULL, // Not needed
+          'xml' => "valid_survey.xml",
           'last_conversion' => array(
-            'date' => NULL,
+            'date' => Mongo_db::date(),
             'warnings' => NULL
           )
         ),
+        'agents' => array(1, 2, 3),
         'created' => Mongo_db::date()
       )
     ));
@@ -71,9 +74,9 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'name' => 'Admin',
         'username' => 'admin',
         'password' => hash_password('admin'),
-        'roles' => array('administrator'),
+        'roles' => array(ROLE_ADMINISTRATOR),
         'author' => null,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
       ),
@@ -85,19 +88,31 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'password' => hash_password('regular'),
         'roles' => array(),
         'author' => 1,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
       ),
       array(
         'uid' => increment_counter('user_uid'),
-        'email' => 'operator@localhost.dev',
-        'name' => 'The Operator',
-        'username' => 'operator',
-        'password' => hash_password('operator'),
-        'roles' => array('cc_operator'),
+        'email' => 'agent@localhost.dev',
+        'name' => 'The Agent',
+        'username' => 'agent',
+        'password' => hash_password('agent'),
+        'roles' => array(ROLE_CC_AGENT),
         'author' => 1,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => increment_counter('user_uid'),
+        'email' => 'blocked_agent@localhost.dev',
+        'name' => 'The Blocked Agent',
+        'username' => 'bloked_agent',
+        'password' => hash_password('blocked_agent'),
+        'roles' => array(ROLE_CC_AGENT),
+        'author' => 1,
+        'status' => User_entity::STATUS_BLOCKED,
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
       )
@@ -116,7 +131,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'assigned' => NULL,
         'author' => 1,
         'assignee_uid' => NULL,
-        'survey_sid' => 2,
+        'survey_sid' => 1,
         'activity' => array()
       );
     }
@@ -142,7 +157,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
     
     // Login user.
-    self::$CI->session->set_userdata(array('user_uid' => 1));
+    self::$CI->session->set_userdata(array('user_uid' => 3));
     // Force user reloading.
     current_user(TRUE);
 
@@ -164,7 +179,9 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
     
     // Login user.
-    self::$CI->session->set_userdata(array('user_uid' => 1));
+    // User is agent.
+    // User is assigned to survey.
+    self::$CI->session->set_userdata(array('user_uid' => 3));
     // Force user reloading.
     current_user(TRUE);
     
@@ -174,6 +191,21 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array('code' => 404, 'message' => 'Invalid survey.'), $result['status']);
     
     self::$CI->api_survey_xslt_transform(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    $this->assertArrayHasKey('xml_form', $result);
+    
+    // Login user.
+    self::$CI->session->set_userdata(array('user_uid' => 1));
+    // Force user reloading.
+    current_user(TRUE);
+    
+    // User is administrator.
+    // User is not assigned to survey.
+    // All assigned users must be able to get the file.
+    // All unassigned users with testrun any permission must be able
+    // to get the file.
+    self::$CI->api_survey_xslt_transform(3);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
     $this->assertArrayHasKey('xml_form', $result);
@@ -191,7 +223,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
     
     // Login user.
-    self::$CI->session->set_userdata(array('user_uid' => 1));
+    self::$CI->session->set_userdata(array('user_uid' => 3));
     // Force user reloading.
     current_user(TRUE);
     
@@ -213,26 +245,37 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     current_user(TRUE);
     
     // Not logged
-    self::$CI->api_survey_enketo_form_submit();
+    self::$CI->api_survey_enketo_form_submit(1);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
   }
   
-  public function test_api_survey_enketo_form_submit_logged_in() {   
+  public function test_api_survey_enketo_form_submit_logged_in() {
+    // Some vars to help:
+    // A call center agent.
+    $agent = 3;
+    // Another user.
+    $other_user = 1;
+    // A survey to which $agent is assigned
+    $working_survey = 1;
+    // Another survey.
+    $other_survey = 2;
+    
     // Login user.
-    self::$CI->session->set_userdata(array('user_uid' => 1));
+    // User 3 is our call center agent.
+    self::$CI->session->set_userdata(array('user_uid' => 3));
     // Force user reloading.
     current_user(TRUE);
     
     /*************************************************************************/
     
     // Call task doesn't exist.
+    // User is assigned to survey.
     $_POST = array(
-      'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array('ctid' => 999)
     );
-    self::$CI->api_survey_enketo_form_submit();
+    self::$CI->api_survey_enketo_form_submit(1);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 500, 'message' => 'Invalid call task.'), $result['status']);
     
@@ -246,19 +289,18 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'assigned' => NULL,
         'author' => 1,
         'assignee_uid' => NULL,
-        'survey_sid' => 2,
+        'survey_sid' => $working_survey,
         'activity' => array()
       )
-    );    
-    // TODO: User 1 assigned to survey.
+    );
+    // Submitting data for a non reserved call task.
+    // User 3 assigned to survey.
     // User not assigned to call task.
-    // The assigned user here is 3
     $_POST = array(
-      'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array('ctid' => 1001)
     );
-    self::$CI->api_survey_enketo_form_submit();
+    self::$CI->api_survey_enketo_form_submit($working_survey);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 500, 'message' => 'User not assigned to call task.'), $result['status']);
     
@@ -266,93 +308,27 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     self::$CI->mongo_db->insert('call_tasks', array(
         'ctid' => 1002,
-        'number' => "1100200000000",
+        'number' => "110020000000",
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date(),
         'assigned' => Mongo_db::date(),
         'author' => 1,
-        'assignee_uid' => 1,
-        'survey_sid' => 2,
+        'assignee_uid' => $other_user,
+        'survey_sid' => $other_survey,
         'activity' => array()
       )
-    );   
-    // Call task not assigned to survey.
+    ); 
+    // Submitting data for another user.
     $_POST = array(
-      'sid' => 1,
-      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
-      'respondent' => array('ctid' => 1002)
-    );
-    self::$CI->api_survey_enketo_form_submit();
-    $result = json_decode(self::$CI->output->get_output(), TRUE);
-    $this->assertEquals(array('code' => 500, 'message' => 'Call task not assigned to survey.'), $result['status']);
-    
-    /*************************************************************************/
-    
-    // Missing data form_data and new_status.
-    $_POST = array(
-      'sid' => 2,
-      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
-      'respondent' => array(
-        'ctid' => 1002
-      )
-    );
-    self::$CI->api_survey_enketo_form_submit();
-    $result = json_decode(self::$CI->output->get_output(), TRUE);
-    $this->assertEquals(array('code' => 500, 'message' => 'Missing data form_data and new_status.'), $result['status']);
-    
-    /*************************************************************************/
-    
-    // Invalid call task status.
-    $_POST = array(
-      'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
         'ctid' => 1002,
-        'new_status' => array(
-          'code' => 12345,
-          'msg' => 'Adding invalid status'
-        )
+        'form_data' => 'the data'
       )
     );
-    self::$CI->api_survey_enketo_form_submit();
+    self::$CI->api_survey_enketo_form_submit($working_survey);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
-    $this->assertEquals(array('code' => 500, 'message' => 'Invalid call task status.'), $result['status']);
-    
-    /*************************************************************************/
-    
-    // Adding Successful status.
-    $_POST = array(
-      'sid' => 2,
-      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
-      'respondent' => array(
-        'ctid' => 1002,
-        'new_status' => array(
-          'code' => Call_task_status::SUCCESSFUL,
-          'msg' => 'Adding valid status.'
-        )
-      )
-    );
-    self::$CI->api_survey_enketo_form_submit();
-    $result = json_decode(self::$CI->output->get_output(), TRUE);
-    $this->assertEquals(array('code' => 500, 'message' => 'Successful status can not be set manually.'), $result['status']);
-    
-    /*************************************************************************/
-    
-    // Adding Invalid number status.
-    $_POST = array(
-      'sid' => 2,
-      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
-      'respondent' => array(
-        'ctid' => 1002,
-        'new_status' => array(
-          'code' => Call_task_status::INVALID_NUMBER,
-          'msg' => 'Adding a valid status.'
-        )
-      )
-    );
-    self::$CI->api_survey_enketo_form_submit();
-    $result = json_decode(self::$CI->output->get_output(), TRUE);
-    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    $this->assertEquals(array('code' => 201, 'message' => 'Submitting data for another user.'), $result['status']);
     
     /*************************************************************************/
     
@@ -363,8 +339,143 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'updated' => Mongo_db::date(),
         'assigned' => Mongo_db::date(),
         'author' => 1,
-        'assignee_uid' => 1,
+        'assignee_uid' => $agent,
+        'survey_sid' => 3,
+        'activity' => array()
+      )
+    ); 
+    // User assigned to call task.
+    // Call task is assigned to survey.
+    // User is assigned to survey.
+    // Survey is not the one data is being submitted for.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1003,
+        'form_data' => 'the data'
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit($working_survey);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 201, 'message' => 'Submitting data for another survey.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1004,
+        'number' => "1100400000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => $agent,
         'survey_sid' => 2,
+        'activity' => array()
+      )
+    );
+    // User assigned to call task.
+    // Call task is assigned to survey.
+    // User is NOT assigned to survey.
+    // Survey is the one data is being submitted for.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array('ctid' => 1004)
+    );
+    self::$CI->api_survey_enketo_form_submit(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1005,
+        'number' => "1100500000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => $agent,
+        'survey_sid' => $working_survey,
+        'activity' => array()
+      )
+    );
+    // User assigned to call task.
+    // Call task is assigned to survey.
+    // User is assigned to survey.
+    // Survey is the one data is being submitted for.
+    // Missing data form_data and new_status.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1005
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit($working_survey);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Missing data form_data and new_status.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Invalid call task status.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1005,
+        'new_status' => array(
+          'code' => 12345,
+          'msg' => 'Adding invalid status'
+        )
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit($working_survey);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid call task status.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Adding Successful status.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1005,
+        'new_status' => array(
+          'code' => Call_task_status::SUCCESSFUL,
+          'msg' => 'Adding valid status.'
+        )
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit($working_survey);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Successful status can not be set manually.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Adding Invalid number status.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1005,
+        'new_status' => array(
+          'code' => Call_task_status::INVALID_NUMBER,
+          'msg' => 'Adding a valid status.'
+        )
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit($working_survey);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    
+    /*************************************************************************/
+    
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1006,
+        'number' => "110060000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => $agent,
+        'survey_sid' => $working_survey,
         'activity' => array(
           array(
             'code' => Call_task_status::NO_CONSENT,
@@ -377,17 +488,16 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     );   
     // Adding Discard status to an already resolved call task
     $_POST = array(
-      'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
-        'ctid' => 1003,
+        'ctid' => 1006,
         'new_status' => array(
           'code' => Call_task_status::DISCARD,
           'msg' => 'Adding valid status.'
         )
       )
     );
-    self::$CI->api_survey_enketo_form_submit();
+    self::$CI->api_survey_enketo_form_submit($working_survey);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 500, 'message' => 'Invalid call task status.'), $result['status']);
     
@@ -396,47 +506,149 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     // Submitting data for an already resolved call task.
     // TODO: Review once implemented data save method.
     $_POST = array(
-      'sid' => 2,
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
-        'ctid' => 1003,
+        'ctid' => 1006,
         'form_data' => 'the data'
       )
     );
-    self::$CI->api_survey_enketo_form_submit();
+    self::$CI->api_survey_enketo_form_submit($working_survey);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 500, 'message' => 'Trying to submit data for a resolved call task.'), $result['status']);
     
     /*************************************************************************/
-    
-    self::$CI->mongo_db->insert('call_tasks', array(
-        'ctid' => 1004,
-        'number' => "110040000000",
-        'created' => Mongo_db::date(),
-        'updated' => Mongo_db::date(),
-        'assigned' => Mongo_db::date(),
-        'author' => 1,
-        'assignee_uid' => 3,
-        'survey_sid' => 2,
-        'activity' => array()
-      )
-    ); 
-    // Submitting data for another user.
-    $_POST = array(
-      'sid' => 2,
-      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
-      'respondent' => array(
-        'ctid' => 1004,
-        'form_data' => 'the data'
-      )
-    );
-    self::$CI->api_survey_enketo_form_submit();
-    $result = json_decode(self::$CI->output->get_output(), TRUE);
-    $this->assertEquals(array('code' => 201, 'message' => 'Submitting data for another user.'), $result['status']);
-    
-    /*************************************************************************/
+
   }
 
+  public function test_api_survey_manage_agents_logged_out() {
+    // Logout user
+    self::$CI->session->set_userdata(array('user_uid' => NULL));
+    // Force user reloading.
+    current_user(TRUE);
+    
+    // Not logged
+    self::$CI->api_survey_manage_agents(999);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
+  }
+
+  public function test_api_survey_manage_agents() {
+    // Login user.
+    self::$CI->session->set_userdata(array('user_uid' => 1));
+    // Force user reloading.
+    current_user(TRUE);
+    
+    // Missing user id.
+    $_POST = array(
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid user.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Non existent user and survey.
+    $_POST = array(
+      'uid' => 999,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(999);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid survey.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Non existent user.
+    $_POST = array(
+      'uid' => 999,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid user.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // User is not an agent.
+    $_POST = array(
+      'uid' => 2,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'User is not an agent.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // User is not an agent.
+    // Action unassign
+    $_POST = array(
+      'uid' => 2,
+      'action' => 'unassign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Assign Ok!.
+    $_POST = array(
+      'uid' => 3,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    
+    $survey = self::$CI->survey_model->get(2);
+    $this->assertEquals(array(3), $survey->agents);
+    
+    /*************************************************************************/
+    
+    // Unassign Ok!.
+    $_POST = array(
+      'uid' => 3,
+      'action' => 'unassign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    
+    $survey = self::$CI->survey_model->get(2);
+    $this->assertEmpty($survey->agents);
+    
+    /*************************************************************************/
+    
+    // Assigning a blocked agent.
+    $_POST = array(
+      'uid' => 4,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(2);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid user.'), $result['status']);
+    
+    /*************************************************************************/
+    
+  }
 }
 
 ?>

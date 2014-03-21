@@ -126,7 +126,10 @@ class User extends CI_Controller {
     }
     else {
       $user->name = $this->input->post('user_name');
-      $user->set_password(hash_password($this->input->post('user_new_password')));
+      $pwd = $this->input->post('user_new_password');
+      if ($pwd != '') {
+        $user->set_password(hash_password($pwd));
+      }
       
       $this->user_model->save($user);
       // TODO: Saving own profile. Handle success, error.
@@ -154,8 +157,11 @@ class User extends CI_Controller {
     }
     else {
       $user->name = $this->input->post('user_name');
+      $pwd = $this->input->post('user_new_password');
+      if ($pwd != '') {
+        $user->set_password(hash_password($pwd));
+      }
       $user
-        ->set_password(hash_password($this->input->post('user_new_password')))
         ->set_status($this->input->post('user_status'))
         ->set_roles($this->input->post('user_roles'));
       

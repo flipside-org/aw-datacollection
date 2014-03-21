@@ -19,4 +19,16 @@
     <?php endif; ?>
   <?php endif; ?>
   
+  <?php if (has_permission('assign agents')) : ?>
+    <h2>Manage Agents</h2>
+    <?= form_open($survey->get_url_manage_agents(), array('id' => 'assign-agents')); ?>
+    <select data-placeholder="Assign Call Center Agents" class="chosen-select" style="width:350px;" multiple>
+      <option value=""></option>
+      <?php foreach ($agents as $agent) : ?>
+        <option value="<?= $agent['user']->uid ?>" <?= implode(' ', $agent['properties']) ?>><?= $agent['user']->name ?></option>
+      <?php endforeach; ?>
+    </select>
+    <?= form_close(); ?>
+  <?php endif; ?>
+  
 </div>

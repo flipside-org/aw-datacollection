@@ -3,4 +3,4 @@
   <link type="text/css" href="<?= base_url('assets/libs/enketo-core/build/css/formhub.css'); ?>" media="all" rel="stylesheet" />
 <?php endif; ?>
 
-<link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>" />
+<link rel="stylesheet" href="<?= base_url('assets/styles/main.css') ?>" />
