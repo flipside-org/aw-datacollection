@@ -1,6 +1,9 @@
-<div class="row"> 
-<?= validation_errors(); ?>
-<?= form_open(); ?>
+<div class="row">
+
+<?= form_error('signin_username', '<div class="error" data-ref="signin_username">', '</div>'); ?>
+<?= form_error('signin_password', '<div class="error" data-ref="signin_password">', '</div>'); ?>
+
+<?= form_open('', array('id' => 'login-form')); ?>
 
   <?= form_label('Username', 'signin_username'); ?>
   <?= form_input('signin_username'); ?>

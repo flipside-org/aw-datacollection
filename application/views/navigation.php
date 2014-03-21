@@ -11,8 +11,8 @@
       </li>
       <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
     </ul>
- 
-    <section class="top-bar-section"> 
+
+    <section class="top-bar-section">
       <!-- Right Nav Section -->
       <ul class="left">
         
@@ -22,18 +22,18 @@
           <a href="<?= base_url('surveys'); ?>">Surveys</a>
           <?php if (has_permission('create survey')) : ?>
           <ul class="dropdown">
-            <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>            
+            <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>
           </ul>
           <?php endif; ?>
         </li>
         <?php endif; ?>
-        
+
         <?php if (has_permission('view user list')) : ?>
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('users'); ?>">Users</a>
           <ul class="dropdown">
-            <li><a href="<?= base_url('user/add'); ?>">Add</a></li>            
+            <li><a href="<?= base_url('user/add'); ?>">Add</a></li>
           </ul>
         </li>
         <?php endif; ?>
@@ -56,7 +56,7 @@
       <?php if (is_logged()) : ?>
       	<li class="name"><a href="<?= base_url('user') ?>">Hello <?= current_user()->name ?></a></li>
       	<li class="has-form">
-      	  <a href="<?= base_url('logout') ?>" class="button alert">logout</a>
+      	  <a href="<?= base_url('logout') ?>" id="logout-button" class="button alert">logout</a>
       	</li>
       </ul>
       <?php else: ?>
@@ -66,5 +66,5 @@
       <?php endif; ?>
     </section>
   </nav>
- 
+
   <!-- End Header and Nav -->
