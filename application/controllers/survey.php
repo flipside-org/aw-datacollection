@@ -477,14 +477,16 @@ class Survey extends CI_Controller {
     else if (!$survey->has_xml()) {
       return $this->api_output(500, 'Xml file not present.', array('xml_form' => NULL));
     }
-    else if (!has_permission('enketo collect data any') && !has_permission('enketo collect data assigned')) {
-      return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
-    }
-    else if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
-      // Is assigned?
-      if (!$survey->is_assigned_agent(current_user()->uid)) {
+    else if (!has_permission('enketo collect data any') && !has_permission('enketo testrun any')) {
+        
+      if (!has_permission('enketo collect data assigned') && !has_permission('enketo testrun assigned')) {
         return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
       }
+      // Is assigned?
+      else if (!$survey->is_assigned_agent(current_user()->uid)) {
+        return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
+      }
+
     }
     // TODO: Collect Data: Check for other restrictions (like status)
     

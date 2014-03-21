@@ -30,7 +30,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
             'warnings' => NULL
           )
         ),
-        'agents' => array(1, 2, 3),
+        'agents' => array(3),
         'created' => Mongo_db::date()
       ),
       array(
@@ -55,10 +55,10 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
         'status' => 2,
         'introduction' => 'The text the user has to read.',
         'files' => array(
-          'xls' => NULL,
-          'xml' => NULL,
+          'xls' => NULL, // Not needed
+          'xml' => "valid_survey.xml",
           'last_conversion' => array(
-            'date' => NULL,
+            'date' => Mongo_db::date(),
             'warnings' => NULL
           )
         ),
@@ -179,6 +179,8 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
     
     // Login user.
+    // User is agent.
+    // User is assigned to survey.
     self::$CI->session->set_userdata(array('user_uid' => 3));
     // Force user reloading.
     current_user(TRUE);
@@ -189,6 +191,21 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array('code' => 404, 'message' => 'Invalid survey.'), $result['status']);
     
     self::$CI->api_survey_xslt_transform(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    $this->assertArrayHasKey('xml_form', $result);
+    
+    // Login user.
+    self::$CI->session->set_userdata(array('user_uid' => 1));
+    // Force user reloading.
+    current_user(TRUE);
+    
+    // User is administrator.
+    // User is not assigned to survey.
+    // All assigned users must be able to get the file.
+    // All unassigned users with testrun any permission must be able
+    // to get the file.
+    self::$CI->api_survey_xslt_transform(3);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
     $this->assertArrayHasKey('xml_form', $result);
