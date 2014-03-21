@@ -274,16 +274,18 @@ class Survey extends CI_Controller {
         // read file
         $file = $this->input->post('survey_respondents_file');
 
-        // load CSVReader library
-        $this->load->helper('csvreader');;
-        $csv = new CSVReader();
-        $csv->separator = ',';
-        $_POST['csv_data'] = $csv->parse_file($file['full_path']);
+        if (isset($file['full_path'])) {
+          // load CSVReader library
+          $this->load->helper('csvreader');;
+          $csv = new CSVReader();
+          $csv->separator = ',';
+          $_POST['csv_data'] = $csv->parse_file($file['full_path']);
+        }
 
         // @todo
         // Now we need to run the verification for repeated phone numbers here too.
 
-        // redirect('/survey/' . $survey->sid . '/respondents');
+        redirect('/survey/' . $survey->sid . '/respondents/add/confirm');
       }
     }
     else {
@@ -789,6 +791,27 @@ class Survey extends CI_Controller {
     }
 
     $this->_survey_respondents_form_handle($sid, 'add');
+  }
+
+  /**
+   * Summary page to add respondents to a given survey.
+   * @param $sid
+   *
+   * Route - /survey/:sid/respondents
+   */
+  public function survey_respondents_add_confirm($sid){
+    if (!has_permission('edit any survey')) {
+      show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
+    }
+
+    $survey = $this->survey_model->get($sid);
+
+    if ($survey) {
+      krumo($_POST);
+    }
+    else {
+     show_404();
+    }
   }
 }
 

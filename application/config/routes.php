@@ -53,6 +53,7 @@ $route['survey/(:num)/(testrun|data_collection)'] = 'survey/survey_enketo/$1/$2'
 // respondents
 $route['survey/(:num)/respondents'] = 'survey/survey_respondents/$1';
 $route['survey/(:num)/respondents/add'] = 'survey/survey_respondents_add/$1';
+$route['survey/(:num)/respondents/add/confirm'] = 'survey/survey_respondents_add_confirm/$1';
 
 $route['survey/(:num)/xslt_transform'] = 'survey/survey_xslt_transform/$1';
 
