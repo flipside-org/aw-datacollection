@@ -7,3 +7,87 @@
 .messages ul {
   margin-bottom: 0;
 }
+
+@mixin button-skin-active($bgcolor) {
+  background-color: shade($bgcolor, 10%);
+  box-shadow:inset 0 2px 0 0 shade($bgcolor, 20%), inset 0 -2px 0 0 tint($bgcolor, 10%);
+}
+
+
+
+
+#site-head {
+  width: rem-calc(80);
+  background-color: #047998;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  
+  #nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    a {
+      display: block;
+    }
+    
+    li {
+      margin-bottom: rem-calc(8);
+      
+      &>a {
+        
+        &.current {
+          @include button-skin-active(#047998);
+        }
+        
+        margin: 0 auto;
+        color: white;
+        display: block;
+        width: rem-calc(56);
+        line-height: rem-calc(32);
+        text-align: center;
+        padding: rem-calc(12);
+        @include border-radius(4px);
+        
+        &:before{
+          font-size: rem-calc(32);
+        }
+      }
+    }
+    
+    
+    .dashboard {
+      &:before {
+        @extend .icon-dashboard;
+      }
+    }
+    .surveys {
+      &:before {
+        @extend .icon-surveys;
+      }
+    }
+    .users {
+      &:before {
+        @extend .icon-users;
+      }
+    }
+    .account {
+      &:before {
+        @extend .icon-account;
+      }
+    }
+    
+    
+  }
+  
+  #connection-status {
+    width: rem-calc(80);
+    height: rem-calc(80);
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #454d53;
+  }
+}

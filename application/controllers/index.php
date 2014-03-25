@@ -5,6 +5,12 @@ class Index extends CI_Controller {
   public function __construct() {
     parent::__construct();
   }
+  
+  public function test() {
+    $this->load->view('base/html_start');
+    $this->load->view('frontend');
+    $this->load->view('base/html_end');
+  }
 
 	public function index() {
 		$this->load->view('base/html_start');

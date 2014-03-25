@@ -1,0 +1,34 @@
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.icon, [class^="icon-"], [class*=" icon-"] {
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  // line-height: 1;
+  vertical-align: middle;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-dashboard {
+  @extend .icon;
+  content: "D";
+}
+.icon-surveys {
+  @extend .icon;
+  content: "S";
+}
+.icon-users {
+  @extend .icon;
+  content: "U";
+}
+.icon-account {
+  @extend .icon;
+  content: "A";
+}
