@@ -1,17 +1,9 @@
-/*Overrides. Remove later*/
-.survey_list .button,
-.survey_list form {
-  margin: 0;
-}
-
-.messages ul {
-  margin-bottom: 0;
-}
-/* // Overrides. Remove later*/
-
-
 body, #site-canvas {
   background-color: #ECEDEE;
+}
+
+a {
+  color: #057A99;
 }
 
 #site-head {
@@ -45,7 +37,7 @@ body, #site-canvas {
       &>a {
         
         &.current {
-          @include button-skin-active(#047998);
+          @include button-skin(#047998, 'active');
         }
         
         margin: 0 auto;
@@ -53,6 +45,7 @@ body, #site-canvas {
         display: block;
         width: rem-calc(56);
         line-height: rem-calc(32);
+        height: rem-calc(56);
         text-align: center;
         padding: rem-calc(12);
         @include border-radius(4px);
@@ -99,8 +92,20 @@ body, #site-canvas {
 }
 
 
-.action-dropdown {
-  @include reset-list;
-  background-color: white;
-  width: rem-calc(184);
+
+
+#site-body {
+  margin-left: rem-calc(80);
+  
+  #secondary .links {
+    @include reset-list;
+    
+    &>li {
+      position: relative;
+      display: inline-block;
+      
+      
+      
+    }
+  }
 }

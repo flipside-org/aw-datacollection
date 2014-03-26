@@ -2,6 +2,19 @@
   font-family: 'Open Sans', sans-serif;
 }
 
+
+/* Custom icon font generated with Icomoon */
+@font-face {
+  font-family: 'flipside-icons';
+  src:url('../fonts/flipside-icons/flipside-icons.eot');
+  src:url('../fonts/flipside-icons/flipside-icons.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/flipside-icons/flipside-icons.woff') format('woff'),
+    url('../fonts/flipside-icons/flipside-icons.ttf') format('truetype'),
+    url('../fonts/flipside-icons/flipside-icons.svg#flipside-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .icon, [class^="icon-"], [class*=" icon-"] {
   speak: none;
   font-style: normal;
@@ -31,4 +44,27 @@
 .icon-account {
   @extend .icon;
   content: "A";
+}
+
+
+
+.icon-s-triangle-down {
+  @extend .icon;
+  font-family: 'flipside-icons';
+  content: "\e617";
+}
+.icon-s-triangle-up {
+  @extend .icon;
+  font-family: 'flipside-icons';
+  content: "\e618";
+}
+.icon-s-triangle-right {
+  @extend .icon;
+  font-family: 'flipside-icons';
+  content: "\e619";
+}
+.icon-s-triangle-left {
+  @extend .icon;
+  font-family: 'flipside-icons';
+  content: "\e61c";
 }
