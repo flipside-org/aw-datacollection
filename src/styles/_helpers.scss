@@ -12,3 +12,14 @@
   position: absolute;
   width: 1px;
 }
+
+@mixin button-skin-active($bgcolor) {
+  background-color: shade($bgcolor, 10%);
+  box-shadow:inset 0 2px 0 0 shade($bgcolor, 20%), inset 0 -2px 0 0 tint($bgcolor, 10%);
+}
+
+@mixin reset-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

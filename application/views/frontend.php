@@ -23,7 +23,8 @@
         </li>
         <li>
           <a href="#" class="account"><span class="visually-hidden">Account</span></a>
-          <ul style="display: none">
+          <ul class="action-dropdown">
+            <li>Signed in as <span>Bruce Wayne</span></li>
             <li><a href="#">Edit profile</a></li>
             <li><a href="#">Sign out</a></li>
           </ul>
@@ -37,6 +38,17 @@
   </header>
   
   <main id="site-body">
+    
+    <header id="page-head">
+    	<div class="row">
+    		<div class="heading">
+    			<h1>Client Satisfaction Survey</h1>
+    		</div>
+    		<nav id="secondary" class="actions" role="navigation">
+    		  page navigation
+    		</nav>
+    	</div>
+    </header>
     
   </main>
 </div>
