@@ -40,6 +40,9 @@ define("HASH_SALT_INDEX", 2);
 define("HASH_PBKDF2_INDEX", 3);
 
 function hash_password($password) {
+  if (empty($password)) {
+    throw new Exception("The provided password is empty.");
+  }
   // format: algorithm:iterations:salt:hash
   $salt = base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTE_SIZE, MCRYPT_DEV_URANDOM));
   return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" . $salt . ":" . 

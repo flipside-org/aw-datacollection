@@ -196,7 +196,6 @@ SubmissionQueue.prototype.submit = function() {
     
     // Submit data
     $.post(Connection.URL_FORM_SUBMIT, {
-      sid : Aw.settings.current_survey.sid,
       csrf_aw_datacollection : con.getCSRF(),
       respondent: respondent_to_submit
       

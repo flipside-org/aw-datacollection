@@ -11,54 +11,52 @@
       </li>
       <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
     </ul>
- 
-    <section class="top-bar-section"> 
+
+    <section class="top-bar-section">
       <!-- Right Nav Section -->
       <ul class="left">
         
-        <?php if (has_permission('view survey list')) : ?>
+        <?php if (has_permission('view survey list any') || has_permission('view survey list assigned')) : ?>
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('surveys'); ?>">Surveys</a>
+          <?php if (has_permission('create survey')) : ?>
           <ul class="dropdown">
-            <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>            
+            <li><a href="<?= base_url('survey/add'); ?>">Add</a></li>
           </ul>
+          <?php endif; ?>
         </li>
         <?php endif; ?>
-        
+
         <?php if (has_permission('view user list')) : ?>
         <li class="divider"></li>
         <li class="has-dropdown">
           <a href="<?= base_url('users'); ?>">Users</a>
           <ul class="dropdown">
-            <li><a href="<?= base_url('user/add'); ?>">Add</a></li>            
+            <li><a href="<?= base_url('user/add'); ?>">Add</a></li>
           </ul>
         </li>
         <?php endif; ?>
-        
+      </ul>
+      
+      <ul class="right">        
         <li class="divider"></li>
         <li class="has-dropdown">
-          <a href="#">Main Item 6</a>
+          <a href="#">Switch user</a>
           <ul class="dropdown">
-            <li><a href="#">Dropdown Option</a></li>
-            <li><a href="#">Dropdown Option</a></li>
-            <li><label>Section Name</label></li>
-            <li class="has-dropdown">
-              <a href="#" class="">Has Dropdown, Level 1</a>
-              <ul class="dropdown">
-                <li><a href="#">Dropdown Options</a></li>
-                <li><a href="#">Dropdown Options</a></li>
-                
-              </ul>
+            <?php foreach ($this->user_model->get_all() as $user): ?>
+            <li>
+              <a href="<?= base_url('fixtures/switch_user/' . $user->uid . '?current=' . current_url()) ?>"><?= $user->name; ?> [<?= $user->uid; ?>] (<?= implode(',', $user->roles); ?>)</a>
             </li>
+            <?php endforeach; ?>
           </ul>
         </li>
-      </ul>
-      <ul class="right">
+        <li class="divider"></li>
+        
       <?php if (is_logged()) : ?>
       	<li class="name"><a href="<?= base_url('user') ?>">Hello <?= current_user()->name ?></a></li>
       	<li class="has-form">
-      	  <a href="<?= base_url('logout') ?>" class="button alert">logout</a>
+      	  <a href="<?= base_url('logout') ?>" id="logout-button" class="button alert">logout</a>
       	</li>
       </ul>
       <?php else: ?>
@@ -68,5 +66,5 @@
       <?php endif; ?>
     </section>
   </nav>
- 
+
   <!-- End Header and Nav -->

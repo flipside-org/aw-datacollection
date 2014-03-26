@@ -21,9 +21,9 @@ class User_model_test extends PHPUnit_Framework_TestCase
         'name' => 'Admin',
         'username' => 'admin',
         'password' => hash_password('admin'),
-        'roles' => array('administrator'),
+        'roles' => array(ROLE_ADMINISTRATOR),
         'author' => null,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
         
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
@@ -37,7 +37,48 @@ class User_model_test extends PHPUnit_Framework_TestCase
         'password' => hash_password('test_user'),
         'roles' => array(),
         'author' => null,
-        'status' => 2,
+        'status' => User_entity::STATUS_ACTIVE,
+        
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        'uid' => 99,
+        'email' => 'multiple@airwolf.dev',
+        'name' => 'multiple roles user',
+        'username' => 'multiple',
+        'password' => hash_password('multiple'),
+        'roles' => array(ROLE_ADMINISTRATOR, ROLE_CC_AGENT),
+        'author' => null,
+        'status' => User_entity::STATUS_ACTIVE,
+        
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        // Returns 3.
+        'uid' => increment_counter('user_uid'),
+        'email' => 'blocked@airwolf.dev',
+        'name' => 'blocked user',
+        'username' => 'blocked',
+        'password' => hash_password('blocked'),
+        'roles' => array(),
+        'author' => null,
+        'status' => User_entity::STATUS_BLOCKED,
+        
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date()
+      ),
+      array(
+        // Returns 4.
+        'uid' => increment_counter('user_uid'),
+        'email' => 'deleted@airwolf.dev',
+        'name' => 'Deleted user',
+        'username' => 'deleted',
+        'password' => hash_password('deleted'),
+        'roles' => array(),
+        'author' => null,
+        'status' => User_entity::STATUS_DELETED,
         
         'created' => Mongo_db::date(),
         'updated' => Mongo_db::date()
@@ -55,6 +96,17 @@ class User_model_test extends PHPUnit_Framework_TestCase
     // Clean up your mess.
     self::$CI->mongo_db->dropDb('aw_datacollection_test');
     
+  }
+  
+  public function test_get_all() {
+    $users = self::$CI->user_model->get_all();
+    $this->assertCount(5, $users);
+    
+    $users = self::$CI->user_model->get_all(User_entity::STATUS_ACTIVE);
+    $this->assertCount(3, $users);
+    
+    $users = self::$CI->user_model->get_all(array(User_entity::STATUS_BLOCKED, User_entity::STATUS_DELETED));
+    $this->assertCount(2, $users);
   }
   
   public function test_get_user_by_uid() {
@@ -90,6 +142,35 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $user_two = self::$CI->user_model->get_by_email('abc');
     $this->assertFalse($user_two);
+  }
+  
+  public function test_get_with_role() {
+    $users = self::$CI->user_model->get_with_role(ROLE_CC_AGENT);
+    $this->assertCount(1, $users);
+    $this->assertEquals(99, $users[0]->uid);
+    
+    $users = self::$CI->user_model->get_with_role(array(ROLE_CC_AGENT));
+    $this->assertCount(1, $users);
+    $this->assertEquals(99, $users[0]->uid);
+    
+    $users = self::$CI->user_model->get_with_role(array(ROLE_ADMINISTRATOR, ROLE_CC_AGENT));
+    $this->assertCount(1, $users);
+    
+    $users = self::$CI->user_model->get_with_role(ROLE_ADMINISTRATOR);
+    $this->assertCount(2, $users);
+    
+    $users = self::$CI->user_model->get_with_role(array());
+    $this->assertCount(1, $users);
+    
+    $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED);
+    $this->assertCount(3, $users);
+    
+    $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED, array(User_entity::STATUS_BLOCKED, User_entity::STATUS_DELETED));
+    $this->assertCount(2, $users);
+    
+    // When statuses is null, the status is ignored.
+    $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED, NULL);
+    $this->assertCount(5, $users);
   }
   
   /**
@@ -134,10 +215,10 @@ class User_model_test extends PHPUnit_Framework_TestCase
       ->set_roles(NULL);
     
     // Save.
-    // We have two test users. This one will be added with uid 3.
+    // We have two test users. This one will be added with uid $user->uid.
     self::$CI->user_model->save($user);
     
-    $saved_user = self::$CI->user_model->get(3);    
+    $saved_user = self::$CI->user_model->get($user->uid);
     $this->assertEquals('A new test user', $saved_user->name);
     $this->assertEquals('new_test_user', $saved_user->username);
     $this->assertEquals('test@testing.com', $saved_user->email);

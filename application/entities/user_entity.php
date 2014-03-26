@@ -263,6 +263,17 @@ class User_entity extends Entity {
   }
   
   /**
+   * Check if a user has a given role.
+   * @access public
+   * @param string $role
+   *   The role to check.
+   * @return boolean
+   */
+  public function has_role($role) {
+    return in_array($role, $this->roles);
+  }
+  
+  /**
    * Returns all the user permissions.
    * @access public
    * @return array
@@ -358,7 +369,7 @@ class User_entity extends Entity {
      // temporarily treat them as such.
      $fake_roles = $this->roles;
      $fake_roles[] = 'ALL';
-     $fake_roles[] = $this->is_logged() ? ROLE_LOGGED : ROLE_ANONYMOUS;
+     $fake_roles[] = $this->is_logged() ? ROLE_REGISTERED : ROLE_ANONYMOUS;
      
      $user_perms = array();
      foreach ($this->settings['permissions'] as $permission_name => $permission_affected_roles) {

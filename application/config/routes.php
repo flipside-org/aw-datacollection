@@ -65,7 +65,10 @@ $route['survey/(:num)/data_collection/(:num)'] = 'survey/survey_enketo_single/$1
 $route['api/survey/request_csrf_token'] = 'survey/api_survey_request_csrf_token';
 $route['api/survey/(:num)/xslt_transform'] = 'survey/api_survey_xslt_transform/$1';
 $route['api/survey/(:num)/request_respondents'] = 'survey/api_survey_request_respondents/$1';
-$route['api/survey/enketo_submit'] = 'survey/api_survey_enketo_form_submit';
+$route['api/survey/(:num)/enketo_submit'] = 'survey/api_survey_enketo_form_submit/$1';
+
+// Other API's
+$route['api/survey/(:num)/manage_agents'] = 'survey/api_survey_manage_agents/$1';
 
 // Users
 $route['login'] = 'user/user_login';

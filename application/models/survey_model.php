@@ -25,12 +25,34 @@ class Survey_model extends CI_Model {
   function __construct() {
       parent::__construct();
   }
-  
+
   /**
-   * Returns all the surveys as Survey_entity
+   * Returns all the surveys as Survey_entity.
+   * It is possible to restrict the query by passing some params.
+   * 
+   * @param mixed $statuses (optional)
+   *   Status or array of statuses to query for. Providing NULL is the same as
+   *   providing all the statuses.
+   *   Default : NULL
+   * 
+   * @param int $agent_uid (optional)
+   *   Assigned agent.
+   * 
    * @return array of Survey_entity
    */
-  public function get_all() {
+  public function get_all($statuses = NULL, $agent_uid = NULL) {
+    if ($statuses !== NULL) {
+      if (empty($statuses)) {
+        return array();
+      }
+      $statuses = !is_array($statuses) ? array($statuses) : $statuses;
+      $this->mongo_db->whereIn('status', $statuses);
+    }
+    
+    if ($agent_uid) {
+      $this->mongo_db->where('agents', (int) $agent_uid);
+    }
+    
     $result = $this->mongo_db
       ->orderBy(array('created' => 'desc'))
       ->get(self::COLLECTION);
