@@ -35,9 +35,9 @@ $column-gutter: rem-calc(32);
 // $total-columns: 12;
 
 // We use these to control various global styles
-// $body-bg: #fff;
-// $body-font-color: #222;
-// $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$body-bg: palette(grey, x-light);
+$body-font-color: palette(grey, dark);
+$body-font-family: 'Open Sans', sans-serif;
 // $body-font-weight: normal;
 // $body-font-style: normal;
 
@@ -50,7 +50,7 @@ $column-gutter: rem-calc(32);
 // $default-float: left;
 
 // We use these as default colors throughout
-// $primary-color: #008CBA;
+// $primary-color: palette(grey);
 // $secondary-color: #e7e7e7;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
@@ -1086,7 +1086,7 @@ $column-gutter: rem-calc(32);
 // $header-font-family: join("Open Sans", $body-font-family);
 // $header-font-weight: 300;
 // $header-font-style: normal;
-// $header-font-color: #222;
+$header-font-color: palette(grey, dark);
 // $header-line-height: 1.4;
 // $header-top-margin: .2rem;
 // $header-bottom-margin: .5rem;

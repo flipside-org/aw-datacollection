@@ -1,8 +1,6 @@
-* {
-  font-family: 'Open Sans', sans-serif;
-}
-
-
+/* ==========================================================================
+   Icons
+   ========================================================================== */
 /* Custom icon font generated with Icomoon */
 @font-face {
   font-family: 'flipside-icons';
@@ -16,6 +14,7 @@
 }
 
 .icon, [class^="icon-"], [class*=" icon-"] {
+  font-family: 'flipside-icons';
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -31,40 +30,63 @@
 
 .icon-dashboard {
   @extend .icon;
-  content: "D";
+  content: "\e605";
 }
 .icon-surveys {
   @extend .icon;
-  content: "S";
+  content: "\e602";
 }
 .icon-users {
   @extend .icon;
-  content: "U";
+  content: "\e600";
 }
 .icon-account {
   @extend .icon;
-  content: "A";
+  content: "\e625";
 }
 
 
 
 .icon-s-triangle-down {
   @extend .icon;
-  font-family: 'flipside-icons';
   content: "\e617";
 }
 .icon-s-triangle-up {
   @extend .icon;
-  font-family: 'flipside-icons';
   content: "\e618";
 }
 .icon-s-triangle-right {
   @extend .icon;
-  font-family: 'flipside-icons';
   content: "\e619";
 }
 .icon-s-triangle-left {
   @extend .icon;
-  font-family: 'flipside-icons';
   content: "\e61c";
+}
+
+/* ==========================================================================
+   Headings
+   ========================================================================== */
+
+
+.hd-xl {
+  font-size: rem-calc(28);
+  line-height: 1.2857142857;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0;
+  padding: 0;
+}
+.hd-l {
+}
+.hd-m {
+}
+.hd-s {
+  
+}
+.hd-xs {
+  
+}
+.hd-xxs {
+  
 }

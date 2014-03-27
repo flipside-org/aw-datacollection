@@ -1,75 +1,68 @@
-/**
- *    base:       #454D53
- *    primary:    #047998
- *    info:       lighten 20% primary
- *    success:    #40B19B
- *    warning:    #FFBB00
- *    danger:     #DA454A
- */
-
-
-
+/* Base button style */
 .bttn {
   display: inline-block;
+  position: relative;
+  z-index: 5;
   padding: rem-calc(0 12);
   border-radius: rem-calc(4);
   font-weight: 700;
-  color: white;
+  
+  &:visited {
+    color: white;
+  }
   
   &:before, &:after {
     font-size: rem-calc(16);
   }
-  
-  &:hover {
-    color: white;
-  }
 }
 
-.bttn-primary {
-  @include button-skin(#047998);
-  
-  &:active, &.current {
-    @include button-skin(#047998, 'active');
-  }
-}
-.bttn-success {
-  @include button-skin(#40B19B);
-  
-  &:active, &.current {
-    @include button-skin(#40B19B, 'active');
-  }
-}
-.bttn-danger {
-  @include button-skin(#DA454A);
-  
-  &:active, &.current {
-    @include button-skin(#DA454A, 'active');
-  }
-}
-
+/* Button sizes */
 .bttn-small {
   line-height: rem-calc(32);
   height: rem-calc(32);
   font-size: rem-calc(14);
 }
-
 .bttn-medium {
   line-height: rem-calc(40);
   height: rem-calc(40);
   font-size: rem-calc(16);
 }
+/* // Button sizes */
 
-
+/* Button colors */
+.bttn-primary {
+  @include button-skin(palette(blue));
+  
+  &:active, &.current {
+    @include button-skin(palette(blue), 'active');
+  }
+}
+.bttn-success {
+  @include button-skin(palette(green));
+  
+  &:active, &.current {
+    @include button-skin(palette(green), 'active');
+  }
+}
+.bttn-danger {
+  @include button-skin(palette(red));
+  
+  &:active, &.current {
+    @include button-skin(palette(red), 'active');
+  }
+}
+/* // Button colors */
 
 /* Dropdown */
 .action-dropdown {
-  @include reset-list;
   min-width: rem-calc(200);
   position: absolute;
   top: 52px;
   left: 0;
+  display: none;
   @include border-radius(4px);
-  box-shadow: 0 0 0 2px rgba(#464E54, 0.1);
+  @include reset-list;
+  box-shadow: 0 0 0 2px rgba(palette(grey, dark), 0.1);
   background-color: white;
   color: #909598;
   font-size: rem-calc(14);
@@ -77,28 +70,38 @@
   &:before {
     @extend .icon-s-triangle-up;
     position: absolute;
+    z-index: 3;
     top: -31px;
     left: 8px;
     color: white;
     font-size: 32px;
-    text-shadow: 0 -3px rgba(#464E54, 0.1);
+    text-shadow: 0 -3px rgba(palette(grey, dark), 0.1);
     line-height: 56px;
   }
-  
-  .logged-user, a {
-    padding: rem-calc(12);
-    border-bottom: 1px solid #ECEDEE;
-  }
-      
-  .logged-user strong{
-    display: block;
-    color: #464E54;
-    font-weight: normal; 
-  }
-  
+
   li {
+    position: relative;
+    z-index: 4;
+    
+    /* Logged user is a special element only used in the primary nav */
+    &.logged-user, a {
+      padding: rem-calc(12);
+      border-bottom: 1px solid palette(grey, x-light);
+    }
+    
+    &.logged-user strong {
+      display: block;
+      color: palette(grey, dark);
+      font-weight: normal; 
+    }
+    
     a {
       display: block;
+      
+      &:hover {
+        background-color: palette(blue, x-light);
+        border-bottom-color: palette(blue, light);
+      }
     }
     
     &:last-child a{
@@ -116,6 +119,12 @@
     @extend .icon-s-triangle-left;
     top: 0;
     left: -19px;
-    text-shadow: -3px 0 rgba(#464E54, 0.1);
+    text-shadow: -3px 0 rgba(palette(grey, dark), 0.1);
   }
 }
+
+/* Dropdown for button size */
+.for-bttn-small {
+  top: 45px;
+}
+/* // Dropdown for button size */

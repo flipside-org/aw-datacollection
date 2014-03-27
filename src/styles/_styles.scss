@@ -1,19 +1,37 @@
-body, #site-canvas {
-  background-color: #ECEDEE;
+/* Generic link styles */
+a:link,
+a:visited {
+  color: palette(blue);
+  @include transform(translate3d(0, 0, 0));
+  @include transition-property(opacity, top, left, right);
+  @include transition-duration(0.2s, 0.1s, 0.2s, 0.2s);
+  @include transition-timing-function(ease, ease, ease, ease);
+  @include transition-delay(0, 0, 0, 0);
+  cursor: pointer;
 }
 
-a {
-  color: #057A99;
+a:hover,
+a:focus {
+  outline: none;
+  opacity: 0.7;
 }
+
+a:active {
+  position: relative;
+  top: 2px;
+}
+/* // Generic link styles */
+
 
 #site-head {
   width: rem-calc(80);
-  background-color: #047998;
+  background-color: palette(blue);
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   
+  /*TODO: Temporary site-title*/
   #site-title a {
     display: block;
     span{
@@ -23,6 +41,7 @@ a {
     }
   }
   
+  /* Navigation bar */
   #nav-links {
     @include reset-list;
     
@@ -37,7 +56,7 @@ a {
       &>a {
         
         &.current {
-          @include button-skin(#047998, 'active');
+          @include button-skin(palette(blue), 'active');
         }
         
         margin: 0 auto;
@@ -54,8 +73,7 @@ a {
           font-size: rem-calc(32);
         }
       }
-    }
-    
+    }    
     
     .dashboard {
       &:before {
@@ -77,8 +95,6 @@ a {
         @extend .icon-account;
       }
     }
-    
-    
   }
   
   #connection-status {
@@ -97,15 +113,84 @@ a {
 #site-body {
   margin-left: rem-calc(80);
   
-  #secondary .links {
-    @include reset-list;
+  /* Section header */
+  #page-head {
+    @include clearfix();
+    padding-top: rem-calc(32);
+    padding-bottom: rem-calc(32);
+    background-color: palette(grey, x-light);
+    box-shadow: 0 4px 0 0 rgba(palette(grey, dark), 0.1);
     
-    &>li {
-      position: relative;
-      display: inline-block;
+    .heading {
+      @include grid-column(6);
       
+      .hd-xl {
+        padding: rem-calc(2) 0;
+      }
+    }   
+    
+    /* Secondary navigation (nav) */
+    #secondary {
+      @include grid-column(6);
       
-      
+      .links {
+        @include reset-list;
+        float: right;
+        
+        &>li {
+          float: left;
+          position: relative;
+          margin-right: rem-calc(8);
+          
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+        
+        .sector-switcher {
+          border-right: rem-calc(2) solid palette(grey, light);
+          margin-right: rem-calc(16);
+          
+          &:last-child {
+            border: none;
+          }
+        }
+        .bttn-sector {
+          @extend .bttn;
+          @extend .bttn-medium;
+          
+          font-size: rem-calc(20);
+          
+          &:link, &:visited {
+            color: palette(grey, dark);
+          }
+        }
+      }
     }
+  }
+}
+
+/* Survey statuses */
+%status-base {
+  @extend %rounded;
+  width: rem-calc(12);
+  height: rem-calc(12);
+  
+  /** Explanation margin.
+   *  top|bottom: the margin value + element height = h1 line-height
+   *  right: shadow value + 8px
+   *  left: shadow value
+   */
+  margin: rem-calc(12 14 12 6);
+  display: block;
+  float: left;
+  content: '';
+  box-shadow: 0 0 0 6px rgba(palette(grey, dark), 0.1);
+}
+
+.status-draft {
+  &:before {
+    @extend %status-base;
+    background-color: palette(blue);
   }
 }

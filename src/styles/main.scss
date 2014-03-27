@@ -2,6 +2,9 @@
 @charset "UTF-8";
 @import "compass";
 
+// Colors are needed in the settings so must be loaded before.
+@import "colors";
+
 // Custom settings
 @import "settings";
 
@@ -45,7 +48,7 @@
   //"foundation/components/tooltips",
   "foundation/components/offcanvas",
   "foundation/components/visibility";
-  
+
 @import "helpers";
 @import "buttons";
 @import "forms";
