@@ -355,6 +355,8 @@ class Survey extends CI_Controller {
           }
 
           // common checks
+          // @todo check also if already present in the DB
+          // hint: check $row against $object->number
           if (is_numeric($row)) {
             if (!isset($respondents_numbers[$row])) {
               $respondents_numbers[$row] = 0;
@@ -1068,6 +1070,8 @@ class Survey extends CI_Controller {
         $data['respondents_numbers'] = array_keys($_SESSION['respondents_numbers']);
       }
 
+      $this->form_validation->set_rules('survey_respondents_submit', '', 'required');
+
       // If no data submitted show the form.
       if ($this->form_validation->run() == FALSE) {
 
@@ -1082,8 +1086,9 @@ class Survey extends CI_Controller {
         foreach ($_SESSION['respondents_numbers'] as $line => $number) {
           // Prepare survey data to construct a new survey_entity
           $call_task_data = array();
-          $call_task_data['survey_id'] = $sid;
-          $call_task_data['number'] = $row;
+          // @todo find generic solution for the code below (int)
+          $call_task_data['survey_sid'] = (int) $sid;
+          $call_task_data['number'] = $number;
 
           // Construct survey.
           $new_call_task = Call_task_entity::build($call_task_data);
