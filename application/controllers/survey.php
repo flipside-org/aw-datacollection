@@ -1054,26 +1054,55 @@ class Survey extends CI_Controller {
 
     $survey = $this->survey_model->get($sid);
 
-    $messages = Status_msg::get();
-    $data = array(
-      'survey' => $survey,
-      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE),
-      'respondents_numbers' => array(),
-    );
-
-    $survey = $this->survey_model->get($sid);
-
     if ($survey) {
+
+      $messages = Status_msg::get();
+      $data = array(
+        'survey' => $survey,
+        'messages' => $this->load->view('messages', array('messages' => $messages), TRUE),
+        'respondents_numbers' => array(),
+      );
+
       // pass on the data to the view
       if (isset($_SESSION['respondents_numbers'])) {
         $data['respondents_numbers'] = array_keys($_SESSION['respondents_numbers']);
-        unset($_SESSION['respondents_numbers']);
       }
 
-      $this->load->view('base/html_start');
-      $this->load->view('navigation');
-      $this->load->view('surveys/survey_respondents_confirm', $data);
-      $this->load->view('base/html_end');
+      // If no data submitted show the form.
+      if ($this->form_validation->run() == FALSE) {
+
+        $this->load->view('base/html_start');
+        $this->load->view('navigation');
+        $this->load->view('surveys/survey_respondents_confirm', $data);
+        $this->load->view('base/html_end');
+      }
+      else {
+
+        // create a call_task for each respondent number
+        foreach ($_SESSION['respondents_numbers'] as $line => $number) {
+          // Prepare survey data to construct a new survey_entity
+          $call_task_data = array();
+          $call_task_data['survey_id'] = $sid;
+          $call_task_data['number'] = $row;
+
+          // Construct survey.
+          $new_call_task = Call_task_entity::build($call_task_data);
+
+          // Save survey.
+          // Survey files can only be handled after the survey is saved.
+          // TODO: Handle error during save.
+          $this->call_task_model->save($new_call_task);
+        }
+
+        // User feedback.
+        $numbers = sizeof($_SESSION['respondents_numbers']);
+        Status_msg::success("Added $numbers entries to the call tasks of this survey.");
+
+        unset($_SESSION['respondents_numbers']);
+
+        // perform the redirect
+        redirect('/survey/' . $survey->sid . '/respondents');
+      }
     }
     else {
      show_404();

@@ -8,15 +8,18 @@
   <h1><?= $survey->title ?></h1>
   <h2>Confirm respondents</h2>
 
-  <ul>
-  <?php foreach ($respondents_numbers as $respondent_number) : ?>
-    <li><?= $respondent_number; ?></li>
-  <?php endforeach; ?>
-  </ul>
+  <?php if (sizeof($respondents_numbers)) : ?>
+    <ul>
+    <?php foreach ($respondents_numbers as $respondent_number) : ?>
+      <li><?= $respondent_number; ?></li>
+    <?php endforeach; ?>
+    </ul>
 
-  <?= form_submit('survey_respondents_submit', 'Confirm respondents'); ?>
+    <?= form_submit('survey_respondents_submit', 'Confirm respondents'); ?>
+  <?php endif ?>
 
-<?= form_close(); ?>
+
+  <?= form_close(); ?>
 </div>
 
 
