@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+define('SURVEY_RESPONDENT_CSV_HEADER', 'phone_number');
+
 /**
  * Survey controller.
  */
@@ -19,6 +21,8 @@ class Survey extends CI_Controller {
     $this->load->model('call_task_model');
     load_entity('call_task');
     load_entity('respondent');
+    // this is neede
+    session_start();
   }
 
   /**
@@ -27,7 +31,7 @@ class Survey extends CI_Controller {
 	public function index() {
 	  redirect('surveys');
 	}
-  
+
   /**
    * Lists all surveys.
    * Route:
@@ -72,7 +76,7 @@ class Survey extends CI_Controller {
     if (!$survey) {
       show_404();
     }
-    
+
     if (!has_permission('view any survey page') && has_permission('view assigned survey page')) {
       // Is assigned?
       if (!$survey->is_assigned_agent(current_user()->uid)) {
@@ -86,7 +90,7 @@ class Survey extends CI_Controller {
       //'messages' => $messages,
       'messages' => $this->load->view('messages', array('messages' => $messages), TRUE)
     );
-    
+
     // Agents. Each array element contains the user and
     // properties for the select. (selected, disabled)
     $agents = array();
@@ -95,17 +99,17 @@ class Survey extends CI_Controller {
     foreach ($all_agents as $index => $user) {
       $agents[$index]['user'] = $user;
       $agents[$index]['properties'] = array();
-      
+
       if ($survey->is_assigned_agent($user->uid)) {
         $agents[$index]['properties'][] = 'selected';
-        
+
         // TODO: Check if the user can be unassigned.
       }
 
     }
-    
+
     $data['agents'] = $agents;
-    
+
     $this->load->view('base/html_start');
     $this->load->view('navigation');
     $this->load->view('surveys/survey_page', $data);
@@ -305,23 +309,73 @@ class Survey extends CI_Controller {
         $this->load->view('base/html_end');
       }
       else {
-        // If it reaches this point the survey was saved.
-        Status_msg::success('Respondents successfully added.');
+        // initialise the respondents numbers list
+        $rows = explode("\n", $this->input->post('survey_respondents_text'));
+        $textarea_lines = sizeof($rows);
+        $respondents_numbers = array();
 
-        // read file
+        // read file, if any
         $file = $this->input->post('survey_respondents_file');
 
         if (isset($file['full_path'])) {
           // load CSVReader library
-          $this->load->helper('csvreader');;
+          $this->load->helper('csvreader');
           $csv = new CSVReader();
           $csv->separator = ',';
-          $_POST['csv_data'] = $csv->parse_file($file['full_path']);
+          // we are merging the rows from csv to potential rows in the text area
+          // this allows to verify everything in one pass
+          $rows = array_merge($rows, $csv->parse_file($file['full_path']));
         }
 
-        // @todo
-        // Now we need to run the verification for repeated phone numbers here too.
+        foreach ($rows as $line => $row) {
+          // silently skip empty rows
+          if (empty($row)) {
+            continue;
+          }
 
+          // prepare data
+          // if it's a row from the text area
+          if (!is_array($row)) {
+            $context = 'textarea';
+            $real_line = $line + 1;
+            $row = trim($row);
+          }
+          // this is from the csv file
+          else {
+            $context = 'CSV file';
+            $real_line = ($line + 1) - $textarea_lines;
+            // make sure it's not a random CSV
+            if (isset($row[SURVEY_RESPONDENT_CSV_HEADER])) {
+              $row = trim($row[SURVEY_RESPONDENT_CSV_HEADER]);
+            }
+            // warn user
+            else {
+              Status_msg::warning('Some data has been skipped. Make sure your column header is "' . SURVEY_RESPONDENT_CSV_HEADER .'".');
+            }
+          }
+
+          // common checks
+          if (is_numeric($row)) {
+            if (!isset($respondents_numbers[$row])) {
+              $respondents_numbers[$row] = 0;
+            }
+            $respondents_numbers[$row]++;
+          }
+          else {
+            Status_msg::warning("Line #$real_line of the $context has been skipped as it does not appear to be a number.");
+          }
+        }
+
+        // store in sesion or issue error if
+        if (sizeof($respondents_numbers)) {
+          $_SESSION['respondents_numbers'] = $respondents_numbers;
+        }
+        else {
+          Status_msg::error('No usable numbers have been found in submitted data.');
+          return FALSE;
+        }
+
+        // perform the redirect
         redirect('/survey/' . $survey->sid . '/respondents/add/confirm');
       }
     }
@@ -390,12 +444,12 @@ class Survey extends CI_Controller {
     else if (!$survey->has_xml()) {
       show_403();
     }
-    
+
     switch ($type) {
       case 'data_collection':
         if (!has_permission('enketo collect data any') && !has_permission('enketo collect data assigned')) {
           show_403();
-          
+
         }else if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
           // Is assigned?
           if (!$survey->is_assigned_agent(current_user()->uid)) {
@@ -452,7 +506,7 @@ class Survey extends CI_Controller {
         show_403();
       }
     }
-    
+
     $call_task = $this->call_task_model->get($ctid);
     $survey = $this->survey_model->get($sid);
     if ($call_task && $survey && $survey->sid == $call_task->survey_sid) {
@@ -488,7 +542,7 @@ class Survey extends CI_Controller {
   /**
    * Call task activity page. Shows a list of completed call tasks
    * and call tasks still to complete.
-   * 
+   *
    * Route:
    * /survey/:sid/call_activity
    */
@@ -506,10 +560,10 @@ class Survey extends CI_Controller {
         show_403();
       }
     }
-  
+
     $resolved = $this->call_task_model->get_resolved($sid, current_user()->uid);
     $unresolved = $this->call_task_model->get_unresolved($sid, current_user()->uid);
-    
+
     $this->load->view('base/html_start');
     $this->load->view('navigation');
     $this->load->view('surveys/survey_call_activity', array(
@@ -519,7 +573,7 @@ class Survey extends CI_Controller {
     );
     $this->load->view('base/html_end');
   }
-  
+
   /**
    * Enketo API
    * Converts the survey xml file to html for enketo to use
@@ -543,7 +597,7 @@ class Survey extends CI_Controller {
       return $this->api_output(500, 'Xml file not present.', array('xml_form' => NULL));
     }
     else if (!has_permission('enketo collect data any') && !has_permission('enketo testrun any')) {
-        
+
       if (!has_permission('enketo collect data assigned') && !has_permission('enketo testrun assigned')) {
         return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
       }
@@ -554,12 +608,12 @@ class Survey extends CI_Controller {
 
     }
     // TODO: Collect Data: Check for other restrictions (like status)
-    
+
     $this->load->helper('xslt_transformer');
 
     $xslt_transformer = Xslt_transformer::build($survey->get_xml_full_path());
     $result = $xslt_transformer->get_transform_result_sxe()->asXML();
-    
+
     return $this->api_output(200, 'Ok!', array('xml_form' => $result));
   }
 
@@ -596,19 +650,19 @@ class Survey extends CI_Controller {
       }
     }
     // TODO: Collect Data: Check for other restrictions (like status)
-    
+
     // Max to reserve - from config.
     $max_to_reserve = $this->config->item('aw_enketo_call_tasks_reserve');
-    
+
     // Already reserved.
     $reserved = $this->call_task_model->get_reserved($sid, current_user()->uid);
-    
+
     // Extra to reserve.
     $to_reserve = $max_to_reserve - count($reserved);
     if ($to_reserve > 0) {
       $newly_reserved = $this->call_task_model->reserve($sid, current_user()->uid, $to_reserve);
-      
-      // If false means that there are no respondents.        
+
+      // If false means that there are no respondents.
       if ($newly_reserved !== FALSE) {
         $reserved = array_merge($reserved, $newly_reserved);
       }
@@ -669,11 +723,11 @@ class Survey extends CI_Controller {
     else if (!$call_task->is_assigned()) {
       return $this->api_output(500, 'User not assigned to call task.');
     }
-    
+
     // After knowing that the call task is valid, knowing to who it belongs
     // is the first thing. All the other validations will be done when
     // the data is submitted under the right circumstances.
-    
+
     // If the same computer is shared by different users it may happen
     // that an user uploads data another user left in the localStorage.
     // We do not save that data, but we send a response to keep it in
@@ -695,12 +749,12 @@ class Survey extends CI_Controller {
         return $this->api_output(201, 'Submitting data for another survey.');
       }
     }
-    
+
     // Reaching this point we know:
     // - Call task is assigned to the current_user.
     // - The survey to which the call task is assigned is the one for
     // which data is being submitted.
-    
+
     // Now that we know that the call task does not belong to another user
     // let's do some more validations.
     if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
@@ -709,9 +763,9 @@ class Survey extends CI_Controller {
         return $this->api_output(403, 'Not allowed.');
       }
     }
-    
+
     // TODO: Collect Data: Check for other restrictions (like status)
-    
+
     // Was the survey completed?
     // If there's a form_data it's finished
     if (isset($respondent['form_data'])) {
@@ -749,11 +803,11 @@ class Survey extends CI_Controller {
     $this->call_task_model->save($call_task);
     return $this->api_output();
   }
-  
+
   /**
    * Survey API
    * API to manage survey agents.
-   * 
+   *
    * JSON output:
    * status : {
    *   code : ,
@@ -764,25 +818,25 @@ class Survey extends CI_Controller {
     if (!has_permission('assign agents')) {
       return $this->api_output(403, 'Not allowed.');
     }
-    
+
     $uid = (int) $this->input->post('uid');
     $action = $this->input->post('action');
-    
+
     $survey = $this->survey_model->get($sid);
     if (!$survey) {
       return $this->api_output(500, 'Invalid survey.');
     }
     // TODO : api_survey_assign_agents : additional checks (survey in right status, the user can be assigned | unassigned)
-    
+
     $user = $this->user_model->get($uid);
     if (!$user || !$user->is_active()) {
       return $this->api_output(500, 'Invalid user.');
     }
-    
+
     if ($action == 'assign' && !$user->has_role(ROLE_CC_AGENT)) {
       return $this->api_output(500, 'User is not an agent.');
     }
-    
+
     $needs_saving = FALSE;
     if($action == 'assign') {
       // Returns true if agent is actually added.
@@ -796,16 +850,16 @@ class Survey extends CI_Controller {
         $needs_saving = TRUE;
       }
     }
-    
+
     // Only save if needed
     if ($needs_saving && !$this->survey_model->save($survey)) {
       return $this->api_output(500, 'Failed saving the survey.');
     }
-    
+
     return $this->api_output(200, 'Ok!');
-    
+
   }
-  
+
   // TODO: Survey. Delete delay function.
   public function delay($sec) {
     sleep($sec);
@@ -821,24 +875,24 @@ class Survey extends CI_Controller {
    * Callback for form validation
    * etc
    */
-   
+
   /**
    * Produces output as JSON for API's
-   * 
+   *
    * JSON output:
    * status : {
    *   code : ,
    *   message:
    * }
    * extra fields
-   * 
+   *
    * @param int $code (default 200)
    *   Value for status.code
    * @param string $msg (default Ok!)
    *   Value for status.message
    * @param array $extra
    *   Any extra fields
-   * 
+   *
    * @return TRUE
    *   This method only sets the output using the output class.
    *   The script execution is not terminated so it is recomendend to
@@ -997,10 +1051,29 @@ class Survey extends CI_Controller {
       show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
     }
 
+
+    $survey = $this->survey_model->get($sid);
+
+    $messages = Status_msg::get();
+    $data = array(
+      'survey' => $survey,
+      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE),
+      'respondents_numbers' => array(),
+    );
+
     $survey = $this->survey_model->get($sid);
 
     if ($survey) {
-      krumo($_POST);
+      // pass on the data to the view
+      if (isset($_SESSION['respondents_numbers'])) {
+        $data['respondents_numbers'] = array_keys($_SESSION['respondents_numbers']);
+        unset($_SESSION['respondents_numbers']);
+      }
+
+      $this->load->view('base/html_start');
+      $this->load->view('navigation');
+      $this->load->view('surveys/survey_respondents_confirm', $data);
+      $this->load->view('base/html_end');
     }
     else {
      show_404();
