@@ -171,7 +171,7 @@ a:active {
 }
 
 /* Survey statuses */
-%status-base {
+%status-indicator-base {
   @extend %rounded;
   width: rem-calc(12);
   height: rem-calc(12);
@@ -188,9 +188,57 @@ a:active {
   box-shadow: 0 0 0 6px rgba(palette(grey, dark), 0.1);
 }
 
-.status-draft {
+.status-indicator-draft {
   &:before {
-    @extend %status-base;
+    @extend %status-indicator-base;
     background-color: palette(blue);
+  }
+}
+
+%status-base {
+  @extend %rounded;
+  padding: rem-calc(8 12);
+  display: inline-block;
+  line-height: rem-calc(14);
+  font-weight: 700;
+  background-color: palette(grey, x-light);
+  color: palette(grey, dark);
+  
+  &:before {
+    @extend %rounded;
+    width: rem-calc(12);
+    height: rem-calc(12);
+    margin: rem-calc(1) rem-calc(8) 0 0;
+    content: '';
+    display: block;
+    float: left;
+  }
+}
+
+.status-draft {
+  @extend %status-base;
+  &:before {
+    background-color: palette(blue);
+  }
+}
+
+.status-open {
+  @extend %status-base;
+  &:before {
+    background-color: palette(green);
+  }
+}
+
+.status-closed {
+  @extend %status-base;
+  &:before {
+    background-color: palette(grey, dark);
+  }
+}
+
+.status-canceled {
+  @extend %status-base;
+  &:before {
+    background-color: palette(red);
   }
 }

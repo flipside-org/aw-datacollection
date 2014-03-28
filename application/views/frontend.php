@@ -43,7 +43,7 @@
       <header id="page-head">
         
       		<div class="heading">
-      			<h1 class="hd-xl status-draft">Client Satisfaction Survey</h1>
+      			<h1 class="hd-xl status-indicator-draft">Client Satisfaction Survey</h1>
       		</div>
       		
       		<nav id="secondary" role="navigation">
@@ -52,7 +52,7 @@
       		  	  <strong class="bttn-sector">Current</strong>
       		  	</li>
       		  	<li class="sector-switcher">
-      		  	  <a class="bttn-sector" href="" data-dropdown="action-bttn"><strong>Summary</strong></a>
+      		  	  <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Summary</strong></a>
       		  	  <ul class="action-dropdown" style="display: none">
                   <li><a href="#">Section</a></li>
                   <li><a href="#">Statistics</a></li>
@@ -60,7 +60,7 @@
                 </ul>
       		  	</li>
       		  	<li>
-      		  	  <a href="" class="bttn bttn-danger bttn-medium" data-dropdown="action-bttn">Destroy the world</a>
+      		  	  <a href="" class="bttn bttn-danger bttn-medium bttn-dropdown" data-dropdown="action-bttn">Destroy the world</a>
       		  	  <ul class="action-dropdown" style="display: none">
                   <li><a href="#">Bomb</a></li>
                   <li><a href="#">Black Hole</a></li>
@@ -73,9 +73,72 @@
       </header>
       
       <div class="content">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        
+        <div class="columns small-12">
+        <section class="contained">
+        	<header class="contained-head">
+        	  
+        	  <ul class="bttn-group bttn-center">
+        	  	<li><a href="" class="bttn bttn-default bttn-small current">Make</a></li>
+        	  	<li><a href="" class="bttn bttn-default bttn-small">my</a></li>
+        	  	<li><a href="" class="bttn bttn-default bttn-small">button</a></li>
+        	  	<li><a href="" class="bttn bttn-default bttn-small">bigggggggggggggger</a></li>
+        	  </ul>
+        	  
+        	</header>
+        	  
+        	  <div class="contained-body">
+  						<table>
+  							<thead>
+  								<tr>
+  									<th>Status</th>
+  									<th>Title</th>
+  									<th>Actions</th>
+  								</tr>
+  							</thead>
+  							<tbody>
+  								<tr>
+  									<td><strong class="status-draft">Draft</strong></td>
+  									<td><a href="">UNHCO Client Satisfaction Survey</a></td>
+  									<td></td>
+  								</tr>
+  								<tr>
+  									<td><strong class="status-open">Open</strong></td>
+  									<td><a href="">GIZ Water Campaign February 2013</a></td>
+  									<td></td>
+  								</tr>
+  								<tr>
+  									<td><strong class="status-closed">Closed</strong></td>
+  									<td><a href="">Lorem Ipsum Dolor Sit Amet</a></td>
+  									<td></td>
+  								</tr>
+  								<tr>
+  									<td><strong class="status-canceled">Canceled</strong></td>
+  									<td><a href="">This will never come to be</a></td>
+  									<td></td>
+  								</tr>
+  							</tbody>
+  						</table>
+						</div>
+					
+        	<footer class="contained-foot">
+        	  <p>18 of 200 items</p>
+        	  <ul class="bttn-group bttn-center">
+              <li><a href="" class="bttn bttn-default bttn-small">&lt;&lt;</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">&lt;</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">1</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">2</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small current">3</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">4</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">5</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">&gt;</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">&gt;&gt;</a></li>
+            </ul>
+        	  </footer>
+        </section>
+        </div>
+        
       </div>
-      
     </section>
   </main>
 </div>

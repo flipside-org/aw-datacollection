@@ -14,6 +14,7 @@ $palettes: (
     x-light:  tint(#454D53, 90%),
     light:    tint(#454D53, 80%),
     base:     tint(#454D53, 40%),
+    mid-dark: tint(#454D53, 10%),
     dark:     #454D53,
     x-dark:   shade(#454D53, 5%),
   ),
@@ -24,12 +25,15 @@ $palettes: (
     base:       #047998
   ),
   green: (
+    x-light:    tint(#DA454A, 90%),
     base:   #40B19B
   ),
   yellow: (
+    x-light:    tint(#DA454A, 90%),
     base:   #FFBB00
   ),
   red: (
+    x-light:    tint(#DA454A, 90%),
     base:   #DA454A
   ),
 );

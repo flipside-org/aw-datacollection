@@ -10,9 +10,12 @@
   &:visited {
     color: white;
   }
-  
-  &:before, &:after {
-    font-size: rem-calc(16);
+}
+
+.bttn-dropdown {
+  &:after {
+    @extend .icon-s-triangle-down;
+    margin-left: rem-calc(8);
   }
 }
 
@@ -21,11 +24,19 @@
   line-height: rem-calc(32);
   height: rem-calc(32);
   font-size: rem-calc(14);
+  
+  &:before, &:after {
+    font-size: rem-calc(14);
+  }
 }
 .bttn-medium {
   line-height: rem-calc(40);
   height: rem-calc(40);
   font-size: rem-calc(16);
+  
+  &:before, &:after {
+    font-size: rem-calc(16);
+  }
 }
 /* // Button sizes */
 
@@ -51,7 +62,58 @@
     @include button-skin(palette(red), 'active');
   }
 }
+.bttn-default {
+  @include button-skin(palette(grey, mid-dark), $tint_prc: 10%);
+  
+  &:active, &.current {
+    @include button-skin(palette(grey, mid-dark), $status: 'active', $tint_prc: 10%);
+  }
+}
 /* // Button colors */
+
+/* Button groups */
+.bttn-group {
+  @include reset-list;
+  @include clearfix();
+  
+  &>li {
+    float: left;
+    
+    /* Add spacing between buttons except the last one */
+    margin-left: 1px;
+    &:last-child {
+      margin: none;
+    }
+    
+    /* Remove border-radius. */
+    .bttn {
+      border-radius: 0;
+    }
+    
+    /* Border on the last */
+    &:first-child .bttn {
+      border-radius: rem-calc(4 0 0 4);
+    }
+    &:last-child .bttn {
+      border-radius: rem-calc(0 4 4 0);
+    }
+  }
+}
+
+.bttn-center {
+  float: left;
+  clear: left;
+  position: relative;
+  left: 50%;
+  
+  &>li {
+    float: left;
+    position: relative;
+    right: 50%;
+  }
+}
+/* // Button groups */
+
 
 /* Dropdown */
 .action-dropdown {

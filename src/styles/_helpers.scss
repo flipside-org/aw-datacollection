@@ -13,11 +13,11 @@
   width: 1px;
 }
 
-@mixin button-skin($bgcolor, $status: 'normal') {
-  $tint-color: tint($bgcolor, 25%);
-  $shade-color: shade($bgcolor, 25%);
+@mixin button-skin($bgcolor, $status: 'normal', $tint_prc: 25%, $shade_prc: 25%, $bg_prc: 10%) {
+  $tint-color: tint($bgcolor, $tint_prc);
+  $shade-color: shade($bgcolor, $shade_prc);
   @if $status == 'active' {
-    background-color: shade($bgcolor, 10%);
+    background-color: shade($bgcolor, $bg_prc);
     box-shadow:inset 0 2px 0 0 $shade-color, inset 0 -2px 0 0 $tint-color;
   }
   @else {
