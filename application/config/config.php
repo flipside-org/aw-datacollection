@@ -382,5 +382,7 @@ $config['aw_enketo_call_tasks_reserve'] = 5;
 // Keep call tasks assigned for 3 days.
 $config['aw_enketo_call_tasks_reserve_exprire'] = 86400 * 3;
 
+$config['aw_respondents_per_page'] = 50;
+
 /* End of file config.php */
 /* Location: ./application/config/config.php */

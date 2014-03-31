@@ -54,6 +54,7 @@ $config['permissions'] = array(
   'delete any survey'         => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'download survey files'     => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR, ROLE_CC_AGENT),
   'assign agents'             => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  'manage respondents any survey' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   
   // Although this permission exists should no be used.
   // It allows non assigned users to collect data which should not happen.
