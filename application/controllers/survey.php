@@ -76,7 +76,7 @@ class Survey extends CI_Controller {
     if (!$survey) {
       show_404();
     }
-
+    // TODO: Status restriction
     if (!has_permission('view any survey page') && has_permission('view assigned survey page')) {
       // Is assigned?
       if (!$survey->is_assigned_agent(current_user()->uid)) {
@@ -192,7 +192,7 @@ class Survey extends CI_Controller {
           // Prepare survey data to construct a new survey_entity
           $survey_data = array();
           $survey_data['title'] = $this->input->post('survey_title', TRUE);
-          $survey_data['status'] = $this->input->post('survey_status');
+          $survey_data['status'] = (int) $this->input->post('survey_status');
           $survey_data['introduction'] = $this->input->post('survey_introduction', TRUE);
 
           // Construct survey.
@@ -238,7 +238,7 @@ class Survey extends CI_Controller {
 
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);
-          $survey->status = $this->input->post('survey_status');
+          $survey->status = (int) $this->input->post('survey_status');
           $survey->introduction = $this->input->post('survey_introduction', TRUE);
 
           // Handle uploaded file:
@@ -312,7 +312,7 @@ class Survey extends CI_Controller {
       $this->load->helper('download');
       $file_storage = $this->config->item('aw_survey_files_location');
 
-      force_download($survey->files[$type], $file_storage . $survey->files[$type]);
+      force_download($survey->files[$type], file_get_contents($file_storage . $survey->files[$type]));
     }
     else {
       show_404();
