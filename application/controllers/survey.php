@@ -275,119 +275,6 @@ class Survey extends CI_Controller {
   }
 
   /**
-   * Handles form to add and edit survey.
-   *
-   * @param $sid
-   * @param $action "edit|add"
-   */
-  protected function _survey_respondents_form_handle($sid, $action = 'edit') {
-
-    $survey = $this->survey_model->get($sid);
-
-    if ($survey) {
-      // Config data for the file upload.
-      $file_upload_config = array(
-        'upload_path' => '/tmp/',
-        'allowed_types' => 'csv',
-        'file_name' => 'respondents_' . md5(microtime(true))
-      );
-
-      // Load needed libraries
-      $this->load->library('upload', $file_upload_config);
-
-      $this->form_validation->set_rules('survey_respondents_file', 'Respondents File', 'callback__cb_survey_respondents_add_file_handle');
-      $this->form_validation->set_rules('survey_respondents_text', 'Respondents Text', 'xss_clean');
-
-      // If no data submitted show the form.
-      if ($this->form_validation->run() == FALSE) {
-
-        $messages = Status_msg::get();
-
-        $this->load->view('base/html_start');
-        $this->load->view('navigation');
-        $this->load->view('surveys/survey_respondents_add', array('survey' => $survey, 'messages' => $messages));
-        $this->load->view('base/html_end');
-      }
-      else {
-        // initialise the respondents numbers list
-        $rows = explode("\n", $this->input->post('survey_respondents_text'));
-        $textarea_lines = sizeof($rows);
-        $respondents_numbers = array();
-
-        // read file, if any
-        $file = $this->input->post('survey_respondents_file');
-
-        if (isset($file['full_path'])) {
-          // load CSVReader library
-          $this->load->helper('csvreader');
-          $csv = new CSVReader();
-          $csv->separator = ',';
-          // we are merging the rows from csv to potential rows in the text area
-          // this allows to verify everything in one pass
-          $rows = array_merge($rows, $csv->parse_file($file['full_path']));
-        }
-
-        foreach ($rows as $line => $row) {
-          // silently skip empty rows
-          if (empty($row)) {
-            continue;
-          }
-
-          // prepare data
-          // if it's a row from the text area
-          if (!is_array($row)) {
-            $context = 'textarea';
-            $real_line = $line + 1;
-            $row = trim($row);
-          }
-          // this is from the csv file
-          else {
-            $context = 'CSV file';
-            $real_line = ($line + 1) - $textarea_lines;
-            // make sure it's not a random CSV
-            if (isset($row[SURVEY_RESPONDENT_CSV_HEADER])) {
-              $row = trim($row[SURVEY_RESPONDENT_CSV_HEADER]);
-            }
-            // warn user
-            else {
-              Status_msg::warning('Some data has been skipped. Make sure your column header is "' . SURVEY_RESPONDENT_CSV_HEADER .'".');
-            }
-          }
-
-          // common checks
-          // @todo check also if already present in the DB
-          // hint: check $row against $object->number
-          if (is_numeric($row)) {
-            if (!isset($respondents_numbers[$row])) {
-              $respondents_numbers[$row] = 0;
-            }
-            $respondents_numbers[$row]++;
-          }
-          else {
-            Status_msg::warning("Line #$real_line of the $context has been skipped as it does not appear to be a number.");
-          }
-        }
-
-        // store in sesion or issue error if
-        if (sizeof($respondents_numbers)) {
-          $_SESSION['respondents_numbers'] = $respondents_numbers;
-        }
-        else {
-          Status_msg::error('No usable numbers have been found in submitted data.');
-          return FALSE;
-        }
-
-        // perform the redirect
-        redirect('/survey/' . $survey->sid . '/respondents/add/confirm');
-      }
-    }
-    else {
-     show_404();
-    }
-
-  }
-
-  /**
    * Delete handler for surveys.
    * Route (POST data)
    * /survey/delete
@@ -1035,11 +922,130 @@ class Survey extends CI_Controller {
    * Route - /survey/:sid/respondents
    */
   public function survey_respondents_add($sid){
-    if (!has_permission('edit any survey')) {
+    if (!has_permission('import respondents any survey')) {
       show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
     }
 
-    $this->_survey_respondents_form_handle($sid, 'add');
+    $survey = $this->survey_model->get($sid);
+
+    if ($survey) {
+      // Config data for the file upload.
+      $file_upload_config = array(
+        'upload_path' => '/tmp/',
+        'allowed_types' => 'csv',
+        'file_name' => 'respondents_' . md5(microtime(true))
+      );
+
+      // Load needed libraries
+      $this->load->library('upload', $file_upload_config);
+
+      $this->form_validation->set_rules('survey_respondents_file', 'Respondents File', 'callback__cb_survey_respondents_add_file_handle');
+      $this->form_validation->set_rules('survey_respondents_text', 'Respondents Text', 'xss_clean');
+
+      // If no data submitted show the form.
+      if ($this->form_validation->run() == FALSE) {
+
+        $messages = Status_msg::get();
+
+        $this->load->view('base/html_start');
+        $this->load->view('navigation');
+        $this->load->view('surveys/survey_respondents_add', array('survey' => $survey, 'messages' => $messages));
+        $this->load->view('base/html_end');
+      }
+      else {
+        // Initialize the respondents numbers list.
+        $rows = explode("\n", $this->input->post('survey_respondents_text'));
+        $textarea_lines = sizeof($rows);
+        $respondents_numbers = array();
+
+        // Read file, if any.
+        $file = $this->input->post('survey_respondents_file');
+
+        if (isset($file['full_path'])) {
+          // Load CSVReader library.
+          $this->load->helper('csvreader');
+          $csv = new CSVReader();
+          $csv->separator = ',';
+          // We are merging the rows from csv to potential rows in the text area
+          // this allows to verify everything in one pass.
+          $rows = array_merge($rows, $csv->parse_file($file['full_path']));
+        }
+        
+        $db_call_tasks = $this->call_task_model->get_all($sid);
+        
+        foreach ($rows as $line => $row) {
+          // Silently skip empty rows.
+          if (empty($row)) {
+            continue;
+          }
+
+          // Prepare data.
+          // If it's a row from the text area.
+          if (!is_array($row)) {
+            $context = 'textarea';
+            $real_line = $line + 1;
+            $row = trim($row);
+          }
+          // This is from the csv file.
+          else {
+            $context = 'CSV file';
+            $real_line = ($line + 1) - $textarea_lines;
+            // Make sure it's not a random CSV.
+            if (isset($row[SURVEY_RESPONDENT_CSV_HEADER])) {
+              $row = trim($row[SURVEY_RESPONDENT_CSV_HEADER]);
+            }
+            // Warn user.
+            else {
+              Status_msg::warning('Some data has been skipped. Make sure your column header is "' . SURVEY_RESPONDENT_CSV_HEADER .'".');
+            }
+          }
+
+          // Common checks.
+          // @todo check also if already present in the DB
+          // hint: check $row against $object->number
+          if (is_numeric($row)) {
+            
+            // Check db doubles.
+            $is_double = FALSE;
+            foreach ($db_call_tasks as $call_task) {
+              if ($call_task->number == $row) {
+                $is_double = TRUE;
+                break;
+              }
+            }
+            
+            if ($is_double) {
+              // Db Double.
+              continue;
+            }
+            // END Check db doubles.
+            
+            if (!isset($respondents_numbers[$row])) {
+              $respondents_numbers[$row] = 0;
+            }
+            $respondents_numbers[$row]++;
+          }
+          else {
+            Status_msg::warning("Line #$real_line of the $context has been skipped as it does not appear to be a number.");
+          }
+        }
+
+        // Store in session or issue error if.
+        if (sizeof($respondents_numbers)) {
+          $_SESSION['respondents_numbers'] = $respondents_numbers;
+        }
+        else {
+          Status_msg::error('No usable numbers have been found in submitted data.');
+          redirect('/survey/' . $survey->sid . '/respondents');
+        }
+
+        // Perform the redirect.
+        redirect('/survey/' . $survey->sid . '/respondents/add/confirm');
+      }
+    }
+    else {
+     show_404();
+    }
   }
 
   /**
@@ -1049,10 +1055,9 @@ class Survey extends CI_Controller {
    * Route - /survey/:sid/respondents
    */
   public function survey_respondents_add_confirm($sid){
-    if (!has_permission('edit any survey')) {
+    if (!has_permission('import respondents any survey')) {
       show_error("The requested operation is not allowed.", 403, 'Operation not allowed');
     }
-
 
     $survey = $this->survey_model->get($sid);
 
@@ -1083,12 +1088,12 @@ class Survey extends CI_Controller {
       else {
 
         // create a call_task for each respondent number
-        foreach ($_SESSION['respondents_numbers'] as $line => $number) {
+        foreach ($_SESSION['respondents_numbers'] as $number => $qtd) {
           // Prepare survey data to construct a new survey_entity
           $call_task_data = array();
           // @todo find generic solution for the code below (int)
           $call_task_data['survey_sid'] = (int) $sid;
-          $call_task_data['number'] = $number;
+          $call_task_data['number'] = (string) $number;
 
           // Construct survey.
           $new_call_task = Call_task_entity::build($call_task_data);
