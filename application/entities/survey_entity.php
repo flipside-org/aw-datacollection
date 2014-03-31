@@ -286,9 +286,12 @@ class Survey_entity extends Entity {
    * @access public
    * @return string
    */
-  public function get_url_respondents() {
+  public function get_url_respondents($page = NULL) {
     if ($this->sid == NULL) {
       throw new Exception("Trying to get link for a non-existent survey.");
+    }
+    if ($page) {
+      return base_url('survey/' . $this->sid . '/respondents/' . $page) ;
     }
     return base_url('survey/' . $this->sid . '/respondents') ;
   }

@@ -51,6 +51,54 @@ class Call_task_model extends CI_Model {
   }
   
   /**
+   * Returns all the Call tasks of a given survey paginated.
+   *  
+   * @param int $sid
+   *  Since all the call tasks are bound to a survey its id is needed.
+   * @param int $page
+   *  Current page.
+   * @param int $items_per_page
+   *  Items to show per page.
+   * 
+   * @return array of Call_task_entity
+   */
+  public function get_all_paginated($sid, $page = 1, $items_per_page = 50) {
+    $sid = (int) $sid;
+    $offset = ($page - 1) * $items_per_page;
+    
+    $result = $this->mongo_db
+      ->where('survey_sid', $sid)
+      ->orderBy(array('created' => 'desc'))
+      ->offset($offset)
+      ->limit($items_per_page)
+      ->get(self::COLLECTION);
+    
+    $call_tasks = array();
+    foreach ($result as $value) {
+      $call_tasks[] = Call_task_entity::build($value);
+    }
+    
+    return $call_tasks;
+  }
+  
+  /**
+   * Returns the call task count.
+   *  
+   * @param int $sid
+   *  Since all the call tasks are bound to a survey its id is needed.
+   * 
+   * @return array of Call_task_entity
+   */
+  public function get_total_count($sid) {
+    $sid = (int) $sid;
+    $result = $this->mongo_db
+      ->where('survey_sid', $sid)
+      ->count(self::COLLECTION);
+    
+    return $result;
+  }
+  
+  /**
    * Returns all the Call tasks of a given survey that are not yet
    * assigned to an agent.
    *  
