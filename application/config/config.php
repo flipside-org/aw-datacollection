@@ -14,8 +14,8 @@
 | path to your installation.
 |
 */
-//$config['base_url']	= 'http://dev/airwolf2.0/aw-datacollection/';
-$config['base_url']	= '/work/aw-datacollection/';
+$config['base_url']	= 'http://192.168.99.10/work/aw-datacollection/';
+//$config['base_url']	= '/work/aw-datacollection/';
 
 /*
 |--------------------------------------------------------------------------
@@ -383,6 +383,12 @@ $config['aw_enketo_call_tasks_reserve'] = 5;
 $config['aw_enketo_call_tasks_reserve_exprire'] = 86400 * 3;
 
 $config['aw_respondents_per_page'] = 50;
+
+/**
+ * Email settings and admin data
+ */
+$config['aw_admin_name'] = 'Aw-datacollection Admin';
+$config['aw_admin_email'] = 'aw-datacollection@airwolf.edispilf.org';
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
