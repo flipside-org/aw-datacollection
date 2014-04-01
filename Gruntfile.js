@@ -94,6 +94,7 @@ module.exports = function(grunt) {
 
           'assets/scripts/website.min.js': [
             'src/vendor/chosen/chosen.jquery.min.js',
+            'src/vendor/jquery-toastmessage/src/main/javascript/jquery.toastmessage.js',
             'src/scripts/*.js'
            ],
         }
@@ -106,6 +107,7 @@ module.exports = function(grunt) {
         files : {
           'assets/styles/main.css' : [
             'src/vendor/chosen/chosen.css',
+            'src/vendor/jquery-toastmessage/src/main/resources/css/jquery.toastmessage.css',
             'src/temp/path_override.css',
             'src/temp/main.css'
           ]
@@ -115,6 +117,7 @@ module.exports = function(grunt) {
         files : {
           'assets/styles/main.css' : [
             'src/vendor/chosen/chosen.min.css',
+            'src/vendor/jquery-toastmessage/src/main/resources/css/jquery.toastmessage.css',
             'src/temp/path_override.css',
             'src/temp/main.css'
           ]

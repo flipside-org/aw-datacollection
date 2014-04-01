@@ -40,7 +40,6 @@
     border-radius: rem-calc(0 4 4 0);
     font-size: rem-calc(14);
     background-color: rgba(palette(grey, dark), 0.9);
-    word-break: break-all;
   }
   
   &:before {
@@ -80,18 +79,18 @@
   
   &.toast-type-notice:before {
     background-color: rgba(palette(blue), 0.9);
-    @extend .icon-dashboard;
+    @extend .icon-circle-info;
   }
   &.toast-type-success:before {
     background-color: rgba(palette(green), 0.9);
-    @extend .icon-dashboard;
+    @extend .icon-circle-success;
   }
   &.toast-type-warning:before {
     background-color: rgba(palette(yellow), 0.9);
-    @extend .icon-dashboard;
+    @extend .icon-circle-warning;
   }
   &.toast-type-error:before {
     background-color: rgba(palette(red), 0.9);
-    @extend .icon-dashboard;
+    @extend .icon-circle-error;
   }
 }
