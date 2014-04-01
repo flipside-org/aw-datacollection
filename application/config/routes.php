@@ -47,7 +47,7 @@ $route['surveys'] = 'survey/surveys_list';
 $route['survey/add'] = 'survey/survey_add';
 $route['survey/(:num)'] = 'survey/survey_by_id/$1';
 $route['survey/(:num)/edit'] = 'survey/survey_edit_by_id/$1';
-$route['survey/delete'] = 'survey/survey_delete_by_id';
+$route['survey/(:num)/delete'] = 'survey/survey_delete_by_id/$1';
 $route['survey/(:num)/files/(xls|xml)'] = 'survey/survey_file_download/$1/$2';
 $route['survey/(:num)/(testrun|data_collection)'] = 'survey/survey_enketo/$1/$2';
 // respondents
@@ -74,7 +74,7 @@ $route['api/survey/(:num)/manage_agents'] = 'survey/api_survey_manage_agents/$1'
 // Users
 $route['login'] = 'user/user_login';
 $route['logout'] = 'user/user_logout';
-$route['user'] = 'user/user_profile';
+//$route['user'] = 'user/user_profile'; As of right now profiles are disabled.
 $route['user/(:num)/edit'] = 'user/user_edit_by_id/$1';
 $route['user/recover'] = 'user/user_recover_password';
 $route['user/reset_password/(:any)'] = 'user/user_reset_password/$1';

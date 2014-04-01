@@ -37,7 +37,7 @@ class Survey extends CI_Controller {
    * Route:
    * /surveys
    */
-  public function surveys_list(){
+  public function surveys_list(){    
     if (!has_permission('view survey list any') && !has_permission('view survey list assigned')) {
       show_403();
     }
@@ -55,7 +55,7 @@ class Survey extends CI_Controller {
     }
 
     $this->load->view('base/html_start');
-    $this->load->view('navigation');
+    $this->load->view('components/navigation', array('active_menu' => 'surveys'));
     $this->load->view('surveys/survey_list', array('surveys' => $surveys));
     $this->load->view('base/html_end');
 
@@ -84,11 +84,8 @@ class Survey extends CI_Controller {
       }
     }
 
-    $messages = Status_msg::get();
     $data = array(
-      'survey' => $survey,
-      //'messages' => $messages,
-      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE)
+      'survey' => $survey
     );
 
     // Agents. Each array element contains the user and
@@ -111,7 +108,7 @@ class Survey extends CI_Controller {
     $data['agents'] = $agents;
 
     $this->load->view('base/html_start');
-    $this->load->view('navigation');
+    $this->load->view('components/navigation', array('active_menu' => 'surveys'));
     $this->load->view('surveys/survey_page', $data);
     $this->load->view('base/html_end');
 
@@ -182,7 +179,7 @@ class Survey extends CI_Controller {
     // If no data submitted show the form.
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
-      $this->load->view('navigation');
+      $this->load->view('components/navigation', array('active_menu' => 'surveys'));
       $this->load->view('surveys/survey_form', array('survey' => $survey));
       $this->load->view('base/html_end');
     }
@@ -276,24 +273,28 @@ class Survey extends CI_Controller {
 
   /**
    * Delete handler for surveys.
-   * Route (POST data)
-   * /survey/delete
+   * Route
+   * /survey/:sid/delete
    */
-  public function survey_delete_by_id(){
+  public function survey_delete_by_id($sid){
+    verify_csrf_get();
+    
     if (!has_permission('delete any survey')) {
       show_403();
     }
-
-    $this->form_validation->set_rules('survey_sid', 'Survey ID', 'required|callback__cb_survey_exists');
-    $sid = $this->input->post('survey_sid');
-
-    if ($this->form_validation->run() == TRUE) {
-      $this->survey_model->delete($sid);
+    
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    
+    if ($this->survey_model->delete($sid)) {
+      Status_msg::success('Survey successfully deleted.');
     }
     else {
-      // Survey Id has been tempered with.
-      show_error("An error occurred while deleting the survey.");
+      Status_msg::error('An error occurred while deleting the survey.');
     }
+    
     redirect('/surveys');
   }
 
@@ -333,25 +334,28 @@ class Survey extends CI_Controller {
     else if (!$survey->has_xml()) {
       show_403();
     }
-
+    
+    // If can collect|testrun any let through, otherwise must be assigned. 
     switch ($type) {
       case 'data_collection':
-        if (!has_permission('enketo collect data any') && !has_permission('enketo collect data assigned')) {
-          show_403();
-
-        }else if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
-          // Is assigned?
-          if (!$survey->is_assigned_agent(current_user()->uid)) {
-            show_403();
-          }
-        }
+        $perm_any = 'enketo collect data any';
+        $perm_assigned = 'enketo collect data assigned';
         break;
 
       case 'testrun':
-        if (!has_permission('enketo testrun any') && !has_permission('enketo testrun assigned')) {
-          show_403();
-        }
+        $perm_any = 'enketo testrun any';
+        $perm_assigned = 'enketo testrun assigned';
         break;
+    }
+    
+    if (!has_permission($perm_any) && !has_permission($perm_assigned)) {
+      show_403();
+
+    }else if (!has_permission($perm_any) && has_permission($perm_assigned)) {
+      // Is assigned?
+      if (!$survey->is_assigned_agent(current_user()->uid)) {
+        show_403();
+      }
     }
 
     // Needed urls.
@@ -366,7 +370,7 @@ class Survey extends CI_Controller {
     $this->js_settings->add($settings);
 
     $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_action' => $type));
-    $this->load->view('navigation');
+    $this->load->view('components/navigation', array('active_menu' => 'surveys'));
     $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'enketo_action' => $type));
     $this->load->view('base/html_end');
 
@@ -415,7 +419,7 @@ class Survey extends CI_Controller {
         $this->js_settings->add($settings);
 
         $this->load->view('base/html_start', array('using_enketo' => TRUE, 'enketo_action' => 'data_collection_single'));
-        $this->load->view('navigation');
+        $this->load->view('components/navigation', array('active_menu' => 'surveys'));
         $this->load->view('surveys/survey_enketo', array('survey' => $survey, 'call_task' => $call_task, 'enketo_action' => 'data_collection_single'));
         $this->load->view('base/html_end');
       }
@@ -454,13 +458,250 @@ class Survey extends CI_Controller {
     $unresolved = $this->call_task_model->get_unresolved($sid, current_user()->uid);
 
     $this->load->view('base/html_start');
-    $this->load->view('navigation');
+    $this->load->view('components/navigation', array('active_menu' => 'surveys'));
     $this->load->view('surveys/survey_call_activity', array(
       'survey' => $survey,
       'call_tasks_resolved' => $resolved,
       'call_tasks_unresolved' => $unresolved)
     );
     $this->load->view('base/html_end');
+  }
+
+  /**
+   * Summary page to list the respondents associated to a given survey.
+   * @param $sid
+   *
+   * Route - /survey/:sid/respondents/:page
+   */
+  public function survey_respondents($sid, $page = 1){
+    $page = $page < 1 ? 1 : $page;    
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    else if (!has_permission('manage respondents any survey')) {
+      show_403();
+    }
+
+    // Respondents to show per page.
+    $respondents_pp = $this->config->item('aw_respondents_per_page');
+    $this->load->library('pagination');
+    
+    // Prepare pagination.
+    $this->pagination->initialize(array(
+      'base_url' => $survey->get_url_respondents(),
+      'use_page_numbers' => TRUE,
+      'uri_segment' => 4,
+      'total_rows' => $this->call_task_model->get_total_count($sid),
+      'per_page' => $respondents_pp,
+      //'cur_tag_open' => '<a class="current" href="' . $survey->get_url_respondents($page) . '">',
+      //'cur_tag_close' => '</a>',
+    ));
+        
+    $respondents = $this->call_task_model->get_all_paginated($sid, $page, $respondents_pp);
+
+    $data = array(
+      'survey' => $survey,
+      'respondents' => $respondents,
+    );
+    
+    $this->load->view('base/html_start');
+    $this->load->view('components/navigation', array('active_menu' => 'surveys'));
+    $this->load->view('surveys/survey_respondents', $data);
+    $this->load->view('base/html_end');
+  }
+
+  /**
+   * Summary page to add respondents to a given survey.
+   * @param $sid
+   *
+   * Route - /survey/:sid/respondents
+   */
+  public function survey_respondents_add($sid){
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    else if (!has_permission('manage respondents any survey')) {
+      show_403();
+    }
+
+    // Config data for the file upload.
+    $file_upload_config = array(
+      'upload_path' => '/tmp/',
+      'allowed_types' => 'csv',
+      'file_name' => 'respondents_' . md5(microtime(true))
+    );
+
+    // Load needed libraries
+    $this->load->library('upload', $file_upload_config);
+
+    $this->form_validation->set_rules('survey_respondents_file', 'Respondents File', 'callback__cb_survey_respondents_add_file_handle');
+    $this->form_validation->set_rules('survey_respondents_text', 'Respondents Text', 'xss_clean');
+
+    // If no data submitted show the form.
+    if ($this->form_validation->run() == FALSE) {
+      
+      $this->load->view('base/html_start');
+      $this->load->view('components/navigation', array('active_menu' => 'surveys'));
+      $this->load->view('surveys/survey_respondents_add', array('survey' => $survey));
+      $this->load->view('base/html_end');
+    }
+    else {
+      // Initialize the respondents numbers list.
+      $rows = explode("\n", $this->input->post('survey_respondents_text'));
+      $textarea_lines = sizeof($rows);
+      $respondents_numbers = array();
+
+      // Read file, if any.
+      $file = $this->input->post('survey_respondents_file');
+
+      if (isset($file['full_path'])) {
+        // Load CSVReader library.
+        $this->load->helper('csvreader');
+        $csv = new CSVReader();
+        $csv->separator = ',';
+        // We are merging the rows from csv to potential rows in the text area
+        // this allows to verify everything in one pass.
+        $rows = array_merge($rows, $csv->parse_file($file['full_path']));
+      }
+      
+      $db_call_tasks = $this->call_task_model->get_all($sid);
+      
+      foreach ($rows as $line => $row) {
+        // Silently skip empty rows.
+        if (empty($row)) {
+          continue;
+        }
+
+        // Prepare data.
+        // If it's a row from the text area.
+        if (!is_array($row)) {
+          $context = 'textarea';
+          $real_line = $line + 1;
+          $row = trim($row);
+        }
+        // This is from the csv file.
+        else {
+          $context = 'CSV file';
+          $real_line = ($line + 1) - $textarea_lines;
+          // Make sure it's not a random CSV.
+          if (isset($row[SURVEY_RESPONDENT_CSV_HEADER])) {
+            $row = trim($row[SURVEY_RESPONDENT_CSV_HEADER]);
+          }
+          // Warn user.
+          else {
+            Status_msg::warning('Some data has been skipped. Make sure your column header is "' . SURVEY_RESPONDENT_CSV_HEADER .'".');
+          }
+        }
+
+        // Common checks.
+        // @todo check also if already present in the DB
+        // hint: check $row against $object->number
+        if (is_numeric($row)) {
+          
+          // Check db doubles.
+          $is_double = FALSE;
+          foreach ($db_call_tasks as $call_task) {
+            if ($call_task->number == $row) {
+              $is_double = TRUE;
+              break;
+            }
+          }
+          
+          if ($is_double) {
+            // Db Double.
+            continue;
+          }
+          // END Check db doubles.
+          
+          if (!isset($respondents_numbers[$row])) {
+            $respondents_numbers[$row] = 0;
+          }
+          $respondents_numbers[$row]++;
+        }
+        else {
+          Status_msg::warning("Line #$real_line of the $context has been skipped as it does not appear to be a number.");
+        }
+      }
+
+      // Store in session or issue error if.
+      if (sizeof($respondents_numbers)) {
+        $_SESSION['respondents_numbers'] = $respondents_numbers;
+      }
+      else {
+        Status_msg::error('No usable numbers have been found in submitted data.');
+        redirect('/survey/' . $survey->sid . '/respondents');
+      }
+
+      // Perform the redirect.
+      redirect('/survey/' . $survey->sid . '/respondents/add/confirm');
+    }
+  }
+
+  /**
+   * Summary page to add respondents to a given survey.
+   * @param $sid
+   *
+   * Route - /survey/:sid/respondents
+   */
+  public function survey_respondents_add_confirm($sid){
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    else if (!has_permission('manage respondents any survey')) {
+      show_403();
+    }
+    
+    $data = array(
+      'survey' => $survey,
+      'respondents_numbers' => array(),
+    );
+
+    // pass on the data to the view
+    if (isset($_SESSION['respondents_numbers'])) {
+      $data['respondents_numbers'] = array_keys($_SESSION['respondents_numbers']);
+    }
+
+    $this->form_validation->set_rules('survey_respondents_submit', '', 'required');
+
+    // If no data submitted show the form.
+    if ($this->form_validation->run() == FALSE) {
+
+      $this->load->view('base/html_start');
+      $this->load->view('components/navigation', array('active_menu' => 'surveys'));
+      $this->load->view('surveys/survey_respondents_confirm', $data);
+      $this->load->view('base/html_end');
+    }
+    else {
+
+      // create a call_task for each respondent number
+      foreach ($_SESSION['respondents_numbers'] as $number => $qtd) {
+        // Prepare survey data to construct a new survey_entity
+        $call_task_data = array();
+        // @todo find generic solution for the code below (int)
+        $call_task_data['survey_sid'] = (int) $sid;
+        $call_task_data['number'] = (string) $number;
+
+        // Construct survey.
+        $new_call_task = Call_task_entity::build($call_task_data);
+
+        // Save survey.
+        // Survey files can only be handled after the survey is saved.
+        // TODO: Handle error during save.
+        $this->call_task_model->save($new_call_task);
+      }
+
+      // User feedback.
+      $numbers = sizeof($_SESSION['respondents_numbers']);
+      Status_msg::success("Added $numbers entries to the call tasks of this survey.");
+
+      unset($_SESSION['respondents_numbers']);
+
+      // perform the redirect
+      redirect('/survey/' . $survey->sid . '/respondents');
+    }
   }
 
   /**
@@ -883,250 +1124,6 @@ class Survey extends CI_Controller {
   }
 
 
-  /**
-   * Summary page to list the respondents associated to a given survey.
-   * @param $sid
-   *
-   * Route - /survey/:sid/respondents/:page
-   */
-  public function survey_respondents($sid, $page = 1){
-    $page = $page < 1 ? 1 : $page;    
-    $survey = $this->survey_model->get($sid);
-    if (!$survey) {
-      show_404();
-    }
-    else if (!has_permission('manage respondents any survey')) {
-      show_403();
-    }
-
-    // Respondents to show per page.
-    $respondents_pp = $this->config->item('aw_respondents_per_page');
-    $this->load->library('pagination');
-    
-    // Prepare pagination.
-    $this->pagination->initialize(array(
-      'base_url' => $survey->get_url_respondents(),
-      'use_page_numbers' => TRUE,
-      'uri_segment' => 4,
-      'total_rows' => $this->call_task_model->get_total_count($sid),
-      'per_page' => $respondents_pp,
-      //'cur_tag_open' => '<a class="current" href="' . $survey->get_url_respondents($page) . '">',
-      //'cur_tag_close' => '</a>',
-    ));
-        
-    $respondents = $this->call_task_model->get_all_paginated($sid, $page, $respondents_pp);
-
-    $messages = Status_msg::get();
-    $data = array(
-      'survey' => $survey,
-      'respondents' => $respondents,
-      //'messages' => $messages,
-      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE)
-    );
-    
-    $this->load->view('base/html_start');
-    $this->load->view('navigation');
-    $this->load->view('surveys/survey_respondents', $data);
-    $this->load->view('base/html_end');
-  }
-
-  /**
-   * Summary page to add respondents to a given survey.
-   * @param $sid
-   *
-   * Route - /survey/:sid/respondents
-   */
-  public function survey_respondents_add($sid){
-    $survey = $this->survey_model->get($sid);
-    if (!$survey) {
-      show_404();
-    }
-    else if (!has_permission('manage respondents any survey')) {
-      show_403();
-    }
-
-    // Config data for the file upload.
-    $file_upload_config = array(
-      'upload_path' => '/tmp/',
-      'allowed_types' => 'csv',
-      'file_name' => 'respondents_' . md5(microtime(true))
-    );
-
-    // Load needed libraries
-    $this->load->library('upload', $file_upload_config);
-
-    $this->form_validation->set_rules('survey_respondents_file', 'Respondents File', 'callback__cb_survey_respondents_add_file_handle');
-    $this->form_validation->set_rules('survey_respondents_text', 'Respondents Text', 'xss_clean');
-
-    // If no data submitted show the form.
-    if ($this->form_validation->run() == FALSE) {
-
-      $messages = Status_msg::get();
-
-      $this->load->view('base/html_start');
-      $this->load->view('navigation');
-      $this->load->view('surveys/survey_respondents_add', array('survey' => $survey, 'messages' => $messages));
-      $this->load->view('base/html_end');
-    }
-    else {
-      // Initialize the respondents numbers list.
-      $rows = explode("\n", $this->input->post('survey_respondents_text'));
-      $textarea_lines = sizeof($rows);
-      $respondents_numbers = array();
-
-      // Read file, if any.
-      $file = $this->input->post('survey_respondents_file');
-
-      if (isset($file['full_path'])) {
-        // Load CSVReader library.
-        $this->load->helper('csvreader');
-        $csv = new CSVReader();
-        $csv->separator = ',';
-        // We are merging the rows from csv to potential rows in the text area
-        // this allows to verify everything in one pass.
-        $rows = array_merge($rows, $csv->parse_file($file['full_path']));
-      }
-      
-      $db_call_tasks = $this->call_task_model->get_all($sid);
-      
-      foreach ($rows as $line => $row) {
-        // Silently skip empty rows.
-        if (empty($row)) {
-          continue;
-        }
-
-        // Prepare data.
-        // If it's a row from the text area.
-        if (!is_array($row)) {
-          $context = 'textarea';
-          $real_line = $line + 1;
-          $row = trim($row);
-        }
-        // This is from the csv file.
-        else {
-          $context = 'CSV file';
-          $real_line = ($line + 1) - $textarea_lines;
-          // Make sure it's not a random CSV.
-          if (isset($row[SURVEY_RESPONDENT_CSV_HEADER])) {
-            $row = trim($row[SURVEY_RESPONDENT_CSV_HEADER]);
-          }
-          // Warn user.
-          else {
-            Status_msg::warning('Some data has been skipped. Make sure your column header is "' . SURVEY_RESPONDENT_CSV_HEADER .'".');
-          }
-        }
-
-        // Common checks.
-        // @todo check also if already present in the DB
-        // hint: check $row against $object->number
-        if (is_numeric($row)) {
-          
-          // Check db doubles.
-          $is_double = FALSE;
-          foreach ($db_call_tasks as $call_task) {
-            if ($call_task->number == $row) {
-              $is_double = TRUE;
-              break;
-            }
-          }
-          
-          if ($is_double) {
-            // Db Double.
-            continue;
-          }
-          // END Check db doubles.
-          
-          if (!isset($respondents_numbers[$row])) {
-            $respondents_numbers[$row] = 0;
-          }
-          $respondents_numbers[$row]++;
-        }
-        else {
-          Status_msg::warning("Line #$real_line of the $context has been skipped as it does not appear to be a number.");
-        }
-      }
-
-      // Store in session or issue error if.
-      if (sizeof($respondents_numbers)) {
-        $_SESSION['respondents_numbers'] = $respondents_numbers;
-      }
-      else {
-        Status_msg::error('No usable numbers have been found in submitted data.');
-        redirect('/survey/' . $survey->sid . '/respondents');
-      }
-
-      // Perform the redirect.
-      redirect('/survey/' . $survey->sid . '/respondents/add/confirm');
-    }
-  }
-
-  /**
-   * Summary page to add respondents to a given survey.
-   * @param $sid
-   *
-   * Route - /survey/:sid/respondents
-   */
-  public function survey_respondents_add_confirm($sid){
-    $survey = $this->survey_model->get($sid);
-    if (!$survey) {
-      show_404();
-    }
-    else if (!has_permission('manage respondents any survey')) {
-      show_403();
-    }
-    
-    $messages = Status_msg::get();
-    $data = array(
-      'survey' => $survey,
-      'messages' => $this->load->view('messages', array('messages' => $messages), TRUE),
-      'respondents_numbers' => array(),
-    );
-
-    // pass on the data to the view
-    if (isset($_SESSION['respondents_numbers'])) {
-      $data['respondents_numbers'] = array_keys($_SESSION['respondents_numbers']);
-    }
-
-    $this->form_validation->set_rules('survey_respondents_submit', '', 'required');
-
-    // If no data submitted show the form.
-    if ($this->form_validation->run() == FALSE) {
-
-      $this->load->view('base/html_start');
-      $this->load->view('navigation');
-      $this->load->view('surveys/survey_respondents_confirm', $data);
-      $this->load->view('base/html_end');
-    }
-    else {
-
-      // create a call_task for each respondent number
-      foreach ($_SESSION['respondents_numbers'] as $number => $qtd) {
-        // Prepare survey data to construct a new survey_entity
-        $call_task_data = array();
-        // @todo find generic solution for the code below (int)
-        $call_task_data['survey_sid'] = (int) $sid;
-        $call_task_data['number'] = (string) $number;
-
-        // Construct survey.
-        $new_call_task = Call_task_entity::build($call_task_data);
-
-        // Save survey.
-        // Survey files can only be handled after the survey is saved.
-        // TODO: Handle error during save.
-        $this->call_task_model->save($new_call_task);
-      }
-
-      // User feedback.
-      $numbers = sizeof($_SESSION['respondents_numbers']);
-      Status_msg::success("Added $numbers entries to the call tasks of this survey.");
-
-      unset($_SESSION['respondents_numbers']);
-
-      // perform the redirect
-      redirect('/survey/' . $survey->sid . '/respondents');
-    }
-  }
 }
-
 /* End of file survey.php */
 /* Location: ./application/controllers/survey.php */

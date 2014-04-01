@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Colors
+   ========================================================================== */
+/**
+ *    base:       #454D53
+ *    primary:    #047998
+ *    info:       lighten 20% primary
+ *    success:    #40B19B
+ *    warning:    #FFBB00
+ *    danger:     #DA454A
+ */
+$palettes: (
+  grey: (
+    x-light:  tint(#454D53, 90%),
+    light:    tint(#454D53, 80%),
+    base:     tint(#454D53, 40%),
+    mid-dark: tint(#454D53, 10%),
+    dark:     #454D53,
+    x-dark:   shade(#454D53, 5%),
+  ),
+  blue: (
+    x-light:    tint(#047998, 90%),
+    light:      tint(#047998, 80%),
+    mid-light:  tint(#047998, 20%),
+    base:       #047998
+  ),
+  green: (
+    x-light:    tint(#DA454A, 90%),
+    base:   #40B19B
+  ),
+  yellow: (
+    x-light:    tint(#DA454A, 90%),
+    base:   #FFBB00
+  ),
+  red: (
+    x-light:  tint(#DA454A, 90%),
+    light:    tint(#DA454A, 80%),
+    base:   #DA454A
+  ),
+);
+
+@function palette($palette, $tone: 'base') {
+  @return map-get(map-get($palettes, $palette), $tone);
+}

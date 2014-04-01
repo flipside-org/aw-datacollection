@@ -93,6 +93,8 @@ class Survey_model extends CI_Model {
     $result = $this->mongo_db
       ->where('sid', (int) $sid)
       ->delete(self::COLLECTION);
+    
+    return $result !== FALSE ? TRUE : FALSE;
   }
   
   /**

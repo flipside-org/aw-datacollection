@@ -1,0 +1,236 @@
+/* Generic link styles */
+a:link,
+a:visited {
+  color: palette(blue);
+  @include transform(translate3d(0, 0, 0));
+  @include transition-property(opacity, top, left, right);
+  @include transition-duration(0.2s, 0.1s, 0.2s, 0.2s);
+  @include transition-timing-function(ease, ease, ease, ease);
+  @include transition-delay(0, 0, 0, 0);
+  cursor: pointer;
+}
+
+a:hover,
+a:focus {
+  outline: none;
+  opacity: 0.7;
+}
+
+a:active {
+  position: relative;
+  top: 2px;
+}
+/* // Generic link styles */
+
+/* Base button style */
+.bttn {
+  display: inline-block;
+  position: relative;
+  z-index: 99;
+  padding: rem-calc(0 12);
+  border-radius: rem-calc(4);
+  font-weight: 700;
+  
+  &:link,
+  &:active,
+  &:visited {
+    color: white;
+  }
+}
+
+.bttn-dropdown {
+  &:after {
+    @extend .icon-s-arr-down;
+    margin-left: rem-calc(8);
+  }
+}
+
+/* Button sizes */
+.bttn-small {
+  line-height: rem-calc(32);
+  height: rem-calc(32);
+  font-size: rem-calc(14);
+  
+  &:before, &:after {
+    font-size: rem-calc(14);
+  }
+}
+.bttn-medium {
+  line-height: rem-calc(40);
+  height: rem-calc(40);
+  font-size: rem-calc(16);
+  
+  &:before, &:after {
+    font-size: rem-calc(16);
+  }
+}
+/* // Button sizes */
+
+/* Button colors */
+.bttn-primary {
+  @include button-skin(palette(blue));
+  
+  &:active, &.current {
+    @include button-skin(palette(blue), 'active');
+  }
+}
+.bttn-success {
+  @include button-skin(palette(green));
+  
+  &:active, &.current {
+    @include button-skin(palette(green), 'active');
+  }
+}
+.bttn-danger {
+  @include button-skin(palette(red));
+  
+  &:active, &.current {
+    @include button-skin(palette(red), 'active');
+  }
+}
+.bttn-default {
+  @include button-skin(palette(grey, mid-dark), $tint_prc: 10%);
+  
+  &:active, &.current {
+    @include button-skin(palette(grey, mid-dark), $status: 'active', $tint_prc: 10%);
+  }
+}
+/* // Button colors */
+
+/* Button groups */
+.bttn-group {
+  @include reset-list;
+  @include clearfix();
+  
+  &>li {
+    float: left;
+    
+    /* Add spacing between buttons except the last one */
+    margin-left: 1px;
+    &:last-child {
+      margin: none;
+    }
+    
+    /* Remove border-radius. */
+    .bttn {
+      border-radius: 0;
+    }
+    
+    /* Border on the last */
+    &:first-child .bttn {
+      border-radius: rem-calc(4 0 0 4);
+    }
+    &:last-child .bttn {
+      border-radius: rem-calc(0 4 4 0);
+    }
+  }
+}
+
+.bttn-center {
+  float: left;
+  clear: left;
+  position: relative;
+  left: 50%;
+  
+  &>li {
+    float: left;
+    position: relative;
+    right: 50%;
+  }
+}
+/* // Button groups */
+
+a.disabled {
+  opacity: 0.4;
+  cursor: default;
+  
+  &:active {
+    position: static;
+    top: 0;
+  }
+}
+
+/* Dropdown */
+.action-dropdown {
+  min-width: rem-calc(200);
+  position: absolute;
+  top: 52px;
+  left: 0;
+  z-index: 80;
+  display: none;
+  @include border-radius(4px);
+  @include reset-list;
+  box-shadow: 0 0 0 2px rgba(palette(grey, dark), 0.1);
+  background-color: white;
+  color: #909598;
+  font-size: rem-calc(14);
+  
+  &:before {
+    @extend .icon-s-triangle-up;
+    position: absolute;
+    z-index: 90;
+    top: -31px;
+    left: 8px;
+    color: white;
+    font-size: 32px;
+    text-shadow: 0 -3px rgba(palette(grey, dark), 0.1);
+    line-height: 56px;
+  }
+
+  li {
+    position: relative;
+    z-index: 95;
+    
+    /* Logged user is a special element only used in the primary nav */
+    &.logged-user, a {
+      padding: rem-calc(12);
+      border-bottom: 1px solid palette(grey, x-light);
+    }
+    
+    &.logged-user strong {
+      display: block;
+      color: palette(grey, dark);
+      font-weight: normal; 
+    }
+    
+    a {
+      display: block;
+      
+      &:hover {
+        background-color: palette(blue, x-light);
+        border-bottom-color: palette(blue, light);
+      }
+      
+      &.danger {
+        color: palette(red);
+        &:hover {
+          background-color: palette(red, x-light);
+          border-bottom-color: palette(red, light);
+        }
+      }
+    }
+    
+    &:last-child a{
+      border: none;
+    }
+  }
+}
+
+.action-dropdown-primary {
+  @extend .action-dropdown;
+  top: 0;
+  left: 84px;
+  
+  &:before {
+    @extend .icon-s-triangle-left;
+    top: 0;
+    left: -19px;
+    text-shadow: -3px 0 rgba(palette(grey, dark), 0.1);
+  }
+}
+
+/* Dropdown for button size */
+.for-bttn-small {
+  top: 45px;
+}
+/* // Dropdown for button size */

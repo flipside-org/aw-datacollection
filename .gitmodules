@@ -7,3 +7,6 @@
 [submodule "assets/libs/enketo-core"]
 	path = assets/libs/enketo-core
 	url = git@github.com:MartijnR/enketo-core.git
+[submodule "src/vendor/jquery-toastmessage"]
+	path = src/vendor/jquery-toastmessage
+	url = git@github.com:akquinet/jquery-toastmessage-plugin.git

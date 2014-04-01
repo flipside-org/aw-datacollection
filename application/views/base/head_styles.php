@@ -3,4 +3,5 @@
   <link type="text/css" href="<?= base_url('assets/libs/enketo-core/build/css/formhub.css'); ?>" media="all" rel="stylesheet" />
 <?php endif; ?>
 
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700italic,700' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="<?= base_url('assets/styles/main.css') ?>" />

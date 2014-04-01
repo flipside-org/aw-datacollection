@@ -1,28 +1,98 @@
-<div class="row">
+<?php
+// Some permission checking that are going to be used in different places.
+$show_actions_enketo_data_collection = FALSE;
+if (has_permission('enketo collect data any')) {
+  $show_actions_enketo_data_collection = TRUE;
+}
+else if (has_permission('enketo collect data assigned') && $survey->is_assigned_agent(current_user()->uid)){
+  $show_actions_enketo_data_collection = TRUE;
+}
 
-  <?= $messages ?>
+$show_actions_enketo_testrun = FALSE;
+if (has_permission('enketo testrun any')) {
+  $show_actions_enketo_testrun = TRUE;
+}
+else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent(current_user()->uid)){
+  $show_actions_enketo_testrun = TRUE;
+}
+?>
 
-  <span class="label"><strong>Status:</strong> <?= $survey->status ?></span>
-  <h1><?= $survey->title ?></h1>
+<main id="site-body">
+  <section class="row">
+    <header id="page-head">
+        
+      <div class="heading">
+        <h1 class="hd-xl <?= $survey->get_status_html_class('indicator-'); ?>"><?= $survey->title ?></h1>
+      </div>
+      
+      <nav id="secondary" role="navigation">
+        <ul class="links">
+          <li class="sector-switcher">
+            <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Summary</strong></a>
+            <ul class="action-dropdown">
+              <?php if (has_permission('manage respondents any survey')) :?>
+              <li><a href="<?= $survey->get_url_respondents() ?>">Respondents</a></li>
+              <?php endif; ?>
+              
+              <?php if ($show_actions_enketo_data_collection) :?>
+              <li><a href="<?= $survey->get_url_call_activity() ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Call activity</a></li>
+              <?php endif; ?>
+            </ul>
+          </li>
+          
+          <?php if (has_permission('download survey files')) : ?>
+          <li>
+            <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Export</a>
+            <ul class="action-dropdown">
+              <li><a href="<?= $survey->get_url_file('xls'); ?>" class="<?= !$survey->has_xls() ? 'disabled' : ''; ?>">Definition file (XLS)</a></li>
+              <li><a href="<?= $survey->get_url_file('xml'); ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Definition file (XML)</a></li>
+            </ul>
+          </li>
+          <?php endif; ?>
+          
+          <?php if (has_permission('edit any survey') || has_permission('delete any survey')) : ?>
+          <li>
+            <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Edit</a>
+            <ul class="action-dropdown">
+              <?php if (has_permission('edit any survey')) : ?>
+              <li><a href="<?= $survey->get_url_edit(); ?>">Modify</a></li>
+              <?php endif; ?>
+              
+              <?php if (has_permission('delete any survey')) : ?>
+              <li><?= anchor_csrf($survey->get_url_delete(), 'Delete', array('class' => 'danger')); ?></li>
+              <?php endif; ?>
+            </ul>
+          </li>
+          <?php endif; ?>
+          
+          <li>
+            <a href="" class="bttn bttn-success bttn-medium bttn-dropdown" data-dropdown="action-bttn">Run</a>
+            <ul class="action-dropdown">
+              <?php if ($show_actions_enketo_testrun) :?>
+              <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Testrun</a></li>
+              <?php endif; ?>
+              
+              <?php if ($show_actions_enketo_data_collection) :?>
+              <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Collect Data</a></li>
+              <?php endif; ?>
+            </ul>
+          </li>
+          
+        </ul>
+      </nav>
+      
+    </header>
+      
+
+
+    <!-- TO FORMAT AND PUT IN PROPER PLACE!!!!!! -->
 
   <div>
+    <h1>Introduction</h1>
     <?= nl2br_except_pre($survey->introduction) ?>
   </div>
-
-  <?php if (has_permission('download survey files')) : ?>
-    <?php if ($survey->files['xls'] !== NULL) : ?>
-      <div>xls: <a href="<?= base_url(sprintf('survey/%d/files/xls', $survey->sid)); ?>">xls</a></div>
-    <?php endif; ?>
-
-    <?php if ($survey->files['xml'] !== NULL) : ?>
-      <div>xml: <a href="<?= base_url(sprintf('survey/%d/files/xml', $survey->sid)); ?>">xml</a></div>
-    <?php endif; ?>
-  <?php endif; ?>
-
-  <?php // @todo add correct permission here ?>
-  <?php if (1) :?>
-  <a href="<?= $survey->get_url_respondents() ?>" class="button tiny secondary">Manage respondents</a>
-  <?php endif; ?>
+  
+<div>
 
   <?php if (has_permission('assign agents')) : ?>
     <h2>Manage Agents</h2>
@@ -37,3 +107,12 @@
   <?php endif; ?>
   
 </div>
+
+<!-- // TO FORMAT AND PUT IN PROPER PLACE!!!!!! -->
+
+
+
+
+
+  </section>
+</main>

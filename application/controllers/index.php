@@ -5,11 +5,21 @@ class Index extends CI_Controller {
   public function __construct() {
     parent::__construct();
   }
+  
+  public function test() {
+    $this->load->view('base/html_start');
+    $this->load->view('frontend');
+    $this->load->view('base/html_end');
+  }
 
 	public function index() {
-		$this->load->view('base/html_start');
-    $this->load->view('navigation');
+	  if (!is_logged()) {
+	    redirect('login');
+	  }
     $this->load->model('survey_model');
+    
+		$this->load->view('base/html_start');
+    $this->load->view('components/navigation', array('active_menu' => 'dashboard'));
     
     // Use the same permissions for the list but use different statuses.
     $surveys = array();
@@ -23,21 +33,22 @@ class Index extends CI_Controller {
     }
     
     // TEMP
+    $data = '';
     if ($surveys) {
-      $this->output->append_output('Your surveys:<br />');
+      $data = 'Your surveys:<br />';
       
       foreach ($surveys as $survey) {
-        $this->output->append_output('-' . $survey->title . '<br />');
+        $data .= '-' . $survey->title . '<br />';
       }
 
       ob_start();
       krumo($surveys);
-      $this->output->append_output(ob_get_clean());
+      $data .= ob_get_clean();
       
     }
     // /TEMP
-
-        
+    
+    $this->load->view('dashboard', array('data' => $data));
     $this->load->view('base/html_end');
 	}
 }

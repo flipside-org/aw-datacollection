@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Helpers - extends + custom vars
+   ========================================================================== */
+
+.visually-hidden {
+  border: 0 none;
+  clip: rect(0px, 0px, 0px, 0px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+@mixin button-skin($bgcolor, $status: 'normal', $tint_prc: 25%, $shade_prc: 25%, $bg_prc: 10%) {
+  $tint-color: tint($bgcolor, $tint_prc);
+  $shade-color: shade($bgcolor, $shade_prc);
+  @if $status == 'active' {
+    background-color: shade($bgcolor, $bg_prc);
+    box-shadow:inset 0 2px 0 0 $shade-color, inset 0 -2px 0 0 $tint-color;
+  }
+  @else {
+    background-color: $bgcolor;
+    box-shadow:inset 0 2px 0 0 $tint-color, inset 0 -2px 0 0 $shade-color;
+  }
+}
+
+@mixin reset-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+%rounded {
+  border-radius: 500px;
+}
+
+%truncated {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

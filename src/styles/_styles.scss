@@ -1,9 +1,270 @@
-/*Overrides. Remove later*/
-.survey_list .button,
-.survey_list form {
-  margin: 0;
+#site-head {
+  width: rem-calc(80);
+  background-color: palette(blue);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  
+  /*TODO: Temporary site-title*/
+  #site-title {
+    font-weight: bold;
+    margin: rem-calc(56 0 32 0);
+    
+    a {
+      display: block;
+      span{
+        display: block;
+        color: white;
+        @include rotate(-90deg);
+      }
+    }
+  }
+  
+  /* Navigation bar */
+  #nav-links {
+    @include reset-list;
+    
+    a {
+      display: block;
+    }
+    
+    &>li {
+      margin-bottom: rem-calc(8);
+      position: relative;
+      
+      &>a {
+        
+        &.current {
+          @include button-skin(palette(blue), 'active');
+        }
+        
+        margin: 0 auto;
+        color: white;
+        display: block;
+        width: rem-calc(56);
+        line-height: rem-calc(32);
+        height: rem-calc(56);
+        text-align: center;
+        padding: rem-calc(12);
+        @include border-radius(4px);
+        
+        &:before{
+          font-size: rem-calc(32);
+        }
+      }
+    }    
+    
+    .dashboard {
+      &:before {
+        @extend .icon-dashboard;
+      }
+    }
+    .surveys {
+      &:before {
+        @extend .icon-survey;
+      }
+    }
+    .users {
+      &:before {
+        @extend .icon-users;
+      }
+    }
+    .account {
+      &:before {
+        @extend .icon-cog;
+      }
+    }
+  }
+  
+  #connection-status {
+    width: rem-calc(80);
+    height: rem-calc(80);
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #454d53;
+  }
 }
 
-.messages ul {
-  margin-bottom: 0;
+/* Site header on pages like login */
+#site-head.horizontal {
+  width: 100%;
+  background: none;
+  position: static;
+  
+  /*TODO: Temporary site-title*/
+  #site-title a {
+    text-align: center;
+    display: block;
+    span{
+      display: block;
+      color: palette(grey, dark);
+      @include rotate(0);
+    }
+  }
+}
+
+
+
+#site-body {
+  margin-left: rem-calc(80);
+  
+  /* Section header */
+  #page-head {
+    @include clearfix();
+    padding-top: rem-calc(32);
+    padding-bottom: rem-calc(32);
+    background-color: palette(grey, x-light);
+    box-shadow: 0 4px 0 0 rgba(palette(grey, dark), 0.1);
+    
+    .heading {
+      @include grid-column(6);
+      
+      .hd-xl {
+        padding: rem-calc(2) 0;
+      }
+    }   
+    
+    /* Secondary navigation (nav) */
+    #secondary {
+      @include grid-column(6);
+      
+      .links {
+        @include reset-list;
+        float: right;
+        
+        &>li {
+          float: left;
+          position: relative;
+          margin-right: rem-calc(8);
+          
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+        
+        .sector-switcher {
+          border-right: rem-calc(2) solid palette(grey, light);
+          margin-right: rem-calc(16);
+          
+          &:last-child {
+            border: none;
+          }
+        }
+        .bttn-sector {
+          @extend .bttn;
+          @extend .bttn-medium;
+          
+          font-size: rem-calc(20);
+          
+          &:link, &:visited {
+            color: palette(grey, dark);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   Survey statuses
+   ========================================================================== */
+%status-indicator-base {
+  @extend %rounded;
+  width: rem-calc(12);
+  height: rem-calc(12);
+  
+  /** Explanation margin.
+   *  top|bottom: the margin value + element height = h1 line-height
+   *  right: shadow value + 8px
+   *  left: shadow value
+   */
+  margin: rem-calc(12 14 12 6);
+  display: block;
+  float: left;
+  content: '';
+  box-shadow: 0 0 0 6px rgba(palette(grey, dark), 0.1);
+}
+
+.indicator-status-draft {
+  &:before {
+    @extend %status-indicator-base;
+    background-color: palette(blue);
+  }
+}
+.indicator-status-open {
+  &:before {
+    @extend %status-indicator-base;
+    background-color: palette(green);
+  }
+}
+.indicator-status-closed {
+  &:before {
+    @extend %status-indicator-base;
+    background-color: palette(grey, dark);
+  }
+}
+.indicator-status-canceled {
+  &:before {
+    @extend %status-indicator-base;
+    background-color: palette(red);
+  }
+}
+
+%status-base {
+  @extend %rounded;
+  padding: rem-calc(8 12);
+  display: inline-block;
+  line-height: rem-calc(14);
+  font-weight: 700;
+  background-color: palette(grey, x-light);
+  color: palette(grey, dark);
+  
+  &:before {
+    @extend %rounded;
+    width: rem-calc(12);
+    height: rem-calc(12);
+    margin: rem-calc(1) rem-calc(8) 0 0;
+    content: '';
+    display: block;
+    float: left;
+  }
+}
+
+.status-draft {
+  @extend %status-base;
+  &:before {
+    background-color: palette(blue);
+  }
+}
+
+.status-open {
+  @extend %status-base;
+  &:before {
+    background-color: palette(green);
+  }
+}
+
+.status-closed {
+  @extend %status-base;
+  &:before {
+    background-color: palette(grey, dark);
+  }
+}
+
+.status-canceled {
+  @extend %status-base;
+  &:before {
+    background-color: palette(red);
+  }
+}
+
+
+.login-box {
+  @include grid-column(6, $offset: 3);
+  
+  form {
+    margin: rem-calc(32 32 0 32);
+  }
 }

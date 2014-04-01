@@ -36,6 +36,20 @@ class Survey_entity extends Entity {
     Survey_entity::STATUS_CLOSED => 'Closed',
     Survey_entity::STATUS_CANCELED => 'Canceled',
   );
+  
+  /**
+   * Html classes for survey status.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses_html_classes = array(
+    Survey_entity::STATUS_DRAFT => 'status-draft',
+    Survey_entity::STATUS_OPEN => 'status-open',
+    Survey_entity::STATUS_CLOSED => 'status-closed',
+    Survey_entity::STATUS_CANCELED => 'status-canceled',
+  );
 
   /********************************
    ********************************
@@ -265,6 +279,30 @@ class Survey_entity extends Entity {
   }
 
   /**
+   * Returns the url to delete a survey.
+   * @access public
+   * @return string
+   */
+  public function get_url_delete() {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a non-existent survey.");
+    }
+    return base_url('survey/' . $this->sid . '/delete') ;
+  }
+
+  /**
+   * Returns the url to download survey file.
+   * @access public
+   * @return string
+   */
+  public function get_url_file($type) {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a non-existent survey.");
+    }
+    return base_url('survey/' . $this->sid . '/files/' . $type) ;
+  }
+
+  /**
    * Returns the url to test run survey.
    * @access public
    * @return string
@@ -432,7 +470,6 @@ class Survey_entity extends Entity {
   /**
    * Returns the full path to the survey's xls file.
    *
-   *
    * @return mixed
    *   If the survey has no file false is returned
    */
@@ -443,12 +480,37 @@ class Survey_entity extends Entity {
   /**
    * Returns the full path to the survey's xls file.
    *
-   *
    * @return mixed
    *   If the survey has no file false is returned
    */
   public function get_xml_full_path() {
     return $this->has_xml() ? $this->settings['file_loc'] . $this->files['xml'] : false;
+  }
+
+  /**
+   * Returns the survey status in human readable format.
+   *
+   * @return string
+   *   The survey status in human readable format
+   */
+  public function get_status_label() {
+    if (!$this->status){
+      return NULL;
+    }
+    return Survey_entity::$statuses[$this->status];
+  }
+
+  /**
+   * Returns the survey status for use as html class.
+   *
+   * @return string
+   *   The survey status for use as html class.
+   */
+  public function get_status_html_class($prefix = '') {
+    if (!$this->status){
+      return NULL;
+    }
+    return $prefix . Survey_entity::$statuses_html_classes[$this->status];
   }
   
   /**
