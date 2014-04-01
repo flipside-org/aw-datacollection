@@ -1,4 +1,4 @@
-$(document).ready(function(){  
+$(document).ready(function(){
   // Dropdown for the main sidebar.
   $('a[data-dropdown="action-bttn-primary"]').mouseenter(function() {
     var $self = $(this);
@@ -18,6 +18,9 @@ $(document).ready(function(){
     }, 150);
     
     $dropdown.data('hide_timeout', hide_timeout);
+  })
+  .click(function() {
+    window.location = $(this).attr('href');
   });
   
   $('.action-dropdown-primary').mouseenter(function() {
@@ -54,10 +57,10 @@ $(document).ready(function(){
       $dropdown.hide();
     }
   });
-  
+
   $(document).click(function() {
     $('.action-dropdown').hide();
     $('a[data-dropdown="action-bttn"]').removeClass('current');
   });
-  
+
 });

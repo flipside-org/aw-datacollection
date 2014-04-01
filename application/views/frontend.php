@@ -60,9 +60,9 @@
                 </ul>
       		  	</li>
       		  	<li>
-      		  	  <a href="" class="bttn bttn-danger bttn-medium bttn-dropdown" data-dropdown="action-bttn">Destroy the world</a>
+      		  	  <a href="" class="bttn bttn-success bttn-medium bttn-dropdown" data-dropdown="action-bttn">Destroy the world</a>
       		  	  <ul class="action-dropdown" style="display: none">
-                  <li><a href="#">Bomb</a></li>
+                  <li><a href="#" class="disabled">Bomb</a></li>
                   <li><a href="#">Black Hole</a></li>
                   <li><a href="#">Banana</a></li>
                 </ul>
@@ -137,8 +137,9 @@
         	  </footer>
         </section>
         </div>
-        
       </div>
+      </div>
+        
     </section>
   </main>
 </div>

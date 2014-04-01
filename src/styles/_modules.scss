@@ -17,6 +17,7 @@
     margin: rem-calc(-32 -32 0 -32);
     padding: rem-calc(32);
     border-radius: rem-calc(4 4 0 0);
+    color: white;
   }
 
   .contained-foot {
@@ -48,7 +49,7 @@
       font-weight: 700;
       
       th {
-        color: white;
+        color: palette(grey);
         font-size: rem-calc(16);
         padding-bottom: rem-calc(20);
       }

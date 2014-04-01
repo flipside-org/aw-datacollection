@@ -1,68 +1,70 @@
-<div class="row">
-
-  <table width='100%' class="survey_list">
-    <thead>
-      <tr>
-        <th width='40%'>Title</th>
-        <th width='5%'>Status</th>
-        <th width='35%'>Actions</th>
-      </tr>
-    </thead>
-
-    <tbody>
-    <?php foreach ($surveys as $survey_entity):?>
-      <tr>
-        <td><a href="<?= $survey_entity->get_url_view() ?>"><?= $survey_entity->title ?></a></td>
-        <td><?= $survey_entity->status; ?></td>
-        <td>
-          <ul class="button-group">
-            <?php if (has_permission('edit any survey')) :?>
-            <li><a href="<?= $survey_entity->get_url_edit() ?>" class="button tiny">Edit</a></li>
-            <?php endif; ?>
-
-            <?php if (has_permission('delete any survey')) :?>
-            <li>
-              <?php
-              print form_open('survey/delete');
-              print form_hidden('survey_sid', $survey_entity->sid);
-              print form_submit(array(
-                'name' => 'survey_delete',
-                'value' => 'Delete',
-                'class' => 'button tiny'
-              ));
-              print form_close();
-            ?>
-            </li>
-            <?php endif; ?>
-
-            <?php // @todo add correct permission here ?>
-            <?php if (1) :?>
-            <li><a href="<?= $survey_entity->get_url_respondents() ?>" class="button tiny secondary">Respondents</a></li>
-            <?php endif; ?>
-
-            <?php if ($survey_entity->has_xml()) : ?>
-              <li><a href="<?= $survey_entity->get_url_survey_enketo('testrun') ?>" class="button tiny secondary">Test Run</a></li>
+<main id="site-body">
+  <section class="row">
+    
+    <header id="page-head">
+      <div class="heading">
+        <h1 class="hd-xl">Surveys</h1>
+      </div>
+      
+      <nav id="secondary" role="navigation">
+        <ul class="links">
+          <?php if (has_permission('create survey')) : ?>
+          <li>
+            <a href="<?= base_url('survey/add'); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
+          </li>
+          <?php endif; ?>
+        </ul>
+      </nav>
+    </header>
+    
+    <div class="content">      
+      <div class="columns small-12">
+        <section class="contained">
+          <header class="contained-head">
+            
+            <ul class="bttn-group bttn-center">
+              <li><a href="" class="bttn bttn-default bttn-small current">All</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">Draft</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">Open</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">Closed</a></li>
+              <li><a href="" class="bttn bttn-default bttn-small">Canceled</a></li>
+            </ul>
+            
+          </header>
+            
+          <div class="contained-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($surveys as $survey_entity):?>
+                <tr>
+                  <td><strong class="<?= $survey_entity->get_status_html_class(); ?>"><?= $survey_entity->get_status_label(); ?></strong></td>
+                  <td><a href="<?= $survey_entity->get_url_view() ?>"><?= $survey_entity->title ?></a></td>
+                  <td><?= date('d-m-Y', 0)?></td>
+                  <td>
+                    <?php if (has_permission('edit any survey')) : ?>
+                    <?= anchor($survey_entity->get_url_edit(), 'Edit', array('class' => 'bttn bttn-small bttn-primary')); ?>
+                    <?php endif; ?>
               
-              <?php
-              $show_actions_enketo_data_collection = FALSE;
-              if (has_permission('enketo collect data any')) {
-                $show_actions_enketo_data_collection = TRUE;
-              }
-              else if (has_permission('enketo collect data assigned') && $survey_entity->is_assigned_agent(current_user()->uid)){
-                $show_actions_enketo_data_collection = TRUE;
-              }
-              
-              if ($show_actions_enketo_data_collection) :?>
-                <li><a href="<?= $survey_entity->get_url_survey_enketo('collection') ?>" class="button tiny success">Collect Data</a></li>
-                <li><a href="<?= $survey_entity->get_url_call_activity() ?>" class="button tiny">Call activity</a></li>
-              <?php endif; ?>
-              
-            <?php endif; ?>
-          </ul>
-        </td>
-      </tr>
-    <?php endforeach; ?>
-
-    </tbody>
-  </table>
-</div>
+                    <?php if (has_permission('delete any survey')) : ?>
+                    <?= anchor_csrf($survey_entity->get_url_delete(), 'Delete', array('class' => 'bttn bttn-small bttn-danger')); ?>
+                    <?php endif; ?>
+                  </td>
+                </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+      
+  </section>
+</main>

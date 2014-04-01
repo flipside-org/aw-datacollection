@@ -1,30 +1,50 @@
+<main id="site-body">
+  <section class="row">
+    <header id="page-head">
+        
+      <div class="heading">
+        <h1 class="hd-xl <?= $survey->get_status_html_class('indicator-'); ?>"><?= $survey->title ?></h1>
+      </div>
+      
+      <nav id="secondary" role="navigation">
+        <ul class="links">
+          <li class="sector-switcher">
+            <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Respondents</strong></a>
+            <ul class="action-dropdown">
+              <li><a href="<?= $survey->get_url_view() ?>">Summary</a></li>
+            </ul>
+          </li>
+          
+          <?php if (has_permission('manage respondents any survey')) : ?>
+          <li>
+            <a href="<?= $survey->get_url_respondents_add(); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
+          </li>
+          <?php endif; ?>
+          
+        </ul>
+      </nav>
+      
+    </header>
+    
+    
+    
+    
+    <?= validation_errors(); ?>
+    <?= form_open_multipart(); ?>
+    
+    <h2>Add respondents</h2>
+  
+    <?= form_label('Respondents Text', 'survey_respondents_text'); ?>
+    <?= form_textarea('survey_respondents_text', set_value('survey_respondents_text')); ?>
+  
+    <?= form_upload('survey_respondents_file'); ?>
+  
+    <?= form_submit('survey_respondents_submit', 'Add respondents'); ?>
+  
+  <?= form_close(); ?>
+    
+    
+    
 
-<div class="row">
-  <?= validation_errors(); ?>
-  <?= form_open_multipart(); ?>
-  <?= $messages ?>
-
-  <span class="label"><strong>Status:</strong> <?= $survey->status ?></span>
-  <h1><?= $survey->title ?></h1>
-  <h2>Add respondents</h2>
-
-  <div>
-    <?= nl2br_except_pre($survey->introduction) ?>
-  </div>
-
-  <?= form_label('Respondents Text', 'survey_respondents_text'); ?>
-  <?= form_textarea('survey_respondents_text', set_value('survey_respondents_text')); ?>
-
-  <?= form_upload('survey_respondents_file'); ?>
-
-  <?= form_submit('survey_respondents_submit', 'Add respondents'); ?>
-
-  <?php // @todo add correct permission here ?>
-  <?php if (1) :?>
-    <a href="<?= $survey->get_url_respondents() ?>" class="button tiny secondary">View respondents</a>
-  <?php endif; ?>
-
-<?= form_close(); ?>
-</div>
-
-
+  </section>
+</main>

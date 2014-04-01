@@ -10,3 +10,4 @@
     <?php $this->load->view('base/head_styles') ?>
   </head>
   <body>
+    <div id="site-canvas">

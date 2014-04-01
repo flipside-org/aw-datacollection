@@ -33,7 +33,8 @@ $palettes: (
     base:   #FFBB00
   ),
   red: (
-    x-light:    tint(#DA454A, 90%),
+    x-light:  tint(#DA454A, 90%),
+    light:    tint(#DA454A, 80%),
     base:   #DA454A
   ),
 );

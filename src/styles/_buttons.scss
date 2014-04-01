@@ -1,12 +1,38 @@
+/* Generic link styles */
+a:link,
+a:visited {
+  color: palette(blue);
+  @include transform(translate3d(0, 0, 0));
+  @include transition-property(opacity, top, left, right);
+  @include transition-duration(0.2s, 0.1s, 0.2s, 0.2s);
+  @include transition-timing-function(ease, ease, ease, ease);
+  @include transition-delay(0, 0, 0, 0);
+  cursor: pointer;
+}
+
+a:hover,
+a:focus {
+  outline: none;
+  opacity: 0.7;
+}
+
+a:active {
+  position: relative;
+  top: 2px;
+}
+/* // Generic link styles */
+
 /* Base button style */
 .bttn {
   display: inline-block;
   position: relative;
-  z-index: 5;
+  z-index: 99;
   padding: rem-calc(0 12);
   border-radius: rem-calc(4);
   font-weight: 700;
   
+  &:link,
+  &:active,
   &:visited {
     color: white;
   }
@@ -14,7 +40,7 @@
 
 .bttn-dropdown {
   &:after {
-    @extend .icon-s-triangle-down;
+    @extend .icon-s-arr-down;
     margin-left: rem-calc(8);
   }
 }
@@ -114,6 +140,15 @@
 }
 /* // Button groups */
 
+a.disabled {
+  opacity: 0.4;
+  cursor: default;
+  
+  &:active {
+    position: static;
+    top: 0;
+  }
+}
 
 /* Dropdown */
 .action-dropdown {
@@ -121,6 +156,7 @@
   position: absolute;
   top: 52px;
   left: 0;
+  z-index: 80;
   display: none;
   @include border-radius(4px);
   @include reset-list;
@@ -132,7 +168,7 @@
   &:before {
     @extend .icon-s-triangle-up;
     position: absolute;
-    z-index: 3;
+    z-index: 90;
     top: -31px;
     left: 8px;
     color: white;
@@ -143,7 +179,7 @@
 
   li {
     position: relative;
-    z-index: 4;
+    z-index: 95;
     
     /* Logged user is a special element only used in the primary nav */
     &.logged-user, a {
@@ -163,6 +199,14 @@
       &:hover {
         background-color: palette(blue, x-light);
         border-bottom-color: palette(blue, light);
+      }
+      
+      &.danger {
+        color: palette(red);
+        &:hover {
+          background-color: palette(red, x-light);
+          border-bottom-color: palette(red, light);
+        }
       }
     }
     

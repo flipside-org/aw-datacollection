@@ -32,7 +32,6 @@ class User extends CI_Controller {
 
     if ($this->form_validation->run() == FALSE) {
   		$this->load->view('base/html_start');
-      $this->load->view('navigation');
       $this->load->view('login');
       $this->load->view('base/html_end');
     }
@@ -58,13 +57,16 @@ class User extends CI_Controller {
    * /user
    */
   public function user_profile($uid = null) {
+    // Profiles are disabled.
+    redirect();
+    
     // Viewing other user's profile is not a requirement.
     // Viewing the current user profile requires the user
     // to be logged in. It is not something to control through
     // a permission.
     if (is_logged()) {
       $this->load->view('base/html_start');
-      $this->load->view('navigation');
+      $this->load->view('components/navigation', array('active_menu' => 'users'));
       $this->load->view('users/user_profile', array('user' => current_user()));
       $this->load->view('base/html_end');
     }
@@ -74,7 +76,7 @@ class User extends CI_Controller {
   }
   
   /**
-   * Logout.
+   * Edit user by id.
    * Route:
    * /user/(:num)/edit
    */
@@ -120,7 +122,7 @@ class User extends CI_Controller {
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
-      $this->load->view('navigation');
+      $this->load->view('components/navigation', array('active_menu' => 'users'));
       $this->load->view('users/user_form', array('user' => $user, 'action' => 'edit_own'));
       $this->load->view('base/html_end');
     }
@@ -151,7 +153,7 @@ class User extends CI_Controller {
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
-      $this->load->view('navigation');
+      $this->load->view('components/navigation', array('active_menu' => 'users'));
       $this->load->view('users/user_form', array('user' => $user, 'action' => 'edit_other'));
       $this->load->view('base/html_end');
     }
@@ -198,7 +200,7 @@ class User extends CI_Controller {
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
-      $this->load->view('navigation');
+      $this->load->view('components/navigation', array('active_menu' => 'users'));
       $this->load->view('users/user_form', array('user' => NULL, 'action' => 'add'));
       $this->load->view('base/html_end');
     }
@@ -259,7 +261,6 @@ class User extends CI_Controller {
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
-      $this->load->view('navigation');
       $this->load->view('users/user_recover_password');
       $this->load->view('base/html_end');
     }
@@ -271,15 +272,15 @@ class User extends CI_Controller {
       
       if ($hash) {
         $this->load->library('email');
-        // TODO: Email data. Use settings as much as possible.
-        $this->email->from('aw-datacollection@airwolf.edispilf.org', 'Aw-datacollection Admin');
-        $this->email->to('daniel.silva@flipside.org');
+        $this->email->from($this->config->item('aw_admin_email'), $this->config->item('aw_admin_name'));
+        $this->email->to($email);
         
-        $this->email->subject('Password Recover');
+        $this->email->subject('Airwolf - Recover Password');
         $this->email->message('Use the following link. ' . base_url('user/reset_password/' . $hash));
         
         $this->email->send();
-        // TODO: Message user. Check your email.
+        
+        Status_msg::success('Please check your email for next steps.', TRUE);
         redirect('login');
       }
       else {
@@ -305,7 +306,6 @@ class User extends CI_Controller {
       
       if ($this->form_validation->run() == FALSE) {
         $this->load->view('base/html_start');
-        $this->load->view('navigation');
         $this->load->view('users/user_reset_password');
         $this->load->view('base/html_end');
       }
@@ -317,11 +317,12 @@ class User extends CI_Controller {
           
           if ($this->user_model->save($user)) {
             $this->recover_password_model->invalidate($hash);
-            // TODO: Message user. Login with your new password.
+            
+            Status_msg::success('Password successfully changed. You can now login.', TRUE);
             redirect('login');
           }
           else {
-            show_error("Error saving your new password. Try again later.");
+            Status_msg::error("Error saving your new password. Try again later.");
           }
           
         }
@@ -354,7 +355,7 @@ class User extends CI_Controller {
     $users = $this->user_model->get_all();
     
     $this->load->view('base/html_start');
-    $this->load->view('navigation');
+    $this->load->view('components/navigation', array('active_menu' => 'users'));
     $this->load->view('users/user_list', array('users' => $users));
     $this->load->view('base/html_end');
   }
