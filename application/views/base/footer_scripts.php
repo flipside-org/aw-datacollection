@@ -1,9 +1,12 @@
 <script src="<?= base_url('assets/scripts/foundation.min.js'); ?>"></script>
 <script src="<?= base_url('assets/scripts/website.min.js'); ?>"></script>
 
+<!-- Toast messages -->
+<?php $this->load->view('components/toast_messages'); ?>
+<!-- End Toast messages -->
+
 <?php if (isset($enketo_action)) : ?>
   <script type="text/javascript" src="<?= base_url('assets/scripts/enketo_base.min.js'); ?>"></script>
-  
   <?php
     switch ($enketo_action) {
       case 'testrun':

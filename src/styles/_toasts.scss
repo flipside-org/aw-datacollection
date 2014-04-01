@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Toasts
+   ========================================================================== */
+  /**
+   *   Styling and overrides for the toast plugin.
+   *   https://github.com/akquinet/jquery-toastmessage-plugin
+   */
+.toast-container {
+  width: rem-calc(348);
+  right: rem-calc(24);
+}
+
+.toast-item {  
+  .toast-item-image {
+    background: none;
+    display: none;  
+  }
+  
+  display: table;
+  width: 100%;
+  background: none;
+  border: none;
+  font-family: $body-font-family;
+  padding: 0;
+  opacity: 1;
+  
+  /* Reset on all p */
+  p {
+    margin: 0;
+    padding: 0;
+  }
+  
+  &>p {
+    /* Since the :before has position relative we have to compensate
+       because items with position relative still occupy their original space.
+       The margin will be: -before size + 16 (to allow some padding) 
+     */
+    margin: 0;
+    padding: rem-calc(16 48 16 16);
+    border-radius: rem-calc(0 4 4 0);
+    font-size: rem-calc(14);
+    background-color: rgba(palette(grey, dark), 0.9);
+    word-break: break-all;
+  }
+  
+  &:before {
+    display: table-cell;
+    width: rem-calc(56);
+    border-radius: rem-calc(4 0 0 4);
+    color: rgba(#FFFFFF, 0.5);
+    font-size: rem-calc(32);
+    text-align: center;
+  }
+
+  &:after {
+    display: block;
+    position: absolute;
+    top: rem-calc(16);
+    right: rem-calc(16);
+    width: rem-calc(16);
+    z-index: 999;
+    color: white;
+    font-size: rem-calc(16);
+    @extend .icon-s-cancel;
+  }
+  
+  ul {
+    margin-bottom: 0;
+  }
+  
+  .toast-item-close {
+    background: none;
+    cursor: pointer;
+    top: rem-calc(16);
+    right: rem-calc(16);
+    width: rem-calc(16);
+    height: rem-calc(16);
+    z-index: 1000;
+  }
+  
+  &.toast-type-notice:before {
+    background-color: rgba(palette(blue), 0.9);
+    @extend .icon-dashboard;
+  }
+  &.toast-type-success:before {
+    background-color: rgba(palette(green), 0.9);
+    @extend .icon-dashboard;
+  }
+  &.toast-type-warning:before {
+    background-color: rgba(palette(yellow), 0.9);
+    @extend .icon-dashboard;
+  }
+  &.toast-type-error:before {
+    background-color: rgba(palette(red), 0.9);
+    @extend .icon-dashboard;
+  }
+}

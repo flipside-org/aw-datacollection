@@ -17,28 +17,41 @@ class Status_msg {
   private static $userdata_key = 'status_msg';
   
   /**
-   * Stores success messages.
+   * Stores messages in the same order has they were set.
    */
-  private static $success = array();
+  private static $messages = array();
+    
+  /**
+   * Sets a notice message.
+   * 
+   * @static
+   */
+  public static function set($msg, $level, $sticky = FALSE) {
+    self::$messages[] = array(
+      'msg' => $msg,
+      'level' => $level,
+      'sticky' => $sticky,
+      'time' => time(),
+    );
+    self::store();
+  }
   
   /**
-   * Stores warning messages.
+   * Sets a notice message.
+   * 
+   * @static
    */
-  private static $warning = array();
-  
-  /**
-   * Stores error messages.
-   */
-  private static $error = array();
+  public static function notice($msg, $sticky = TRUE) {
+    self::set($msg, 'notice', $sticky);
+  }
   
   /**
    * Sets a success message.
    * 
    * @static
    */
-  public static function success($msg) {
-    self::$success[] = $msg;
-    self::store();
+  public static function success($msg, $sticky = FALSE) {
+    self::set($msg, 'success', $sticky);
   }
   
   /**
@@ -47,9 +60,8 @@ class Status_msg {
    * 
    * @static
    */
-  public static function warning($msg) {
-    self::$warning[] = $msg;
-    self::store();
+  public static function warning($msg, $sticky = TRUE) {
+    self::set($msg, 'warning', $sticky);
   }
   
   /**
@@ -58,9 +70,8 @@ class Status_msg {
    * 
    * @static
    */
-  public static function error($msg) {
-    self::$error[] = $msg;
-    self::store();
+  public static function error($msg, $sticky = TRUE) {
+    self::set($msg, 'error', $sticky);
   }
   
   /**
@@ -69,11 +80,7 @@ class Status_msg {
    */
   public static function store() {    
     $CI =& get_instance();
-    $CI->session->set_userdata(self::$userdata_key, array(
-      'success' => self::$success,
-      'warning' => self::$warning,
-      'error' => self::$error
-    ));
+    $CI->session->set_userdata(self::$userdata_key, self::$messages);
   }
   
   /**
