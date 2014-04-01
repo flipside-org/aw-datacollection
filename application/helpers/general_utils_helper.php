@@ -103,6 +103,44 @@ if ( ! function_exists('show_403')) {
   }
 }
 
+if ( ! function_exists('verify_csrf_get')) {
+  /**
+   * CSRF verification for GET requests.
+   * This function verifies that the get request made to the page
+   * carries the CSRF token. If it not present it till throw the
+   * standard error.
+   * Assumes the param name is the token name.
+   */
+  function verify_csrf_get() {
+    $CI = get_instance();
+    $csrf_token_name = $CI->security->get_csrf_token_name();
+    $csrf_cookie_name =  config_item('cookie_prefix') . config_item('csrf_cookie_name');
+    $link_token = $CI->input->get($csrf_token_name);
+
+    // Is token set?
+    if (!$link_token || !isset($_COOKIE[$csrf_cookie_name])){
+      $CI->security->csrf_show_error();
+    }
+
+    // Do the tokens match?
+    if ($link_token != $_COOKIE[$csrf_cookie_name]) {
+      $CI->security->csrf_show_error();
+    }
+    
+    $CI->security->csrf_verify();
+  }
+}
+
+if ( ! function_exists('anchor_csrf')) {
+  function anchor_csrf($uri = '', $title = '', $attributes = '') {
+    $CI = get_instance();
+    $csrf_token_name = $CI->security->get_csrf_token_name();
+    $csrf_hash = $CI->security->get_csrf_hash();
+    
+    $uri .= "?$csrf_token_name=$csrf_hash";    
+    return anchor($uri, $title, $attributes);
+  }
+}
 
 // ------------------------------------------------------------------------
 
