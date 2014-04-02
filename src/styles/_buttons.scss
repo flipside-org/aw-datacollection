@@ -158,13 +158,19 @@ a.disabled {
   top: 52px;
   left: 0;
   z-index: 80;
-  display: none;
   @include border-radius(4px);
   @include reset-list;
   box-shadow: 0 0 0 2px rgba(palette(grey, dark), 0.1);
   background-color: white;
   color: #909598;
   font-size: rem-calc(14);
+  opacity: 0;
+  margin-top: rem-calc(-32);
+  visibility: hidden;
+  @include transition-property(opacity, margin, visibility);
+  @include transition-duration(0.1s, 0.1s, 0.1s);
+  @include transition-timing-function(ease, ease, linear);
+  @include transition-delay(0, 0, 0);
   
   &:before {
     @extend .icon-s-triangle-up;
@@ -176,6 +182,12 @@ a.disabled {
     font-size: 32px;
     text-shadow: 0 -3px rgba(palette(grey, dark), 0.1);
     line-height: 56px;
+  }
+  
+  &.revealed {
+    opacity: 1;
+    margin-top: 0;
+    visibility: visible;
   }
 
   li {
@@ -221,6 +233,17 @@ a.disabled {
   @extend .action-dropdown;
   top: 0;
   left: 84px;
+  opacity: 0;
+  margin-top: 0;
+  margin-left: rem-calc(-32);
+  visibility: hidden;
+  
+  &.revealed {
+    opacity: 1;
+    margin-top: 0;
+    margin-left: 0;
+    visibility: visible;
+  }
   
   &:before {
     @extend .icon-s-triangle-left;
