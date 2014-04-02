@@ -263,7 +263,9 @@
 
 .login-box {
   @include grid-column(6, $offset: 3);
-  
+  section.contained {
+    margin-left: rem-calc(-80); // negative value of margin-left of site-body
+  }
   form {
     margin: rem-calc(32 32 0 32);
   }
