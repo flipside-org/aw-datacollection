@@ -8,7 +8,7 @@
         </div>
         
         <nav id="secondary" role="navigation">
-          <ul class="links">
+          <ul class="bttn-toolbar">
             <?php if (has_permission('create account')) : ?>
             <li>
               <a href="<?= base_url('user/add'); ?>" class="bttn bttn-primary bttn-medium">Add new</a>

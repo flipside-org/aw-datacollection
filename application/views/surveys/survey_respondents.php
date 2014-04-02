@@ -8,7 +8,7 @@
         </div>
 
         <nav id="secondary" role="navigation">
-          <ul class="links">
+          <ul class="bttn-toolbar">
             <li class="sector-switcher">
               <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Respondents</strong></a>
               <ul class="action-dropdown">

@@ -26,7 +26,7 @@ a:active {
 .bttn {
   display: inline-block;
   position: relative;
-  z-index: 99;
+  z-index: 70;
   padding: rem-calc(0 12);
   border-radius: rem-calc(4);
   font-weight: 700;
@@ -140,6 +140,23 @@ a:active {
   }
 }
 /* // Button groups */
+
+.bttn-toolbar {
+  @include reset-list;
+  //float: left;
+  
+  &>li {
+    float: left;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-right: rem-calc(8);
+    
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
 
 a.disabled {
   opacity: 0.4;

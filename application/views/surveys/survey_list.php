@@ -8,7 +8,7 @@
         </div>
 
         <nav id="secondary" role="navigation">
-          <ul class="links">
+          <ul class="bttn-toolbar">
             <?php if (has_permission('create survey')) : ?>
             <li>
               <a href="<?= base_url('survey/add'); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
@@ -51,13 +51,21 @@
                   <td><a href="<?= $survey_entity->get_url_view() ?>"><?= $survey_entity->title ?></a></td>
                   <td><?= date('d-m-Y', 0) ?></td>
                   <td>
-                    <?php if (has_permission('edit any survey')) : ?>
-                    <?= anchor($survey_entity->get_url_edit(), 'Edit', array('class' => 'bttn bttn-small bttn-primary')); ?>
-                    <?php endif; ?>
-
-                    <?php if (has_permission('delete any survey')) : ?>
-                    <?= anchor_csrf($survey_entity->get_url_delete(), 'Delete', array('class' => 'bttn bttn-small bttn-danger')); ?>
-                    <?php endif; ?>
+                    <ul class="bttn-toolbar">
+                      <li>
+                        <a href="#" class="bttn bttn-primary bttn-small bttn-dropdown" data-dropdown="action-bttn">Edit</a>
+                        <ul class="action-dropdown for-bttn-small">
+                          <li>
+                          <?php if (has_permission('edit any survey')) : ?>
+                          <li><?= anchor($survey_entity->get_url_edit(), 'Edit'); ?></li>
+                          <?php endif; ?>
+      
+                          <?php if (has_permission('delete any survey')) : ?>
+                          <li><?= anchor_csrf($survey_entity->get_url_delete(), 'Delete', array('class' => 'danger')); ?></li>
+                          <?php endif; ?>
+                        </ul>
+                      </li>
+                    </ul>
                   </td>
                 </tr>
                 <?php endforeach; ?>

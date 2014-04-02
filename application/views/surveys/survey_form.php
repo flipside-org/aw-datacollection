@@ -12,7 +12,7 @@
         </div>
         
         <nav id="secondary" role="navigation">
-          <ul class="links">
+          <ul class="bttn-toolbar">
             <li class="sector-switcher">
               <strong class="bttn-sector">
               <?php if ($survey) : ?>

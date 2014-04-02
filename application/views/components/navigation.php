@@ -2,7 +2,7 @@
     <h1 id="site-title" class="hd-l"><a href="<?= base_url(); ?>" title="Go home">Airwolf</a></h1>
 
     <nav id="primary" role="navigation">
-      <ul id="nav-links" class="links">
+      <ul id="nav-links">
         <li>
           <?php $current = isset($active_menu) && $active_menu == 'dashboard' ? 'current' : ''; ?>
           <a href="<?= base_url(); ?>" class="dashboard <?= $current; ?>"><span class="visually-hidden">Dashboard</span></a>

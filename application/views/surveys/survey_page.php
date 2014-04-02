@@ -27,7 +27,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
         </div>
         
         <nav id="secondary" role="navigation">
-          <ul class="links">
+          <ul class="bttn-toolbar">
             <li class="sector-switcher">
               <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Summary</strong></a>
               <ul class="action-dropdown">

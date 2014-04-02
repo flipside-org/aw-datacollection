@@ -203,19 +203,8 @@
     #secondary {
       @include grid-column(6);
       
-      .links {
-        @include reset-list;
+      .bttn-toolbar {
         float: right;
-        
-        &>li {
-          float: left;
-          position: relative;
-          margin-right: rem-calc(8);
-          
-          &:last-child {
-            margin-right: 0;
-          }
-        }
         
         .sector-switcher {
           border-right: rem-calc(2) solid palette(grey, light);
