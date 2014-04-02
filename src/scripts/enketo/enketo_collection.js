@@ -129,7 +129,6 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   $.get(Connection.URL_XSLT_TRANSFORM, function(response) {
     var xml_form = response['xml_form'];
     
-    
     // If the computer is shared by multiple users it may happen that a user
     // submits data left by another user. That data should not be lost so
     // when a user starts data collection the system tries to submit it.
@@ -182,7 +181,12 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       resp_queue = RespondentQueue.prepareQueue(respondents);
       
       // Enketo form stuff.
-      var $data = $(xml_form);
+      // XML Parser.
+      var parser = new DOMParser();
+      var $data = parser.parseFromString(xml_form, 'text/xml');
+      // Convert to jQuery object to allow find.
+      $data = $($data);
+      
       formStr = (new XMLSerializer() ).serializeToString($data.find( 'form:eq(0)' )[0]);
       modelStr = (new XMLSerializer() ).serializeToString($data.find( 'model:eq(0)' )[0]);
       
