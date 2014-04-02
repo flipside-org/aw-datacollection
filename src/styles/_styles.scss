@@ -1,10 +1,20 @@
+%mast-padding {
+  padding-right: $column-gutter / 2;
+  padding-left: ($column-gutter / 2) + $header-width;
+}
+
+#site-canvas {
+  @extend %mast-padding;
+}
+
 #site-head {
-  width: rem-calc(80);
+  width: $header-width;
   background-color: palette(blue);
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
+  z-index: 200;
   
   /*TODO: Temporary site-title*/
   #site-title {
@@ -88,19 +98,25 @@
 }
 
 /* Site header on pages like login */
-#site-head.horizontal {
-  width: 100%;
-  background: none;
-  position: static;
+.not-logged {
+  #site-canvas {
+    padding-left: $column-gutter / 2;
+  }
   
-  /*TODO: Temporary site-title*/
-  #site-title a {
-    text-align: center;
-    display: block;
-    span{
+  #site-head {
+    width: 100%;
+    background: none;
+    position: static;
+    
+    /*TODO: Temporary site-title*/
+    #site-title a {
+      text-align: center;
       display: block;
-      color: palette(grey, dark);
-      @include rotate(0);
+      span{
+        display: block;
+        color: palette(grey, dark);
+        @include rotate(0);
+      }
     }
   }
 }
@@ -108,16 +124,28 @@
 
 
 #site-body {
-  margin-left: rem-calc(80);
   
   /* Section header */
   #page-head {
-    @include clearfix();
-    padding-top: rem-calc(32);
-    padding-bottom: rem-calc(32);
-    background-color: palette(grey, x-light);
-    box-shadow: 0 4px 0 0 rgba(palette(grey, dark), 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    @extend %mast-padding;
     
+    &>.inner {
+      @include grid-row();
+      @include clearfix();
+      padding-top: rem-calc(32);
+      padding-bottom: rem-calc(32);
+      background-color: palette(grey, x-light);
+    }
+    
+    &>.overlay {
+      box-shadow: 0 4px 0 0 rgba(palette(grey, dark), 0.2);
+    }
+
     .heading {
       @include grid-column(6);
       

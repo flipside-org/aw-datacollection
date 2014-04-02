@@ -1,5 +1,7 @@
-<header id="site-head" class="horizontal">
-  <h1 id="site-title"><a href="<?= base_url(); ?>" title="Go home"><span>Airwolf</span></a></h1>
+<header id="site-head">
+  <div class="inner">
+    <h1 id="site-title"><a href="<?= base_url(); ?>" title="Go home"><span>Airwolf</span></a></h1>
+  </div>
 </header>
 
 <main id="site-body">

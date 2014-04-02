@@ -1,20 +1,23 @@
 <main id="site-body">
   <section class="row">
-    
     <header id="page-head">
-      <div class="heading">
-        <h1 class="hd-xl">Users</h1>
-      </div>
+      <div class="inner">
+        
+        <div class="heading">
+          <h1 class="hd-xl">Users</h1>
+        </div>
+        
+        <nav id="secondary" role="navigation">
+          <ul class="links">
+            <?php if (has_permission('create account')) : ?>
+            <li>
+              <a href="<?= base_url('user/add'); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
+            </li>
+            <?php endif; ?>
+          </ul>
+        </nav>
       
-      <nav id="secondary" role="navigation">
-        <ul class="links">
-          <?php if (has_permission('create account')) : ?>
-          <li>
-            <a href="<?= base_url('user/add'); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
-          </li>
-          <?php endif; ?>
-        </ul>
-      </nav>
+      </div>
     </header>
     
     <div class="content">      
@@ -22,7 +25,7 @@
         <section class="contained">
           <header class="contained-head">
             
-            <ul class="bttn-group bttn-center">
+            <ul class="bttn-group bttn-center filters">
               <li><a href="" class="bttn bttn-default bttn-small current">All</a></li>
               <li><a href="" class="bttn bttn-default bttn-small">Active</a></li>
               <li><a href="" class="bttn bttn-default bttn-small">Blocked</a></li>

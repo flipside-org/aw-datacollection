@@ -9,5 +9,5 @@
     
     <?php $this->load->view('base/head_styles') ?>
   </head>
-  <body>
+  <body class="<?= is_logged() ? 'is-logged' : 'not-logged'; ?>">
     <div id="site-canvas">

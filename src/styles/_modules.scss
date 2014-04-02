@@ -18,6 +18,12 @@
     padding: rem-calc(32);
     border-radius: rem-calc(4 4 0 0);
     color: white;
+    
+    .filters {
+      .bttn {
+        min-width: rem-calc(96);
+      }
+    }
   }
 
   .contained-foot {
