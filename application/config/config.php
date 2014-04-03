@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://192.168.99.10/work/aw-datacollection/';
+$config['base_url']	= 'http://192.168.0.102:8080/work/aw-datacollection/';
 //$config['base_url']	= '/work/aw-datacollection/';
 
 /*

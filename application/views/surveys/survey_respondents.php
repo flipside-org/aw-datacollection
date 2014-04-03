@@ -10,7 +10,7 @@
         <nav id="secondary" role="navigation">
           <ul class="bttn-toolbar">
             <li class="sector-switcher">
-              <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Respondents</strong></a>
+              <a class="bttn-sector bttn-dropdown" href="#" data-dropdown="action-bttn"><strong>Respondents</strong></a>
               <ul class="action-dropdown">
                 <li><a href="<?= $survey->get_url_view() ?>">Summary</a></li>
               </ul>
@@ -18,7 +18,11 @@
 
             <?php if (has_permission('manage respondents any survey')) : ?>
             <li>
-              <a href="<?= $survey->get_url_respondents_add(); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
+              <a href="#" class="bttn bttn-primary bttn-medium bttn-dropdown"  data-dropdown="action-bttn">Add new</a>
+              <ul class="action-dropdown">
+                <li><a href="<?= $survey->get_url_respondents_add('file'); ?>">Upload file</a></li>
+                <li><a href="<?= $survey->get_url_respondents_add('direct'); ?>">Direct input</a></li>
+              </ul>
             </li>
             <?php endif; ?>
 
