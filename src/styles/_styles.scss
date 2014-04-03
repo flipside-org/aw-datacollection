@@ -220,7 +220,7 @@
           
           font-size: rem-calc(20);
           
-          &:link, &:visited {
+          &:link, &:visited, &:active {
             color: palette(grey, dark);
           }
         }
