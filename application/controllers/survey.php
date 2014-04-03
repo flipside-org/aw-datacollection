@@ -538,7 +538,7 @@ class Survey extends CI_Controller {
     
         // Load needed libraries.
         $this->load->library('upload', $file_upload_config);
-        $this->form_validation->set_rules('survey_respondents_file', 'Respondents File', 'required|callback__cb_survey_respondents_add_file_handle');
+        $this->form_validation->set_rules('survey_respondents_file', 'Respondents File', 'callback__cb_survey_respondents_add_file_handle');
         break;
       case 'direct':
         $this->form_validation->set_rules('survey_respondents_text', 'Respondents Text', 'trim|required|xss_clean');
@@ -1155,7 +1155,8 @@ class Survey extends CI_Controller {
     }
     else  {
       // Nothing was uploaded. That's ok.
-      $_POST['survey_respondents_file'] = FALSE;
+      $this->form_validation->set_message('_cb_survey_respondents_add_file_handle', 'Please upload a file.');
+      return false;
     }
   }
 
