@@ -35,6 +35,8 @@ a:active {
   &:link,
   &:active,
   &:visited {
+    position: static;
+    top: 0;
     color: white;
   }
 }
@@ -182,7 +184,7 @@ a.disabled {
   color: #909598;
   font-size: rem-calc(14);
   opacity: 0;
-  margin-top: rem-calc(-32);
+  margin-top: rem-calc(-16);
   visibility: hidden;
   @include transition-property(opacity, margin, visibility);
   @include transition-duration(0.1s, 0.1s, 0.1s);
@@ -252,7 +254,7 @@ a.disabled {
   left: 84px;
   opacity: 0;
   margin-top: 0;
-  margin-left: rem-calc(-32);
+  margin-left: rem-calc(-16);
   visibility: hidden;
   
   &.revealed {
