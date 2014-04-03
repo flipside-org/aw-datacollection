@@ -22,6 +22,8 @@
     font-weight: bold;
     @include rotate(-90deg);
     writing-mode: tb-rl;
+    -webkit-font-smoothing: antialiased;
+    -webkit-transform-origin: 50% 51%;
     
     a {
       display: block;
