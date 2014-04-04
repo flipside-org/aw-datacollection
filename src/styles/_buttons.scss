@@ -22,7 +22,7 @@ a:active {
 }
 /* // Generic link styles */
 
-/* Iconed link styles */
+/* Fancy link styles */
 .go-link,
 .expand-link {
   position: relative;
@@ -31,7 +31,7 @@ a:active {
     @include transition(all 0.1s ease);
     position: absolute;
     top: 0;
-    right: rem-calc(24);
+    right: rem-calc(20);
     z-index: 1;
     opacity: 0;
     font-size: 1rem;
@@ -45,7 +45,7 @@ a:active {
 }
 
 .go-link:before { @extend .icon-arr-tail-right; }
-.expand-link:before { @extend .icon-expand; }
+.expand-link:before { @extend .icon-expand-row; }
 
 /* Base button style */
 .bttn {
