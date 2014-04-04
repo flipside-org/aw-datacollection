@@ -19,6 +19,11 @@ function show_404($page = '', $log_error = TRUE)
 	throw new PHPUnit_Framework_Exception($page, 404);
 }
 
+function redirect($uri = '', $method = 'location', $http_response_code = 302)
+{
+	throw new PHPUnit_Framework_Exception($uri);
+}
+
 define('ROOT_PATH', dirname(__FILE__) . '/../../');
 
 /*

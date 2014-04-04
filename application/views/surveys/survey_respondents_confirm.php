@@ -7,21 +7,14 @@
           <h1 class="hd-xl <?= $survey->get_status_html_class('indicator-'); ?>"><?= $survey->title ?></h1>
         </div>
 
-        <nav id="secondary" role="navigation">
+       <nav id="secondary" role="navigation">
           <ul class="bttn-toolbar">
             <li class="sector-switcher">
-              <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Respondents</strong></a>
-              <ul class="action-dropdown">
-                <li><a href="<?= $survey->get_url_view() ?>">Summary</a></li>
-              </ul>
+              <strong class="bttn-sector">Add Respondents</strong>
             </li>
-            
-            <?php if (has_permission('manage respondents any survey')) : ?>
             <li>
-              <a href="<?= $survey->get_url_respondents_add(); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
+              <a href="<?= $survey->get_url_respondents(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
             </li>
-            <?php endif; ?>
-            
           </ul>
         </nav>
       </div>
