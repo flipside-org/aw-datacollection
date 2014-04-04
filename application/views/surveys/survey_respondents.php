@@ -33,16 +33,25 @@
     </header>
     <div class="content">
 
-
-
-
-    <table>
+    <table class="cb-group">
       <tr>
+        <td>
+          <label class="label-check cb-master-label" for="respondents-check-all">
+            <input name="respondents-check-all" value="1" type="checkbox" class="cb-master"/>
+          </label>
+        </td>
         <td>Number</td>
         <td>Actions</td>
       </tr>
       <?php foreach ($respondents as $resp) : ?>
         <tr>
+          <td>
+
+            <label class="label-check cb-slave-label" for="respondents-check">
+              <input name="respondents-check[]" value="<?= $resp->ctid; ?>" type="checkbox" class="cb-slave"/>
+            </label>
+
+          </td>
           <td><?= $resp->number; ?></td>
           <td></td>
         </tr>
