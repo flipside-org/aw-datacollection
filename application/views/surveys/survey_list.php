@@ -48,8 +48,8 @@
                 <?php foreach ($surveys as $survey_entity):?>
                 <tr>
                   <td><strong class="<?= $survey_entity->get_status_html_class(); ?>"><?= $survey_entity->get_status_label(); ?></strong></td>
-                  <td><a href="<?= $survey_entity->get_url_view() ?>"><?= $survey_entity->title ?></a></td>
-                  <td><?= date('d-m-Y', 0) ?></td>
+                  <td><a href="<?= $survey_entity->get_url_view() ?>" class="go-link"><strong class="highlight"><?= $survey_entity->title ?></strong></a></td>
+                  <td><?= date('d M, Y', 0) ?> <small>Modified</small></td>
                   <td>
                     <ul class="bttn-toolbar">
                       <li>
@@ -57,7 +57,7 @@
                         <ul class="action-dropdown for-bttn-small">
                           <li>
                           <?php if (has_permission('edit any survey')) : ?>
-                          <li><?= anchor($survey_entity->get_url_edit(), 'Edit'); ?></li>
+                          <li><?= anchor($survey_entity->get_url_edit(), 'Modify'); ?></li>
                           <?php endif; ?>
       
                           <?php if (has_permission('delete any survey')) : ?>
