@@ -29,7 +29,7 @@ a:active {
   z-index: 70;
   padding: rem-calc(0 12);
   border-radius: rem-calc(4);
-  font-weight: 700;
+  font-weight: $body-font-bold;
   text-align: center;
   
   &:link,
@@ -39,12 +39,20 @@ a:active {
     top: 0;
     color: white;
   }
+  &:active {
+    opacity: 1;
+  }
+  &:before, &:after {
+    font-size: rem-calc(16);
+    vertical-align: bottom !important;
+  }
 }
 
 .bttn-dropdown {
   &:after {
     @extend .icon-s-arr-down;
-    margin-left: rem-calc(8);
+    margin-left: rem-calc(4);
+    opacity: 0.6;
   }
 }
 
@@ -53,19 +61,11 @@ a:active {
   line-height: rem-calc(32);
   height: rem-calc(32);
   font-size: rem-calc(14);
-  
-  &:before, &:after {
-    font-size: rem-calc(14);
-  }
 }
 .bttn-medium {
   line-height: rem-calc(40);
   height: rem-calc(40);
   font-size: rem-calc(16);
-  
-  &:before, &:after {
-    font-size: rem-calc(16);
-  }
 }
 /* // Button sizes */
 
@@ -183,6 +183,7 @@ a.disabled {
   background-color: white;
   color: #909598;
   font-size: rem-calc(14);
+  font-weight: $body-font-bold;
   opacity: 0;
   margin-top: rem-calc(-16);
   visibility: hidden;
@@ -192,15 +193,17 @@ a.disabled {
   @include transition-delay(0, 0, 0);
   
   &:before {
-    @extend .icon-s-triangle-up;
+    @extend .icon-triangle-up;
     position: absolute;
     z-index: 90;
-    top: -31px;
-    left: 8px;
+    top: -11px;
+    left: 1rem;
     color: white;
-    font-size: 32px;
-    text-shadow: 0 -3px rgba(palette(grey, dark), 0.1);
-    line-height: 56px;
+    font-size: 1rem;
+    text-shadow: 0 -2px rgba(palette(grey, dark), 0.1);
+    line-height: 1;
+    height: 1rem;
+    width: 1rem;
   }
   
   &.revealed {
@@ -265,15 +268,15 @@ a.disabled {
   }
   
   &:before {
-    @extend .icon-s-triangle-left;
-    top: 0;
-    left: -19px;
-    text-shadow: -3px 0 rgba(palette(grey, dark), 0.1);
+    @extend .icon-triangle-left;
+    top: 1rem;
+    left: -11px;
+    text-shadow: -2px 0 rgba(palette(grey, dark), 0.1);
   }
 }
 
 /* Dropdown for button size */
 .for-bttn-small {
-  top: 45px;
+  top: 44px;
 }
 /* // Dropdown for button size */
