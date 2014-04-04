@@ -286,6 +286,9 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
    * Always after initializeForm();
    */
   function initializeGUI() {
+    // Show connection indicator.
+    $('#connection-status').show();
+    
     $('.call-actions').removeClass('hide');
     // Clean call task
     $('.call-status').addClass('hide');
@@ -479,9 +482,15 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     console.log('EVENT: connection_status_change');
     
     // TEMP
-    var $indicator = $('.connection-status');
-    if (connection.isOnline()) { $indicator.text('Online').removeClass('alert'); }
-    else { $indicator.text('Offline').addClass('alert'); }
+    var $beacon = $('#connection-status .beacon');
+    if (connection.isOnline()) {
+      $beacon.addClass('online');
+      $beacon.find('span').text('Offline');
+    }
+    else {
+      $beacon.removeClass('online');
+      $beacon.find('span').text('Online');
+    }
     // /TEMP
     
     
@@ -491,5 +500,30 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     }
   });
   // End Event connection_status_change
+  
+  // EVENT submission_queue_submit_start
+  // Triggered by the Submission queue when data is being submitted
+  $(window).on('submission_queue_submit_start', function(event, status) {
+    var $beacon = $('#connection-status .beacon');
+    $beacon.addClass('working');
+    $beacon.find('span').text('Uploading data.');
+  });
+  // End EVENT submission_queue_submit_start
+  
+  // EVENT submission_queue_submit_finish
+  // Triggered by the Submission queue when data was submitted
+  $(window).on('submission_queue_submit_finish', function(event, status) {
+    var $beacon = $('#connection-status .beacon');
+    $beacon.removeClass('working');
+    
+    // Global variable con
+    if (con.isOnline()) {
+      $beacon.find('span').text('Offline');
+    }
+    else {
+      $beacon.find('span').text('Online');
+    }
+  });
+  // End EVENT submission_queue_submit_finish
 
 });

@@ -339,11 +339,11 @@ class Survey_entity extends Entity {
    * @access public
    * @return string
    */
-  public function get_url_respondents_add() {
+  public function get_url_respondents_add($type) {
     if ($this->sid == NULL) {
       throw new Exception("Trying to get link for a non-existent survey.");
     }
-    return base_url('survey/' . $this->sid . '/respondents/add') ;
+    return base_url('survey/' . $this->sid . '/respondents/add/' . $type) ;
   }
 
   /**

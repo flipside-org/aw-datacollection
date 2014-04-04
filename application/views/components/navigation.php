@@ -1,8 +1,8 @@
 <header id="site-head">
-    <h1 id="site-title" class="hd-xl"><a href="<?= base_url(); ?>" title="Go home"><span>Airwolf</span></a></h1>
+    <h1 id="site-title" class="hd-l"><a href="<?= base_url(); ?>" title="Go home">Airwolf</a></h1>
 
     <nav id="primary" role="navigation">
-      <ul id="nav-links" class="links">
+      <ul id="nav-links">
         <li>
           <?php $current = isset($active_menu) && $active_menu == 'dashboard' ? 'current' : ''; ?>
           <a href="<?= base_url(); ?>" class="dashboard <?= $current; ?>"><span class="visually-hidden">Dashboard</span></a>
@@ -40,7 +40,7 @@
         
         <!-- Dev option to switch between users -->
         <li>
-          <a href="#" class="users" data-dropdown="action-bttn-primary"><span class="visually-hidden">Users</span></a>
+          <a href="#" class="user-switch-dev" data-dropdown="action-bttn-primary"><span class="visually-hidden">Users</span></a>
           <ul class="action-dropdown-primary">
             <?php foreach ($this->user_model->get_all() as $user): ?>
             <li>
@@ -67,6 +67,6 @@
     </nav>
 
     <div id="connection-status">
-      Loading...
+      <em class="beacon"><span class="visually-hidden">Online</span></em>
     </div>
   </header>

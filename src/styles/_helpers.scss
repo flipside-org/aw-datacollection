@@ -42,3 +42,14 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+/* Keyframes animations */
+@include keyframes(spin-c) {
+  from { @include transform(rotate(0deg)); }
+    to { @include transform(rotate(360deg)); }
+}
+
+@include keyframes(spin-cc) {
+  from { @include transform(rotate(0deg)); }
+  to { @include transform(rotate(-360deg)); }
+}

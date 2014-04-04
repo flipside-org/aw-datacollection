@@ -142,6 +142,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
   public static function tearDownAfterClass() {
     // Clean up your mess.
     self::$CI->session->sess_destroy();
+    session_destroy();
     self::$CI->mongo_db->dropDb('aw_datacollection_test');
   }
 

@@ -3,7 +3,7 @@
     <h1 id="site-title"><a href="#" title="Go home"><span>Airwolf</span></a></h1>
 
     <nav id="primary" role="navigation">
-      <ul id="nav-links" class="links">
+      <ul id="nav-links" class="bttn-toolbar">
         <li>
           <a href="#" class="dashboard current"><span class="visually-hidden">Dashboard</span></a>
         </li>
@@ -47,7 +47,7 @@
       		</div>
       		
       		<nav id="secondary" role="navigation">
-      		  <ul class="links">
+      		  <ul class="bttn-toolbar">
       		  	<li class="sector-switcher">
       		  	  <strong class="bttn-sector">Current</strong>
       		  	</li>

@@ -167,6 +167,9 @@ SubmissionQueue.prototype.submit = function() {
       return null;
     }
     
+    // Notify that submission started.
+    $(window).trigger('submission_queue_submit_start');
+    
     // TODO: SubmissionQueue.prototype.submit - Remove MOCK
     ///////////////////////MOCK
     // Simulate errors
@@ -174,8 +177,10 @@ SubmissionQueue.prototype.submit = function() {
       console.warn('error');
       self.is_uploading = true;
       $.get(Aw.settings.base_url + 'survey/delay/4', function() {
+        $(window).trigger('submission_queue_submit_finish', 1);
         // yeah. do nothing.
       }).fail(function(r){
+        $(window).trigger('submission_queue_submit_finish', -1);
         if (r.status == 404) {
           // Not found means no connection.
           con.setOnlineStatus( false );
@@ -202,6 +207,7 @@ SubmissionQueue.prototype.submit = function() {
     }, function(res) {
       console.log('Submission successful.');
       console.log(res);
+      $(window).trigger('submission_queue_submit_finish', 1);
       if (res.status.code == 201) {
         // Submitting data for another user.
         // Shift the respondent to the end of the queue.
@@ -217,6 +223,7 @@ SubmissionQueue.prototype.submit = function() {
             
     }).fail(function(res) {
       console.log('Submission failed.');
+      $(window).trigger('submission_queue_submit_finish', -1);
       // If the request failed because of the CSRF token, invalidate it and try again.
       if (res.status == 500 && res.responseText.match('The action you have requested is not allowed.')) {
         console.log('Invalid token.');

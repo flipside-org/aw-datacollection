@@ -1,34 +1,28 @@
 <main id="site-body">
   <section class="row">
     <header id="page-head">
-        
-      <div class="heading">
-        <h1 class="hd-xl <?= $survey->get_status_html_class('indicator-'); ?>"><?= $survey->title ?></h1>
+      <div class="inner">
+
+        <div class="heading">
+          <h1 class="hd-xl <?= $survey->get_status_html_class('indicator-'); ?>"><?= $survey->title ?></h1>
+        </div>
+
+       <nav id="secondary" role="navigation">
+          <ul class="bttn-toolbar">
+            <li class="sector-switcher">
+              <strong class="bttn-sector">Add Respondents</strong>
+            </li>
+            <li>
+              <a href="<?= $survey->get_url_respondents(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
+            </li>
+          </ul>
+        </nav>
       </div>
-      
-      <nav id="secondary" role="navigation">
-        <ul class="links">
-          <li class="sector-switcher">
-            <a class="bttn-sector bttn-dropdown" href="" data-dropdown="action-bttn"><strong>Respondents</strong></a>
-            <ul class="action-dropdown">
-              <li><a href="<?= $survey->get_url_view() ?>">Summary</a></li>
-            </ul>
-          </li>
-          
-          <?php if (has_permission('manage respondents any survey')) : ?>
-          <li>
-            <a href="<?= $survey->get_url_respondents_add(); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
-          </li>
-          <?php endif; ?>
-          
-        </ul>
-      </nav>
-      
     </header>
-    
-    
-    
-    
+
+    <div class="content">
+
+
     <?= validation_errors(); ?>
     <?= form_open_multipart(); ?>
     
@@ -46,9 +40,9 @@
   
   
     <?= form_close(); ?>
-    
-    
-    
 
+
+
+    </div>
   </section>
 </main>

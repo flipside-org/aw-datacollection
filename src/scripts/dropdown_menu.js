@@ -5,16 +5,16 @@ $(document).ready(function(){
     var $dropdown = $self.siblings('.action-dropdown-primary');
     clearTimeout($dropdown.data('hide_timeout'));
     // Hide others.
-    $('.action-dropdown-primary').not($dropdown).hide();
+    $('.action-dropdown-primary').not($dropdown).removeClass('revealed');
     
-    $dropdown.show();
+    $dropdown.addClass('revealed');
   })
   .mouseleave(function() {
     var $self = $(this);
     var $dropdown = $self.siblings('.action-dropdown-primary');
     
     var hide_timeout = setTimeout(function() {
-      $dropdown.hide();
+      $dropdown.removeClass('revealed');
     }, 150);
     
     $dropdown.data('hide_timeout', hide_timeout);
@@ -26,12 +26,12 @@ $(document).ready(function(){
   $('.action-dropdown-primary').mouseenter(function() {
     var $self = $(this);
     clearTimeout($self.data('hide_timeout'));
-    $self.show();
+    $self.addClass('revealed');
   })
   .mouseleave(function() {
     var $self = $(this);
     var hide_timeout = setTimeout(function() {
-      $self.hide(); 
+      $self.removeClass('revealed');
     }, 150);
     $self.data('hide_timeout', hide_timeout);
   });
@@ -45,21 +45,15 @@ $(document).ready(function(){
     var $dropdown = $self.siblings('.action-dropdown');
     
     // Hide others.
-    $('.action-dropdown').not($dropdown).hide();
+    $('.action-dropdown').not($dropdown).removeClass('revealed');
     $('a[data-dropdown="action-bttn"]').not($self).removeClass('current');
     
-    if ($dropdown.is(':hidden')) {
-      $self.addClass('current');
-      $dropdown.show();
-    }
-    else {
-      $self.removeClass('current');
-      $dropdown.hide();
-    }
+    $self.toggleClass('current');
+    $dropdown.toggleClass('revealed');
   });
 
   $(document).click(function() {
-    $('.action-dropdown').hide();
+    $('.action-dropdown').removeClass('revealed');
     $('a[data-dropdown="action-bttn"]').removeClass('current');
   });
 
