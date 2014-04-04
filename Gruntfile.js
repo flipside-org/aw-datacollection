@@ -138,7 +138,7 @@ module.exports = function(grunt) {
     // https://npmjs.org/package/grunt-contrib-watch
     watch : {
       src: {
-        files: ['src/scripts/**.js', 'src/styles/*.scss'],
+        files: ['src/scripts/**.js', 'src/scripts/enketo/**.js', 'src/styles/*.scss'],
         tasks: ['build']
       }
     }
