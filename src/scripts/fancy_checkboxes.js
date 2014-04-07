@@ -56,6 +56,9 @@ $(document).ready(function() {
         $cb_master_label.removeClass('cb-master-none cb-master-some cb-master-all').addClass('cb-master-page');
         // We only want the master checkbox selected when all is selected.
         $cb_master.prop('checked', false);
+        
+        // Set the count.
+        $('.fancy-cb-count', $cb_group).text(cb_slaves_labels.find('.cb-slave').length);
       break;
       case 0:
         master_status_new = -1;
@@ -65,6 +68,9 @@ $(document).ready(function() {
         $cb_master_label.removeClass('cb-master-some cb-master-page cb-master-all').addClass('cb-master-none');
         // We only want the master checkbox selected when all is selected.
         $cb_master.prop('checked', false);
+        
+        // Set the count.
+        $('.fancy-cb-count', $cb_group).text(0);
       break;
       case 1:
         master_status_new = 2;
@@ -74,6 +80,10 @@ $(document).ready(function() {
         $cb_master_label.removeClass('cb-master-none cb-master-some cb-master-page').addClass('cb-master-all');
         // We only want the master checkbox selected when all is selected.
         $cb_master.prop('checked', true);
+        
+        // Set the count.
+        var $counter = $('.fancy-cb-count', $cb_group);
+        $counter.text($counter.attr('data-count-all'));
       break;
       case 2:
         master_status_new = -1;
@@ -82,6 +92,9 @@ $(document).ready(function() {
         $cb_master_label.removeClass('cb-master-some cb-master-page cb-master-all').addClass('cb-master-none');
         // We only want the master checkbox selected when all is selected.
         $cb_master.prop('checked', false);
+        
+        // Set the count.
+        $('.fancy-cb-count', $cb_group).text(0);
       break;
     }
     
@@ -100,24 +113,31 @@ $(document).ready(function() {
     // From the moment a slave is clicked the master should be set to an
     // intermediate state.
     $cb_master_label
-    .removeClass('cb-master-none cb-master-page cb-master-all')
-    .addClass('cb-master-some')
-    .data('status', 0);
+      .removeClass('cb-master-none cb-master-page cb-master-all')
+      .addClass('cb-master-some')
+      .data('status', 0);
     // On the intermediate status the checkbox is not selected.
     $cb_master_label.find('.cb-master').prop('checked', false);
     
+    // If all the other slaves are selected, re-select the master.
+    var all_selected_slaves = $cb_group.find('.cb-slave-label.fancy-cb-on').length;
+    var all_slaves = $cb_group.find('.cb-slave-label').length;
+    
+    // Set count.
+    $('.fancy-cb-count', $cb_group).text(all_selected_slaves);
+    
     // Being checked.
-    if ($self.hasClass('fancy-cb-on')) {
-      // If all the other slaves are selected, re-select the master.
-      var all_selected_slaves = $cb_group.find('.cb-slave-label.fancy-cb-on').length;
-      var all_slaves = $cb_group.find('.cb-slave-label').length;
-      
-      if (all_slaves == all_selected_slaves) {
-        $cb_master_label
-          .removeClass('cb-master-none cb-master-some cb-master-all')
-          .addClass('cb-master-page')
-          .data('status', 1);
-      }
+    if (all_slaves == all_selected_slaves) {
+      $cb_master_label
+        .removeClass('cb-master-none cb-master-some cb-master-all')
+        .addClass('cb-master-page')
+        .data('status', 1);
+    }
+    else if (all_selected_slaves === 0) {
+      $cb_master_label
+        .removeClass('cb-master-page cb-master-some cb-master-all')
+        .addClass('cb-master-none')
+        .data('status', -1);
     }
   });
 });

@@ -39,6 +39,7 @@
           <label class="fancy-cb-label cb-master-label" for="respondents-check-all">
             <input name="respondents-check-all" value="1" type="checkbox" class="cb-master"/>
           </label>
+          <span class="fancy-cb-count" data-count-all="100">0</span>
         </td>
         <td>Number</td>
         <td>Actions</td>
