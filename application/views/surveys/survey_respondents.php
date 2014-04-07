@@ -33,12 +33,13 @@
     </header>
     <div class="content">
 
-    <table class="cb-group">
+    <table class="fancy-cb-group">
       <tr>
         <td>
-          <label class="label-check cb-master-label" for="respondents-check-all">
+          <label class="fancy-cb-label cb-master-label" for="respondents-check-all">
             <input name="respondents-check-all" value="1" type="checkbox" class="cb-master"/>
           </label>
+          <span class="fancy-cb-count" data-count-all="100">0</span>
         </td>
         <td>Number</td>
         <td>Actions</td>
@@ -47,7 +48,7 @@
         <tr>
           <td>
 
-            <label class="label-check cb-slave-label" for="respondents-check">
+            <label class="fancy-cb-label cb-slave-label" for="respondents-check">
               <input name="respondents-check[]" value="<?= $resp->ctid; ?>" type="checkbox" class="cb-slave"/>
             </label>
 
