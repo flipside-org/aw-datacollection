@@ -19,7 +19,7 @@
   
   #site-title {
     margin: rem-calc(32 0 64 0);
-    font-weight: bold;
+    font-weight: $body-font-bold;
     @include rotate(-90deg);
     writing-mode: tb-rl;
     -webkit-font-smoothing: antialiased;
@@ -61,6 +61,7 @@
         
         &:before{
           font-size: rem-calc(32);
+          vertical-align: bottom !important;
         }
       }
     }    
@@ -281,7 +282,7 @@
   padding: rem-calc(8 12);
   display: inline-block;
   line-height: rem-calc(14);
-  font-weight: 700;
+  font-weight: $body-font-bold;
   background-color: palette(grey, x-light);
   color: palette(grey, dark);
   

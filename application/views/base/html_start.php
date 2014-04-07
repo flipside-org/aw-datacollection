@@ -3,7 +3,7 @@
 <html class="no-js" lang="en" >
   <head>
     <?php $this->load->view('base/head_meta') ?>
-    <title>Foundation 5</title>
+    <title>Airwolf</title>
     
     <?php $this->load->view('base/head_scripts') ?>
     

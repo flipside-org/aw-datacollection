@@ -15,7 +15,7 @@
   
   .contained-head {
     margin: rem-calc(-32 -32 0 -32);
-    padding: rem-calc(32);
+    padding: rem-calc(16 32);
     border-radius: rem-calc(4 4 0 0);
     color: white;
     
@@ -38,8 +38,7 @@
   
   table {
     width: 100%;
-    margin: 0;
-    border: none;
+    margin: rem-calc(0 0 -16 0);
     
     tr {
       td:first-child, th:first-child {
@@ -50,26 +49,25 @@
       }
     }
     
-    thead {
-      background-color: palette(grey, dark);
-      font-weight: 700;
-      
-      th {
-        color: palette(grey);
-        font-size: rem-calc(16);
-        padding-bottom: rem-calc(20);
-      }
-    }
-    
     tbody {
       tr {
         border-bottom: 1px solid palette(grey, x-light);
-        background: none;
-        
+        @include transition(all 0.1s ease);
         &:last-child {
           border: none;
         }
+        &:hover {
+          background-color: palette(grey, xx-light);
+        }
       }
+      small {
+        display: block;
+        font-size: inherit;
+        color: palette(grey, base);
+      }
+    }
+    .highlight {
+      font-size: 1rem;
     }
   }
 }
