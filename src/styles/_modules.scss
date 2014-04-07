@@ -9,13 +9,12 @@
     @include clearfix();
     background-color: palette(grey, dark);
     color: palette(grey);
-    padding: rem-calc(32);
+    padding: rem-calc(16 32);
     font-size: rem-calc(14);
   }
   
   .contained-head {
     margin: rem-calc(-32 -32 0 -32);
-    padding: rem-calc(16 32);
     border-radius: rem-calc(4 4 0 0);
     color: white;
     
@@ -28,8 +27,18 @@
 
   .contained-foot {
     background-color: palette(grey, dark);
-    margin: rem-calc(0 -32 -32 -32);
+    margin: rem-calc(16 -32 -32 -32);
     border-radius: rem-calc(0 0 4 4);
+    
+    p {
+      float: left;
+      margin: 0;
+      line-height: rem-calc(24);
+    }
+    
+    ul {
+      margin-top: rem-calc(-24);
+    }
   }
   
   .contained-body {

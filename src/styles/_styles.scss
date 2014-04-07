@@ -5,6 +5,7 @@
 
 #site-canvas {
   @extend %mast-padding;
+  padding-bottom: rem-calc(32);
 }
 
 #site-head {
