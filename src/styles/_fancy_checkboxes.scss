@@ -1,11 +1,11 @@
 /* http://www.maratz.com/blog/archives/2006/06/11/fancy-checkboxes-and-radio-buttons/ */
-.label-check input,
+.fancy-cb-label input,
 .label-radio input {
   position: absolute;
   left: -9999px;
 }
 
-.label-check {
+.fancy-cb-label {
   &:before {
     display: block;
     width: rem-calc(20);
@@ -20,7 +20,7 @@
     content: '';
   }
   
-  &.cb-on:before {
+  &.fancy-cb-on:before {
     background-color: palette(blue);
     box-shadow:inset 0 2px 0 0 shade(palette(blue), 25%);
     @extend .icon-s-tick;
