@@ -18,7 +18,7 @@
   <?php foreach($messages as $index => $msg): ?>
   $().toastmessage('showToast', {
     sticky   : <?= $msg['sticky'] ? 'true' : 'false'; ?>,
-    text     : '<?= $msg['msg']; ?>',
+    text     : "<?= $msg['msg']; ?>",
     type     : '<?= $msg['level']; ?>',
     inEffectDuration : 100,
     position : 'bottom-right',
