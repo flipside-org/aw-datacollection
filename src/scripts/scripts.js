@@ -2,6 +2,8 @@ $(document).foundation();
 
 $('a.disabled').click(function(e) {
   e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
 });
 
 
@@ -27,5 +29,29 @@ $(document).ready(function() {
     });
   }
   
-});
+  // ================================================================
+  // Fake form submits and confirmation buttons.
+  //
+  // To create a confirmation button add ( data-confirm-action="message" )
+  // to the button. This will trigger a confirmation box. If the answer
+  // is affirmative the button action will fire.
+  //
+  // For fake submit buttons add ( data-trigger-submit="id" ) and replace
+  // id with the id of the submit button.
+  // ================================================================
 
+  $('[data-confirm-action]').click(function(e) {
+    var message = $(this).attr('data-confirm-action');
+    var confirm = window.confirm(message);
+    if (!confirm) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  });
+  
+  $('[data-trigger-submit]').click(function(e) {
+    e.preventDefault();
+    var id = $(this).attr('data-trigger-submit');
+    $('#' + id).click();
+  });
+});
