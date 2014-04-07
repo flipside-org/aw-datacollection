@@ -494,8 +494,29 @@ class Survey extends CI_Controller {
       'uri_segment' => 4,
       'total_rows' => $this->call_task_model->get_total_count($sid),
       'per_page' => $respondents_pp,
-      //'cur_tag_open' => '<a class="current" href="' . $survey->get_url_respondents($page) . '">',
-      //'cur_tag_close' => '</a>',
+      
+      'full_tag_open' => '<ul class="bttn-group bttn-center">',
+      'full_tag_close' => '</ul>',
+      
+      'num_tag_open' => '<li>',
+      'anchor_class' => 'class="bttn bttn-default bttn-small"',
+      'num_tag_close' => '</li>',
+      
+      // By default current is not a link.
+      'cur_tag_open' => '<li><a class="bttn bttn-default bttn-small current" href="' . $survey->get_url_respondents($page) . '">',
+      'cur_tag_close' => '</li></a>',
+      
+      'first_tag_open' => '<li>',
+      'first_tag_close' => '</li>',
+      
+      'last_tag_open' => '<li>',
+      'last_tag_close' => '</li>',
+      
+      'next_tag_open' => '<li>',
+      'next_tag_close' => '</li>',
+      
+      'prev_tag_open' => '<li>',
+      'prev_tag_close' => '</li>',
     ));
         
     $respondents = $this->call_task_model->get_all_paginated($sid, $page, $respondents_pp);
@@ -738,6 +759,124 @@ class Survey extends CI_Controller {
     }
     
     return $respondents_numbers;
+  }
+
+  /**
+   * Manage respondents. Used as submit for form or single link.
+   * @param $sid
+   *   Survey sid
+   * @param $action
+   *  Action can be bulk (when used by form) or delete.
+   * @param $ctid
+   *   Only used when action is not bulk.
+   *
+   * Route - /survey/:sid/respondents/bulk
+   * Route - /survey/:sid/respondents/:ctid/delete
+   */
+  public function survey_respondents_manage($sid, $action, $ctid = null) {
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    else if (!has_permission('manage respondents any survey')) {
+      show_403();
+    }
+    
+    switch ($action) {
+      case 'bulk':
+        
+        $selected_respondents = $this->input->post('respondents-check');
+        // No respondents to act. Just redirect.
+        if (!$selected_respondents) {
+          redirect($survey->get_url_respondents());
+        }
+        
+        // Is the action to be applied to all the respondents?
+        $all_selected = $this->input->post('respondents-check-all');
+        
+        $successes = 0;
+        $with_data = 0;
+        // Bulk action - delete.
+        if ($this->input->post('respondent-delete') == 'respondent-delete') {
+          
+          if ($all_selected) {
+            // Delete all.
+            $call_tasks = $this->call_task_model->get_all($sid);
+            // Loop over all.
+            foreach ($call_tasks as $call_task) {
+              // Only call tasks without data can be deleted.
+              $activity = $call_task->get_activity();
+              if (empty($activity)){
+                // Delete.
+                if ($this->call_task_model->delete($call_task->ctid)) {
+                  $successes++;
+                }
+              }
+              else {
+                $with_data++;
+              }
+            }
+          }
+          else {
+            // Loop over selected.
+            foreach ($selected_respondents as $value) {
+              $call_task = $this->call_task_model->get($value);
+              
+              if ($call_task && $call_task->survey_sid == $sid) {
+              // Only call tasks without data can be deleted.
+                $activity = $call_task->get_activity();
+                if (empty($activity)){
+                  if ($this->call_task_model->delete($call_task->ctid)) {
+                    $successes++;
+                  }
+                }
+                else {
+                  $with_data++;
+                }
+              }
+              // else skip silently.
+              // Invalid respondent. Only through ID manipulation.
+            }
+          }
+          
+          if ($successes) {
+            Status_msg::success($successes . " respondents successfully deleted.");
+          }
+          if ($with_data) {
+            Status_msg::error($with_data . " respondents couldn't be deleted because there's data in the database.");
+          }
+          
+        }
+        
+        break;
+      case 'delete':
+        // Verify CSRF token in url.
+        verify_csrf_get();
+        
+        $call_task = $this->call_task_model->get($ctid);
+        
+        if ($call_task && $call_task->survey_sid == $sid) {
+          $activity = $call_task->get_activity();
+          if (empty($activity)){
+            // Delete.
+            if ($this->call_task_model->delete($call_task->ctid)) {
+              Status_msg::success("Respondent successfully deleted.");
+            }
+            else {
+              Status_msg::error("An error occurred while deleting the respondent. Please try again.");
+            }
+          }
+          else {
+            Status_msg::error("The respondent couldn't be deleted because there's data in the database.");
+          }
+        }
+        else {
+          show_error('Something went wrong...');
+        }
+        break;
+    }
+    
+    redirect($survey->get_url_respondents());
   }
 
   /**

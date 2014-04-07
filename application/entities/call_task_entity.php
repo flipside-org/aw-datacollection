@@ -290,11 +290,26 @@ class Call_task_entity extends Entity {
   public function get_url_single_data_collection() {
     if ($this->survey_sid == NULL) {
       throw new Exception("Trying to get link for a call task not related to a survey.");
-    }    
+    }
     if ($this->ctid == NULL) {
       throw new Exception("Trying to get link for a nonexistent call task.");
-    }    
+    }
     return base_url('survey/' . $this->survey_sid . '/data_collection/' . $this->ctid);
+  }
+  
+  /**
+   * Returns the url to delete
+   * @access public
+   * @return string
+   */
+  public function get_url_delete() {
+    if ($this->survey_sid == NULL) {
+      throw new Exception("Trying to get link for a call task not related to a survey.");
+    }
+    if ($this->ctid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent call task.");
+    }
+    return base_url('survey/' . $this->survey_sid . '/respondents/manage/' . $this->ctid . '/delete');
   }
   
   /**

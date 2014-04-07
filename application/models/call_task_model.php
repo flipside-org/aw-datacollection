@@ -355,7 +355,19 @@ class Call_task_model extends CI_Model {
       return FALSE;
     }
   }
-
+  
+  /**
+   * Deletes a call task by its ctid.
+   * @param int $sid
+   */
+  public function delete($ctid) {
+    $result = $this->mongo_db
+      ->where('ctid', (int) $ctid)
+      ->delete(self::COLLECTION);
+    
+    return $result !== FALSE ? TRUE : FALSE;
+  }
+  
   /**
    * Assigns Call Tasks to user. (Reserves them)
    * 
