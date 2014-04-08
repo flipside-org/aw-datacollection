@@ -20,7 +20,6 @@ class Survey extends CI_Controller {
     $this->load->model('survey_model');
     $this->load->model('call_task_model');
     load_entity('call_task');
-    load_entity('respondent');
     // this is neede
     session_start();
   }
