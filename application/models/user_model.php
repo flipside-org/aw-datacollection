@@ -162,8 +162,10 @@ class User_model extends CI_Model {
    *   Whether or not the save was successful.
    */
   public function save(User_entity &$entity) {
+    // To ensure date consistency.
+    $date = Mongo_db::date();
     // Set update date:
-    $entity->updated = Mongo_db::date();
+    $entity->updated = $date;
     
     $prepared_data = array();
     foreach ($entity as $field_name => $field_value) {
@@ -174,7 +176,7 @@ class User_model extends CI_Model {
       $entity->uid = increment_counter(self::COUNTER_COLLECTION);
       $prepared_data['uid'] = $entity->uid;
       // Set creation date:
-      $prepared_data['created'] = Mongo_db::date();
+      $prepared_data['created'] = $date;
       
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
