@@ -29,6 +29,10 @@ class MY_Pagination extends CI_Pagination {
       $end = $this->total_rows;
     }
     
+    if ($end == 0) {
+      $beginning = 0;
+    }
+    
     return $beginning . '-' . $end . ' of ' . $this->total_rows;
   }
 }

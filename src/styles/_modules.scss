@@ -79,4 +79,21 @@
       font-size: 1rem;
     }
   }
+  
+  .contained-empty {
+    text-align: center;
+    color: palette(grey);
+    border-radius: rem-calc(8);
+    border: rem-calc(4) dashed palette(grey, x-light);
+    padding: rem-calc(160 32);
+    
+    h1 {
+      @extend .hd-l;
+      color: inherit;
+    }
+    
+    &>*:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
