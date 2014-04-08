@@ -236,7 +236,7 @@
 /* ==========================================================================
    Survey statuses
    ========================================================================== */
-%status-indicator-base {
+%indicator-status-base {
   @extend %rounded;
   width: rem-calc(12);
   height: rem-calc(12);
@@ -255,30 +255,40 @@
 
 .indicator-status-draft {
   &:before {
-    @extend %status-indicator-base;
+    @extend %indicator-status-base;
     background-color: palette(blue);
   }
 }
 .indicator-status-open {
   &:before {
-    @extend %status-indicator-base;
+    @extend %indicator-status-base;
     background-color: palette(green);
   }
 }
 .indicator-status-closed {
   &:before {
-    @extend %status-indicator-base;
+    @extend %indicator-status-base;
     background-color: palette(grey, dark);
   }
 }
 .indicator-status-canceled {
   &:before {
-    @extend %status-indicator-base;
+    @extend %indicator-status-base;
     background-color: palette(red);
   }
 }
 
 %status-base {
+  @extend %rounded;
+  width: rem-calc(12);
+  height: rem-calc(12);
+  margin: rem-calc(1) rem-calc(8) 0 0;
+  content: '';
+  display: block;
+  float: left;
+}
+
+.status {
   @extend %rounded;
   padding: rem-calc(8 12);
   display: inline-block;
@@ -286,44 +296,62 @@
   font-weight: $body-font-bold;
   background-color: palette(grey, x-light);
   color: palette(grey, dark);
-  
-  &:before {
-    @extend %rounded;
-    width: rem-calc(12);
-    height: rem-calc(12);
-    margin: rem-calc(1) rem-calc(8) 0 0;
-    content: '';
-    display: block;
-    float: left;
-  }
 }
 
 .status-draft {
-  @extend %status-base;
   &:before {
+    @extend %status-base;
     background-color: palette(blue);
   }
 }
 
 .status-open {
-  @extend %status-base;
   &:before {
+    @extend %status-base;
     background-color: palette(green);
   }
 }
 
 .status-closed {
-  @extend %status-base;
   &:before {
+    @extend %status-base;
     background-color: palette(grey, dark);
   }
 }
 
 .status-canceled {
-  @extend %status-base;
   &:before {
+    @extend %status-base;
     background-color: palette(red);
   }
+}
+
+.action-dropdown {
+  [class*=' status-'], [class^='status-'] {
+    &:before {
+      margin-top: rem-calc(5);
+    }
+  }
+}
+.bttn-small{
+  &[class*=' status-'], &[class^='status-'] {
+    &:before {
+      margin-top: rem-calc(10);
+    }
+  }
+}
+.bttn-medium{
+  &[class*=' status-'], &[class^='status-'] {
+    &:before {
+      margin-top: rem-calc(14);
+    }
+  }
+}
+
+.survey-warnings {
+  margin: rem-calc(16 -32 0 0);
+  padding: rem-calc(16 32 0 0);
+  border-top: rem-calc(1) solid palette(grey, x-light);
 }
 
 

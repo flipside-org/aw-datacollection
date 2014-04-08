@@ -44,6 +44,7 @@
             
           <?php else : ?>
             <header class="contained-head">
+              <h1 class="hd-s visually-hidden">Respondents</h1>
               <ul class="bttn-toolbar">
                 <li>
                   <a href="#" class="bttn bttn-default bttn-small bttn-dropdown" data-dropdown="action-bttn">Bulk edit</a>

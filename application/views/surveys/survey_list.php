@@ -47,7 +47,7 @@
               <tbody>
                 <?php foreach ($surveys as $survey_entity):?>
                 <tr>
-                  <td><strong class="<?= $survey_entity->get_status_html_class(); ?>"><?= $survey_entity->get_status_label(); ?></strong></td>
+                  <td><strong class="status <?= $survey_entity->get_status_html_class(); ?>"><?= $survey_entity->get_status_label(); ?></strong></td>
                   <td><a href="<?= $survey_entity->get_url_view() ?>" class="go-link"><strong class="highlight"><?= $survey_entity->title ?></strong></a></td>
                   <td><?= date('d M, Y', 0) ?> <small>Modified</small></td>
                   <td>

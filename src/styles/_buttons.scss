@@ -45,7 +45,25 @@ a:active {
 }
 
 .go-link:before { @extend .icon-arr-tail-right; }
-.expand-link:before { @extend .icon-expand-row; }
+.expand-link:before { @extend .icon-arr-tail-down; }
+
+.survey-warnings-expand {
+  font-weight: $body-font-bold;
+  line-height: rem-calc(22);
+  float: right;
+  
+  &:after {
+    @extend .icon-arr-tail-down;
+    margin-left: rem-calc(4);
+    opacity: 0.5;
+    vertical-align: bottom;
+  }
+  
+  small {
+    font-weight: normal;
+    font-size: inherit;
+  }
+}
 
 /* Base button style */
 .bttn {
@@ -119,6 +137,19 @@ a:active {
   
   &:active, &.current {
     @include button-skin(palette(grey, mid-dark), $status: 'active', $tint_prc: 10%);
+  }
+}
+.bttn-default-light {
+  &:link,
+  &:active,
+  &:visited {
+    color: palette(grey, dark);
+  }
+  
+  @include button-skin(palette(grey, x-light), $tint_prc: 10%);
+  
+  &:active, &.current {
+    @include button-skin(palette(grey, x-light), $status: 'active', $tint_prc: 10%);
   }
 }
 /* // Button colors */

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $(".chosen-select").chosen();
+  $(".chosen-select").chosen({width: '100%'});
 
   $(".chosen-select").on('change', function(evt, params) {
     var action = null;
