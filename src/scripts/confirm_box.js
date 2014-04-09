@@ -19,9 +19,9 @@
 // Located in: components/confirm_box.php */
 var confirmBox = function(msg, options) {
   var settings = $.extend({
-    title: null,
-    confirm: null,
-    cancel: null,
+    title: 'Are you sure?',
+    confirm: 'Confirm',
+    cancel: 'Cancel',
     
     onCancel: function(){},
     onConfirm: function(){}

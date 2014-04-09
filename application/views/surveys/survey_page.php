@@ -171,7 +171,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                   <li>
                     <a href="#" class="bttn bttn-default-light bttn-small bttn-dropdown status-open" data-dropdown="action-bttn">Draft</a>
                     <ul class="action-dropdown for-bttn-small">
-                      <li><a href="#" class="status-open" data-confirm-action="Are you sure?">Status 1</a></li>
+                      <li><a href="#" class="status-open" data-confirm-action="Are you sure?" data-confirm-title="Title set by data attribute">Status 1</a></li>
                       <li><a href="#" class="status-canceled" data-confirm-action="Are you sure?">Status 2</a></li>
                     </ul>
                   </li>
@@ -210,12 +210,14 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 <h1 class="hd-s">Definition file</h1>
               </header>
               <div class="widget-body">
-                <p>Active <a href="#" class="survey-warnings-expand">View warnings <small>(11)</small></a></p>
-                  <ul class="survey-warnings">
-                  	<li>This is one of the warnings occurred when uploading the xls.</li>
-                  	<li>And yet another warnig.</li>
-                  	<li>Enough isn't it.</li>
-                  </ul>
+                <p>Active <a href="#" class="survey-warnings-expand" data-expand="survey-warnings">View warnings <small>(11)</small></a></p>
+                  <div id="survey-warnings">
+                    <ul>
+                    	<li>This is one of the warnings occurred when uploading the xls.</li>
+                    	<li>And yet another warnig.</li>
+                    	<li>Enough isn't it.</li>
+                    </ul>
+                  </div>
               </div>
             </article>
             

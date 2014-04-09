@@ -26,4 +26,11 @@ $(document).ready(function() {
       }
     });
   }
-}); 
+  
+  // Expand element.
+  $('[data-expand]').click(function(e) {
+    e.preventDefault();
+    var id = $(this).attr('data-expand');
+    $('#' + id).toggleClass('revealed');
+  });
+});

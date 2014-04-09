@@ -347,10 +347,29 @@
     }
   }
 }
-.survey-warnings {
-  margin: rem-calc(16 -32 0 0);
+#survey-warnings {
+  margin: rem-calc(0 -32 0 0);
   padding: rem-calc(16 32 0 0);
   border-top: rem-calc(1) solid palette(grey, x-light);
+  
+  ul {
+    margin-bottom: 0;  
+  }
+  
+  max-height: 0;
+  visibility: hidden;
+  overflow-y: hidden;
+  
+  @include transform(translate3d(0, 0, 0));
+  @include transition-property(max-height, visibility);
+  @include transition-duration(1s, 0.1s);
+  @include transition-timing-function(ease, linear);
+  @include transition-delay(0, 0);
+  
+  &.revealed {
+    visibility: visible;
+    max-height: 1000px;
+  }
 }
 
 
