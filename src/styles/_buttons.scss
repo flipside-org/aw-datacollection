@@ -157,7 +157,8 @@ a:active {
 /* Button groups */
 .bttn-group {
   @include reset-list;
-  @include clearfix();
+  @extend .clearfix;
+  margin-bottom: 0;
   
   &>li {
     float: left;
@@ -199,7 +200,8 @@ a:active {
 
 .bttn-toolbar {
   @include reset-list;
-  //float: left;
+  @extend .clearfix;
+  margin-bottom: 0;
   
   &>li {
     float: left;

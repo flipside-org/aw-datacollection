@@ -16,9 +16,7 @@
     margin-bottom: rem-calc(16);
   }
   
-  ul {
-    margin-bottom: rem-calc(16);
-    
+  ul {    
     li {
       font-size: rem-calc(14);
       line-height: rem-calc(22);
@@ -178,6 +176,7 @@
   background-color: palette(grey, x-light);
   height: rem-calc(32);
   padding: rem-calc(4);
+  margin-bottom: rem-calc(16);
   
   li {
     height: rem-calc(24);
@@ -242,4 +241,135 @@
     top: 0;
     right: 0;
   }
+}
+
+
+
+/* This parent can be any width and height */
+/* http://css-tricks.com/centering-in-the-unknown/ */
+.confirm-box-wrapper {
+  text-align: center;
+  background: none repeat scroll 0 0 rgba(palette(grey, dark), 0.9);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  min-width: 300px;
+  
+  /* The ghost, nudged to maintain perfect centering */
+  &:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -0.25em; /* Adjusts for spacing */
+  }
+}
+
+/* The element to be centered, can
+   also be of any width and height */ 
+.confirm-box {
+  width: 30%;
+  min-width: 300px;
+  text-align: left;
+  display: inline-block;
+  vertical-align: middle;
+  
+  background-color: white;
+  padding: rem-calc(0 32);
+  box-shadow: 0 2px 0 0 rgba(palette(grey, dark), 0.1);
+  border-radius: rem-calc(4);
+  font-size: rem-calc(14);
+  
+  .confirm-box-head,
+  .confirm-box-foot {
+    position: relative;
+    @include clearfix();
+    background-color: palette(grey, x-light);
+    margin: rem-calc(0 -32);
+  }
+  
+  .confirm-box-head {
+    padding: rem-calc(16 32 0 32);
+    border-radius: rem-calc(4 4 0 0);
+    
+    .confirm-icon-close {
+      display: block;
+      position: absolute;
+      top: rem-calc(20);
+      right: rem-calc(16);
+      width: rem-calc(16);
+      height: rem-calc(16);
+      opacity: 0.5;
+      
+      &:link,
+      &:active,
+      &:visited {
+        color: palette(grey, dark);
+      }
+      
+      &:before {
+        @extend .icon-s-cancel;
+        width: rem-calc(16);
+        height: rem-calc(16);
+        font-size: rem-calc(16);
+        line-height: rem-calc(16);
+      }
+    }
+  }
+  
+  .confirm-box-foot {
+    padding: rem-calc(16 32);
+    border-radius: rem-calc(0 0 4 4);
+    
+    .bttn-toolbar {
+      float: right;
+    }
+  }
+  
+  .confirm-box-body {
+    padding: rem-calc(32 0);
+    
+    &>*:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+/* For the animation */
+.confirm-box-wrapper {
+  opacity: 0;
+  visibility: hidden;
+  
+  @include transform(translate3d(0, 0, 0));
+  @include transition-property(opacity, visibility);
+  @include transition-duration(0.1s, 0.1s);
+  @include transition-timing-function(ease, linear);
+  @include transition-delay(0, 0);
+  
+  .confirm-box {
+    opacity: 0;
+    margin-top: rem-calc(-48);
+    visibility: hidden;
+    
+    @include transform(translate3d(0, 0, 0));
+    @include transition-property(opacity, margin, visibility);
+    @include transition-duration(0.1s, 0.1s, 0.1s);
+    @include transition-timing-function(ease, ease, linear);
+    @include transition-delay(0.2s, 0.2s, 0.2s);
+  }
+  
+  &.revealed {
+    opacity: 1;
+    visibility: visible;
+    
+    .confirm-box {
+      opacity: 1;
+      margin-top: 0;
+      visibility: visible;
+    }
+  }
+    
 }
