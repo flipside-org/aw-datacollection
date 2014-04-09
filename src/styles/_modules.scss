@@ -35,7 +35,7 @@
   }
   
   .contained-head {
-    margin: rem-calc(-32 -32 32 -32);
+    margin: rem-calc(-32 -32 16 -32);
     border-radius: rem-calc(4 4 0 0);
     color: white;
     
@@ -82,7 +82,7 @@
   
   table {
     width: 100%;
-    margin: rem-calc(-32 0 -16 0);
+    margin: rem-calc(-16 0 -16 0);
     
     tr {
       td:first-child, th:first-child {
@@ -134,8 +134,8 @@
   
   .widget {
     border-bottom: 1px solid palette(grey, x-light);
-    padding: rem-calc(0 32 32 32);
-    margin-bottom: rem-calc(32);
+    padding: rem-calc(0 32 16 32);
+    margin-bottom: rem-calc(16);
     
     &:last-child {
       border-bottom: none;

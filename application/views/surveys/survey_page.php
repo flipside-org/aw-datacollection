@@ -168,14 +168,14 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               </header>
               <div class="widget-body">
                 <ul class="bttn-toolbar">
-                <li>
-                  <a href="#" class="bttn bttn-default-light bttn-small bttn-dropdown status-open" data-dropdown="action-bttn">Draft</a>
-                  <ul class="action-dropdown for-bttn-small">
-                    <li><a href="#" class="status-open" data-confirm-action="Are you sure?">Status 1</a></li>
-                    <li><a href="#" class="status-canceled" data-confirm-action="Are you sure?">Status 2</a></li>
-                  </ul>
-                </li>
-              </ul>
+                  <li>
+                    <a href="#" class="bttn bttn-default-light bttn-small bttn-dropdown status-open" data-dropdown="action-bttn">Draft</a>
+                    <ul class="action-dropdown for-bttn-small">
+                      <li><a href="#" class="status-open" data-confirm-action="Are you sure?">Status 1</a></li>
+                      <li><a href="#" class="status-canceled" data-confirm-action="Are you sure?">Status 2</a></li>
+                    </ul>
+                  </li>
+                </ul>
               </div>
             </article>
             
