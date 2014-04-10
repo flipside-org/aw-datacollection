@@ -107,10 +107,26 @@ class Survey_entity extends Entity {
   /**
    * Survey introduction.
    * Text presented to the CC Agent when collecting data.
-   * @var int
+   * @var string
    * @access public
    */
   public $introduction;
+
+  /**
+   * Survey description.
+   * Description of the survey.
+   * @var string
+   * @access public
+   */
+  public $description;
+
+  /**
+   * Survey Client.
+   * The client that requested this survey.
+   * @var string
+   * @access public
+   */
+  public $client;
 
   /**
    * Survey files.

@@ -171,8 +171,10 @@ class Survey extends CI_Controller {
 
     // Set form validation rules.
     $this->form_validation->set_rules('survey_title', 'Survey Title', 'required');
+    $this->form_validation->set_rules('survey_client', 'Survey Client', 'required');
     $this->form_validation->set_rules('survey_status', 'Survey Status', 'required|callback__cb_survey_status_valid');
     $this->form_validation->set_rules('survey_introduction', 'Survey Introduction', 'xss_clean');
+    $this->form_validation->set_rules('survey_description', 'Survey Description', 'xss_clean');
     $this->form_validation->set_rules('survey_file', 'Survey File', 'callback__cb_survey_file_handle');
 
     // If no data submitted show the form.
@@ -188,8 +190,10 @@ class Survey extends CI_Controller {
           // Prepare survey data to construct a new survey_entity
           $survey_data = array();
           $survey_data['title'] = $this->input->post('survey_title', TRUE);
+          $survey_data['client'] = $this->input->post('survey_client', TRUE);
           $survey_data['status'] = (int) $this->input->post('survey_status');
           $survey_data['introduction'] = $this->input->post('survey_introduction', TRUE);
+          $survey_data['description'] = $this->input->post('survey_description', TRUE);
 
           // Construct survey.
           $new_survey = Survey_entity::build($survey_data);
@@ -234,8 +238,10 @@ class Survey extends CI_Controller {
 
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);
+          $survey->client = $this->input->post('survey_client', TRUE);
           $survey->status = (int) $this->input->post('survey_status');
           $survey->introduction = $this->input->post('survey_introduction', TRUE);
+          $survey->description = $this->input->post('survey_description', TRUE);
 
           // Handle uploaded file:
           $file = $this->input->post('survey_file');

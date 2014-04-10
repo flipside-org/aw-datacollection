@@ -42,6 +42,9 @@
     
       <?= form_label('Survey Title', 'survey_title'); ?>
       <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title'))); ?>
+    
+      <?= form_label('Survey Client', 'survey_client'); ?>
+      <?= form_input('survey_client', set_value('survey_client', property_if_not_null($survey, 'client'))); ?>
       
       <?= form_label('Status', 'survey_status'); ?>
       <?= form_dropdown('survey_status',
@@ -50,6 +53,9 @@
             
       <?= form_label('Survey Introduction', 'survey_introduction'); ?>
       <?= form_textarea('survey_introduction', set_value('survey_introduction', property_if_not_null($survey, 'introduction'))); ?>
+            
+      <?= form_label('Survey Description', 'survey_description'); ?>
+      <?= form_textarea('survey_description', set_value('survey_description', property_if_not_null($survey, 'description'))); ?>
             
       <?= form_upload('survey_file'); ?>
       

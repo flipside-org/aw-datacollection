@@ -90,9 +90,13 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
       <div class="columns small-6">
         <section class="contained">
           <header class="contained-head">
-            <h1 class="hd-s"><b>For</b> UNHCO</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sed massa tristique, viverra augue posuere, tincidunt nibh.</p>
-            <p class="time">Last modified on 18 Mar, 2014.</p>
+            <h1 class="hd-s"><b>For</b> <?= $survey->client; ?></h1>
+            <?php if ($survey->description): ?>
+              <p><?= nl2br_except_pre($survey->description); ?></p>
+            <?php endif; ?>
+              <p class="time">
+                <?= $survey->created->sec == $survey->updated->sec ? 'Created' : 'Updated'; ?> on <?= date('d M, Y', $survey->updated->sec); ?>
+              </p>
           </header>
           <div class="contained-body">
             
