@@ -345,6 +345,18 @@ class Survey_entity extends Entity {
     }
     return base_url('survey/' . $this->sid . '/respondents/add/' . $type) ;
   }
+  
+  /**
+   * Returns the url to do bulk edition
+   * @access public
+   * @return string
+   */
+  public function get_url_respondents_manage_bulk() {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent survey.");
+    }
+    return base_url('survey/' . $this->sid . '/respondents/manage/bulk' );
+  }
 
   /**
    * Returns the url to edit a survey.

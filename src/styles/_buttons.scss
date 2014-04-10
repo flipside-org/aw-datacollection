@@ -50,8 +50,6 @@ a:active {
 /* Base button style */
 .bttn {
   display: inline-block;
-  position: relative;
-  z-index: 70;
   padding: rem-calc(0 12);
   border-radius: rem-calc(4);
   font-weight: $body-font-bold;
@@ -193,6 +191,10 @@ a.disabled {
     position: static;
     top: 0;
   }
+  
+  &:hover {
+    background: none !important;
+  }
 }
 
 /* Dropdown */
@@ -201,7 +203,7 @@ a.disabled {
   position: absolute;
   top: 52px;
   left: 0;
-  z-index: 80;
+  z-index: 10;
   @include border-radius(4px);
   @include reset-list;
   box-shadow: 0 0 0 2px rgba(palette(grey, dark), 0.1);
@@ -209,6 +211,7 @@ a.disabled {
   color: #909598;
   font-size: rem-calc(14);
   font-weight: $body-font-bold;
+  
   opacity: 0;
   margin-top: rem-calc(-16);
   visibility: hidden;
@@ -220,7 +223,7 @@ a.disabled {
   &:before {
     @extend .icon-triangle-up;
     position: absolute;
-    z-index: 90;
+    z-index: 15;
     top: -11px;
     left: 1rem;
     color: white;
@@ -239,12 +242,13 @@ a.disabled {
 
   li {
     position: relative;
-    z-index: 95;
+    z-index: 20;
+    padding: rem-calc(4 0);
+    border-bottom: 1px solid palette(grey, x-light);
     
     /* Logged user is a special element only used in the primary nav */
     &.logged-user, a {
-      padding: rem-calc(12);
-      border-bottom: 1px solid palette(grey, x-light);
+      padding: rem-calc(8 12);
     }
     
     &.logged-user strong {
@@ -258,19 +262,17 @@ a.disabled {
       
       &:hover {
         background-color: palette(blue, x-light);
-        border-bottom-color: palette(blue, light);
       }
       
       &.danger {
         color: palette(red);
         &:hover {
           background-color: palette(red, x-light);
-          border-bottom-color: palette(red, light);
         }
       }
     }
     
-    &:last-child a{
+    &:last-child {
       border: none;
     }
   }

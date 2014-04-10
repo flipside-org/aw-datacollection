@@ -355,7 +355,19 @@ class Call_task_model extends CI_Model {
       return FALSE;
     }
   }
-
+  
+  /**
+   * Deletes a call task by its ctid.
+   * @param int $sid
+   */
+  public function delete($ctid) {
+    $result = $this->mongo_db
+      ->where('ctid', (int) $ctid)
+      ->delete(self::COLLECTION);
+    
+    return $result !== FALSE ? TRUE : FALSE;
+  }
+  
   /**
    * Assigns Call Tasks to user. (Reserves them)
    * 
@@ -443,8 +455,10 @@ class Call_task_model extends CI_Model {
    *   Whether or not the save was successful.
    */
   public function save(Call_task_entity &$entity) {
+    // To ensure date consistency.
+    $date = Mongo_db::date();
     // Set update date:
-    $entity->updated = Mongo_db::date();
+    $entity->updated = $date;
     
     $prepared_data = array();
     foreach ($entity as $field_name => $field_value) {
@@ -455,7 +469,7 @@ class Call_task_model extends CI_Model {
       $entity->ctid = increment_counter(self::COUNTER_COLLECTION);
       $prepared_data['ctid'] = $entity->ctid;
       // Set creation date:
-      $prepared_data['created'] = Mongo_db::date();
+      $prepared_data['created'] = $date;
       
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       

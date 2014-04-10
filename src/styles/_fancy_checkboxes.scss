@@ -46,7 +46,7 @@
   }
   
   &.cb-master-some:before {
-    @extend .icon-square;
+    @extend .icon-s-subtract;
   }
   
   &.cb-master-page:before {
@@ -60,7 +60,7 @@
 
 .fancy-cb-count {
   @extend %rounded;
-  background-color: palette(grey, dark);
+  background-color: palette(grey, xx-dark);
   line-height: rem-calc(20);
   padding: rem-calc(0 8);
   display: block;

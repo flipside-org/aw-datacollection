@@ -55,6 +55,8 @@ $route['survey/(:num)/respondents/(:num)'] = 'survey/survey_respondents/$1/$2';
 $route['survey/(:num)/respondents'] = 'survey/survey_respondents/$1';
 $route['survey/(:num)/respondents/add/(file|direct)'] = 'survey/survey_respondents_add/$1/$2';
 $route['survey/(:num)/respondents/add/confirm'] = 'survey/survey_respondents_add_confirm/$1';
+$route['survey/(:num)/respondents/manage/bulk'] = 'survey/survey_respondents_manage/$1/bulk';
+$route['survey/(:num)/respondents/manage/(:num)/(delete)'] = 'survey/survey_respondents_manage/$1/$3/$2';
 
 $route['survey/(:num)/xslt_transform'] = 'survey/survey_xslt_transform/$1';
 
