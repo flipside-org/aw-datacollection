@@ -126,20 +126,31 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             		<h1 class="hd-s">Respondents</h1>
             	</header>
             	<div class="widget-body">
+            	  <?php if ($call_tasks_status_bar['total'] != 0):
+            	   
+                 $per_success = $call_tasks_status_bar['success'] / $call_tasks_status_bar['total'] * 100;
+                 $per_failed = $call_tasks_status_bar['failed'] / $call_tasks_status_bar['total'] * 100;
+                 $per_pending = $call_tasks_status_bar['pending'] / $call_tasks_status_bar['total'] * 100;
+                 $per_remaining = $call_tasks_status_bar['remaining'] / $call_tasks_status_bar['total'] * 100;
+            	  ?>
             	  
             	  <ul class="progress-bar">
-                  <li class="success" style="width: 30%">&nbsp;</li>
-                  <li class="danger" style="width: 15%">&nbsp;</li>
-                  <li class="warning" style="width: 20%">&nbsp;</li>
+                  <li class="success" style="width: <?= $per_success; ?>%">&nbsp;</li>
+                  <li class="danger" style="width: <?= $per_failed; ?>%">&nbsp;</li>
+                  <li class="warning" style="width: <?= $per_pending; ?>%">&nbsp;</li>
                 </ul>
                 
                 <ul class="progress-bar-legend">
-                  <li class="success">Success: <strong>560</strong> (33.3%)</li>
-                  <li class="danger">Failed: <strong>560</strong> (33.3%)</li>
-                  <li class="warning">Pending: <strong>560</strong> (33.3%)</li>
-                  <li class="default">Left: <strong>560</strong> (33.3%)</li>
-                  <li class="summary">Total: <strong>2500</strong></li>
+                  <li class="success">Success: <strong><?= $call_tasks_status_bar['success']; ?></strong> (<?= round($per_success, 2); ?>%)</li>
+                  <li class="danger">Failed: <strong><?= $call_tasks_status_bar['failed']; ?></strong> (<?= round($per_failed, 2); ?>%)</li>
+                  <li class="warning">Pending: <strong><?= $call_tasks_status_bar['pending']; ?></strong> (<?= round($per_pending, 2); ?>%)</li>
+                  <li class="default">Remaining: <strong><?= $call_tasks_status_bar['remaining']; ?></strong> (<?= round($per_remaining, 2); ?>%)</li>
+                  <li class="summary">Total: <strong><?= $call_tasks_status_bar['total']; ?></strong></li>
                 </ul>
+                
+                <?php else: ?>
+                  No respondents!
+                <?php endif; ?>
             	  
             	</div>
             </article>
@@ -234,6 +245,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             <h1 class="hd-s">Call tasks</h1>
           </header>
           <div class="contained-body">
+            <?php if (!empty($call_tasks_table)) : ?>
             <table class="fancy-cb-group">
               <thead>
                 <tr>
@@ -245,15 +257,20 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 </tr>
               </thead>
               <tbody>
+                <?php foreach ($call_tasks_table as $agent) : ?>
                 <tr>
-                	<td><strong class="highlight">Vitor</strong></td>
-                	<td>10</td>
-                	<td>5</td>
-                	<td>3</td>
-                	<td><strong>18</strong></td>
+                	<td><strong class="highlight"><?= $agent['name']; ?></strong></td>
+                	<td><?= $agent['success']; ?></td>
+                	<td><?= $agent['failed']; ?></td>
+                	<td><?= $agent['pending']; ?></td>
+                	<td><strong><?= $agent['sum']; ?></strong></td>
                 </tr>
+                <?php endforeach; ?>
               </tbody>
             </table>
+            <?php else: ?>
+              No respondents!
+            <?php endif; ?>
           </div>
         </section>
         

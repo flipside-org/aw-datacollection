@@ -83,9 +83,8 @@ class Survey extends CI_Controller {
       }
     }
 
-    $data = array(
-      'survey' => $survey
-    );
+    $data = array();
+    $data['survey'] = $survey;
 
     // Agents. Each array element contains the user and
     // properties for the select. (selected, disabled)
@@ -103,8 +102,79 @@ class Survey extends CI_Controller {
       }
 
     }
-
     $data['agents'] = $agents;
+    
+    // Call tasks, statistics and stuff.
+    // We need call tasks to compute the progress bars and the cal tasks tables.
+    // Instead of doing complicated aggragate queries for each one, we just get all
+    // the call tasks and extract all the data we need.
+    $all_call_tasks = $this->call_task_model->get_all($survey->sid);
+    
+    $call_tasks_status_bar = array(
+      'total' => count($all_call_tasks),
+      'success' => 0,
+      'failed' => 0,
+      'pending' => 0,
+      'remaining' => 0,
+    );
+    $call_tasks_table = array();
+    
+    // The mighty call tasks loop.
+    foreach ($all_call_tasks as $call_task) {
+      
+      // Compute call tasks status bar.
+      if ($call_task->is_unresolved()) {
+        $call_tasks_status_bar['pending']++;
+      }
+      else if ($call_task->is_success()) {
+        $call_tasks_status_bar['success']++;
+      }
+      else if ($call_task->is_failed()) {
+        $call_tasks_status_bar['failed']++;
+      }
+      else {
+        $call_tasks_status_bar['remaining']++;
+      }
+      // //END Compute call tasks status bar.
+      /**********************************************/
+      
+      // Prepare table data.
+      if ($call_task->is_assigned()) {
+        $uid = $call_task->assignee_uid;
+        
+        if (!isset($call_tasks_table[$uid])) {
+          // Fetch user name from db.
+          $user = $this->user_model->get($uid);
+          
+          $call_tasks_table[$uid] = array(
+            'name' => $user->name,
+            'sum' => 0,
+            'success' => 0,
+            'failed' => 0,
+            'pending' => 0,
+          );
+        }
+        
+        if ($call_task->is_unresolved()) {
+          $call_tasks_table[$uid]['pending']++;
+        }
+        else if ($call_task->is_success()) {
+          $call_tasks_table[$uid]['success']++;
+        }
+        else if ($call_task->is_failed()) {
+          $call_tasks_table[$uid]['failed']++;
+        }
+        $call_tasks_table[$uid]['sum']++;        
+      }
+      // //END Prepare table data.
+      /**********************************************/
+      
+    }
+    
+    $data['call_tasks_status_bar'] = $call_tasks_status_bar;
+    $data['call_tasks_table'] = $call_tasks_table;
+    
+    //krumo($data); die();
 
     $this->load->view('base/html_start');
     $this->load->view('components/navigation', array('active_menu' => 'surveys'));

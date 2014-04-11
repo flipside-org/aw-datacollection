@@ -283,6 +283,42 @@ class Call_task_entity extends Entity {
   }
   
   /**
+   * Checks whether the call task is success.
+   * A call task is a success:
+   *  - Is resolved
+   *  - The last status is SUCCESSFUL 
+   *  
+   * @return boolean
+   */
+  public function is_success() {
+    if ($this->is_resolved()) {
+      $last = end($this->activity);
+      if ($last->code == Call_task_status::SUCCESSFUL) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+  
+  /**
+   * Checks whether the call task is failed.
+   * A call task is a fail:
+   *  - Is resolved
+   *  - The last status is not SUCCESSFUL 
+   *  
+   * @return boolean
+   */
+  public function is_failed() {
+    if ($this->is_resolved()) {
+      $last = end($this->activity);
+      if ($last->code != Call_task_status::SUCCESSFUL) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+  
+  /**
    * Returns the url to do data collection for a specific call task.
    * @access public
    * @return string
