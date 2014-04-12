@@ -45,6 +45,9 @@
     
       <?= form_label('Survey Client', 'survey_client'); ?>
       <?= form_input('survey_client', set_value('survey_client', property_if_not_null($survey, 'client'))); ?>
+    
+      <?= form_label('Goal', 'survey_goal'); ?>
+      <?= form_input('survey_goal', set_value('survey_goal', property_if_not_null($survey, 'goal'))); ?>
       
       <?= form_label('Status', 'survey_status'); ?>
       <?= form_dropdown('survey_status',

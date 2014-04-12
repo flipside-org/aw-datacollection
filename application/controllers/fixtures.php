@@ -89,6 +89,7 @@ class Fixtures extends CI_Controller {
         'title' => 'Meteor usage',
         'client' => 'Flipside',
         'status' => 1,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
         'description' => 'This survey will help us understand the reach of meteor.',
         'files' => array(
@@ -108,6 +109,7 @@ class Fixtures extends CI_Controller {
         'title' => 'Handlebars vs something else',
         'client' => 'Flipside',
         'status' => 2,
+        'goal' => 20,
         'introduction' => 'The text the user has to read.',
         'description' => 'This survey description',
         'files' => array(
@@ -128,6 +130,7 @@ class Fixtures extends CI_Controller {
         'title' => 'Cat ladies around the neighborhood',
         'client' => 'Flipside',
         'status' => 2,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
         'description' => 'This survey description',
         'files' => array(
@@ -147,6 +150,7 @@ class Fixtures extends CI_Controller {
         'title' => 'Knowledge of html',
         'client' => 'Flipside',
         'status' => 2,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
         'description' => 'This survey description',
         'files' => array(
@@ -166,6 +170,7 @@ class Fixtures extends CI_Controller {
         'title' => 'Running out of titles',
         'client' => 'The world',
         'status' => 3,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
         'description' => 'This survey description',
         'files' => array(
@@ -185,6 +190,7 @@ class Fixtures extends CI_Controller {
         'title' => 'Another survey',
         'client' => 'The world',
         'status' => 99,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
         'description' => NULL,
         'files' => array(

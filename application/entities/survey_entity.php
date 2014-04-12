@@ -129,6 +129,15 @@ class Survey_entity extends Entity {
   public $client;
 
   /**
+   * Survey Gaol.
+   * The number of complete call tasks needed to consider the survey done.
+   * It merely informative. There're no logical implications.
+   * @var int
+   * @access public
+   */
+  public $goal;
+
+  /**
    * Survey files.
    * This will be a sub document on mongo.
    * @var array

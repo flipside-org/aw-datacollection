@@ -250,6 +250,7 @@ class Survey extends CI_Controller {
     // Set form validation rules.
     $this->form_validation->set_rules('survey_title', 'Survey Title', 'required');
     $this->form_validation->set_rules('survey_client', 'Survey Client', 'required');
+    $this->form_validation->set_rules('survey_goal', 'Survey Goal', 'is_natural_no_zero');
     $this->form_validation->set_rules('survey_status', 'Survey Status', 'required|callback__cb_survey_status_valid');
     $this->form_validation->set_rules('survey_introduction', 'Survey Introduction', 'xss_clean');
     $this->form_validation->set_rules('survey_description', 'Survey Description', 'xss_clean');
@@ -269,6 +270,7 @@ class Survey extends CI_Controller {
           $survey_data = array();
           $survey_data['title'] = $this->input->post('survey_title', TRUE);
           $survey_data['client'] = $this->input->post('survey_client', TRUE);
+          $survey_data['goal'] = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
           $survey_data['status'] = (int) $this->input->post('survey_status');
           $survey_data['introduction'] = $this->input->post('survey_introduction', TRUE);
           $survey_data['description'] = $this->input->post('survey_description', TRUE);
@@ -317,6 +319,7 @@ class Survey extends CI_Controller {
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);
           $survey->client = $this->input->post('survey_client', TRUE);
+          $survey->goal = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
           $survey->status = (int) $this->input->post('survey_status');
           $survey->introduction = $this->input->post('survey_introduction', TRUE);
           $survey->description = $this->input->post('survey_description', TRUE);
