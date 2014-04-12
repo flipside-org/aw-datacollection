@@ -225,14 +225,22 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 <h1 class="hd-s">Definition file</h1>
               </header>
               <div class="widget-body">
-                <p>Active <a href="#" class="survey-warnings-expand" data-expand="survey-warnings">View warnings <small>(11)</small></a></p>
+                <p>
+                  <?= $survey->has_xml()? 'Active' : 'Not present';?> 
+                  <?php $warnings = $survey->files['last_conversion']['warnings']; ?>
+                  <?php if ($warnings): ?>
+                  <a href="#" class="survey-warnings-expand" data-expand="survey-warnings">View warnings <small>(<?= count($warnings); ?>)</small></a>
+                  <?php endif; ?>
+                </p>
+                  <?php if ($warnings): ?>
                   <div id="survey-warnings">
                     <ul>
-                    	<li>This is one of the warnings occurred when uploading the xls.</li>
-                    	<li>And yet another warnig.</li>
-                    	<li>Enough isn't it.</li>
+                      <?php foreach ($warnings as $warn) :?>
+                    	<li><?= $warn ?></li>
+                      <?php endforeach; ?>
                     </ul>
                   </div>
+                  <?php endif; ?>
               </div>
             </article>
             
