@@ -240,6 +240,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
           </div>
         </section>
         
+        <?php if (has_permission('view survey stats - call tasks full table')) : ?>
         <section class="contained">
           <header class="contained-head">
             <h1 class="hd-s">Call tasks</h1>
@@ -269,10 +270,41 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               </tbody>
             </table>
             <?php else: ?>
-              No respondents!
+              No Agents.
             <?php endif; ?>
           </div>
         </section>
+        <?php
+          // Without permission only sees the table if there's data for the current user.
+         elseif (isset($call_tasks_table[current_user()->uid])) :
+           $agent = $call_tasks_table[current_user()->uid];
+        ?>
+        <section class="contained">
+          <header class="contained-head">
+            <h1 class="hd-s">Your call tasks</h1>
+          </header>
+          <div class="contained-body">
+            <table class="fancy-cb-group">
+              <thead>
+                <tr>
+                  <th>Success</th>
+                  <th>Failed</th>
+                  <th>Pending</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><?= $agent['success']; ?></td>
+                  <td><?= $agent['failed']; ?></td>
+                  <td><?= $agent['pending']; ?></td>
+                  <td><strong><?= $agent['sum']; ?></strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <?php endif; ?>
         
         <section class="contained">
           <h1 class="hd-s">Welcome text</h1>

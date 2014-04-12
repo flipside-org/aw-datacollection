@@ -56,6 +56,11 @@ $config['permissions'] = array(
   'assign agents'             => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'manage respondents any survey' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   
+  // Survey statistics. Permissions to allow some granularity.
+  // Agents without this permission will only see their own data.
+  'view survey stats - call tasks full table' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  
+  
   // Although this permission exists should no be used.
   // It allows non assigned users to collect data which should not happen.
   'enketo collect data any'       => array(),

@@ -117,7 +117,19 @@ class Survey extends CI_Controller {
       'pending' => 0,
       'remaining' => 0,
     );
+    
+    // Prepare call tasks table by looping over assigned agents.
     $call_tasks_table = array();
+    foreach ($survey->agents as $uid) {
+      $user = $this->user_model->get($uid);          
+      $call_tasks_table[$uid] = array(
+        'name' => $user->name,
+        'sum' => 0,
+        'success' => 0,
+        'failed' => 0,
+        'pending' => 0,
+      );
+    }
     
     // The mighty call tasks loop.
     foreach ($all_call_tasks as $call_task) {
@@ -142,29 +154,25 @@ class Survey extends CI_Controller {
       if ($call_task->is_assigned()) {
         $uid = $call_task->assignee_uid;
         
-        if (!isset($call_tasks_table[$uid])) {
-          // Fetch user name from db.
-          $user = $this->user_model->get($uid);
-          
-          $call_tasks_table[$uid] = array(
-            'name' => $user->name,
-            'sum' => 0,
-            'success' => 0,
-            'failed' => 0,
-            'pending' => 0,
-          );
+        if (isset($call_tasks_table[$uid])) {
+          if ($call_task->is_unresolved()) {
+            $call_tasks_table[$uid]['pending']++;
+            $call_tasks_table[$uid]['sum']++;
+          }
+          else if ($call_task->is_success()) {
+            $call_tasks_table[$uid]['success']++;
+            $call_tasks_table[$uid]['sum']++;
+          }
+          else if ($call_task->is_failed()) {
+            $call_tasks_table[$uid]['failed']++;
+            $call_tasks_table[$uid]['sum']++;
+          }
+          // else
+          // Call tasks that are reserved (assigned but without activity)
+          // do not interest us. Skip them.
         }
-        
-        if ($call_task->is_unresolved()) {
-          $call_tasks_table[$uid]['pending']++;
-        }
-        else if ($call_task->is_success()) {
-          $call_tasks_table[$uid]['success']++;
-        }
-        else if ($call_task->is_failed()) {
-          $call_tasks_table[$uid]['failed']++;
-        }
-        $call_tasks_table[$uid]['sum']++;        
+        // else
+        // The agent was probably unassigned. just ignore it.
       }
       // //END Prepare table data.
       /**********************************************/
