@@ -52,7 +52,7 @@ $config['permissions'] = array(
   'edit any survey'           => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'create survey'             => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'delete any survey'         => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
-  'download survey files'     => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR, ROLE_CC_AGENT),
+  'download any survey files'     => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'assign agents'             => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'manage respondents any survey' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   

@@ -171,12 +171,19 @@
 
 .progress-bar {
   @extend %rounded;
-  @include reset-list();
   box-shadow: inset 0 2px 0 0 palette(grey, light);
   background-color: palette(grey, x-light);
   height: rem-calc(32);
   padding: rem-calc(4);
   margin-bottom: rem-calc(16);
+  
+  ul {
+    @extend %rounded;
+    @include reset-list();
+    @extend .clearfix;
+    overflow: hidden;
+    height: rem-calc(24);
+  }
   
   li {
     height: rem-calc(24);
@@ -194,16 +201,6 @@
   }
   .warning {
     background-color: palette(yellow);
-  }
-  
-  li:first-child {
-    border-top-left-radius: 500px;
-    border-bottom-left-radius: 500px;
-  }
-  
-  li:last-child {
-    border-top-right-radius: 500px;
-    border-bottom-right-radius: 500px;
   }
 }
 

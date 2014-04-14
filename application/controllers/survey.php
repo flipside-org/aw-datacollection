@@ -390,7 +390,7 @@ class Survey extends CI_Controller {
    * /survey/:sid/files/(xls|xml)
    */
   public function survey_file_download($sid, $type) {
-    if (!has_permission('download survey files')) {
+    if (!has_permission('download any survey files')) {
       show_403();
     }
 
