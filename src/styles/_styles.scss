@@ -390,7 +390,8 @@
   .chart-legend {
     width: 50%;
     float: left;
-
+    
+    /* Colors must match the ones set for morris chart. */
     .progress-bar-legend {
       li:nth-child(1):before {
         background: #047998;
