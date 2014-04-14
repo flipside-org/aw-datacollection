@@ -118,34 +118,26 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 </div>
                 <ul class="progress-bar-legend">
                   <li class="success">Success: <strong><?= $call_tasks_status_bar['success']; ?></strong> (<?= $per_success; ?>%)</li>
-                  <li class="summary">Goal: <strong><?= $survey->goal; ?></strong></li>
+                  <li class="summary-alt">Goal: <strong><?= $survey->goal; ?></strong></li>
                 </ul>
-            	  
-            	</div>
+                
+              </div>
             </article>
             <?php endif; ?>
             
             
-            
+            <?php if (has_permission('view survey stats - respondents progress')) : ?>
             <article class="widget">
               <header class="widget-head">
-                <h1 class="hd-s">Call tasks</h1>
+                <h1 class="hd-s">Respondents</h1>
               </header>
-              <div class="widget-body">
-                <?php if ($call_tasks_status_bar['total'] != 0) {
-                 
-                  $per_success = $call_tasks_status_bar['success'] / $call_tasks_status_bar['total'] * 100;
-                  $per_failed = $call_tasks_status_bar['failed'] / $call_tasks_status_bar['total'] * 100;
-                  $per_pending = $call_tasks_status_bar['pending'] / $call_tasks_status_bar['total'] * 100;
-                  $per_remaining = $call_tasks_status_bar['remaining'] / $call_tasks_status_bar['total'] * 100;
-                }
-                else {
-                  $per_success = 0;
-                  $per_failed = 0;
-                  $per_pending = 0;
-                  $per_remaining = 0;
-                }
-                ?>
+              <?php if ($call_tasks_status_bar['total']) :
+                $per_success = $call_tasks_status_bar['success'] / $call_tasks_status_bar['total'] * 100;
+                $per_failed = $call_tasks_status_bar['failed'] / $call_tasks_status_bar['total'] * 100;
+                $per_pending = $call_tasks_status_bar['pending'] / $call_tasks_status_bar['total'] * 100;
+                $per_remaining = $call_tasks_status_bar['remaining'] / $call_tasks_status_bar['total'] * 100;
+              ?>
+              <div class="widget-body">                 
                 
                 <div class="progress-bar">
                   <ul>
@@ -153,27 +145,65 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                     <li class="danger" style="width: <?= $per_failed; ?>%">&nbsp;</li>
                     <li class="warning" style="width: <?= $per_pending; ?>%">&nbsp;</li>
                   </ul>
-								</div>
+                </div>
                 <ul class="progress-bar-legend">
                   <li class="success">Success: <strong><?= $call_tasks_status_bar['success']; ?></strong> (<?= round($per_success, 2); ?>%)</li>
                   <li class="danger">Failed: <strong><?= $call_tasks_status_bar['failed']; ?></strong> (<?= round($per_failed, 2); ?>%)</li>
                   <li class="warning">Pending: <strong><?= $call_tasks_status_bar['pending']; ?></strong> (<?= round($per_pending, 2); ?>%)</li>
                   <li class="default">Remaining: <strong><?= $call_tasks_status_bar['remaining']; ?></strong> (<?= round($per_remaining, 2); ?>%)</li>
-                  <li class="summary">Total: <strong><?= $call_tasks_status_bar['total']; ?></strong></li>
+                  <li class="summary-alt">Total: <strong><?= $call_tasks_status_bar['total']; ?></strong></li>
                 </ul>
-            	  
-            	</div>
+                
+              </div>
+              <?php else : ?>
+              <div class="widget-empty">
+                <p>There are no respondents yet.</p>
+              </div>
+              <?php endif; ?>
             </article>
+            <?php endif; ?>
             
             
-            
+            <?php if (has_permission('view survey stats - calls placed')) : ?>
             <article class="widget">
               <header class="widget-head">
                 <h1 class="hd-s">Placed Calls</h1>
               </header>
-              <div class="widget-body"></div>
+              
+              <?php if ($call_tasks_placed_calls['sum']) : ?>
+              <div class="widget-body">
+                                
+                <figure class="stats-placed-calls">
+                  <div class="chart" id="placed-calls-chart" style="height: 230px;"></div>
+                  <script type="text/javascript">
+                    $(function() {
+                      Morris.Donut({
+                        element: 'placed-calls-chart',
+                        data: <?= json_encode(array_values($call_tasks_placed_calls['data'])); ?>,
+                        colors: ['#047998', '#2A8DA8', '#4FA1B7', '#75B5C6', '#9AC9D6', '#C0DDE5', '#E5F1F4']
+                      });
+                    });
+                  </script>
+                  <figcaption class="chart-legend">
+                    <ul class="progress-bar-legend">
+                      <?php foreach ($call_tasks_placed_calls['data'] as $placed_call_status) : ?>
+                        <?php $percent = $placed_call_status['value'] / $call_tasks_placed_calls['sum'] * 100; ?>
+                        <li><?= $placed_call_status['label']; ?>: <strong><?= $placed_call_status['value']; ?></strong> (<?= round($percent, 2); ?>%)</li>
+                      <?php endforeach ?>
+                        <li class="summary">Total: <strong><?= $call_tasks_placed_calls['sum']; ?></strong></li>
+                    </ul>
+                  </figcaption>
+                </figure>
+              </div>
+              
+              <?php else : ?>
+              <div class="widget-empty">
+                <p>No calls placed yet.</p>
+              </div>
+              <?php endif ?>
+              
             </article>
-            
+            <?php endif; ?>
             
             
           </div>
@@ -250,11 +280,11 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
         </section>
         
         <?php if (has_permission('view survey stats - call tasks full table')) : ?>
-          <?php if (!empty($call_tasks_table)) : ?>
           <section class="contained">
             <header class="contained-head">
-              <h1 class="hd-s">Call tasks</h1>
+              <h1 class="hd-s">Agents' summary</h1>
             </header>
+            <?php if (!empty($call_tasks_table)) : ?>
             <div class="contained-body">
               <table class="fancy-cb-group">
                 <thead>
@@ -279,8 +309,13 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 </tbody>
               </table>
             </div>
+            <?php else : ?>
+            <div class="widget-empty">
+              <p>No assigned agents yet.<br/><em>After assigning agents refresh the page.</em></p>
+            </div>
+            <?php endif ?>
+            
           </section>
-          <?php endif; ?>
         <?php
           // Without permission only sees the table if there's data for the current user.
          elseif (isset($call_tasks_table[current_user()->uid])) :
@@ -288,7 +323,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
         ?>
         <section class="contained">
           <header class="contained-head">
-            <h1 class="hd-s">Your call tasks</h1>
+            <h1 class="hd-s">Your summary</h1>
           </header>
           <div class="contained-body">
             <table class="fancy-cb-group">
@@ -313,10 +348,22 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
         </section>
         <?php endif; ?>
         
+        
+        <?php if ($survey->introduction) : ?>
         <section class="contained">
-          <h1 class="hd-s">Welcome text</h1>
-          <p><?= nl2br_except_pre($survey->introduction) ?></p>
+          <h1 class="hd-s">Survey introduction</h1>
+          <p><?= nl2br_except_pre($survey->introduction) ?></p> 
         </section>
+        
+        <?php elseif (has_permission('edit any survey')): ?>
+        <section class="contained">
+          <h1 class="hd-s">Survey introduction</h1>
+          <div class="widget-empty">
+            <p>There's no introduction text.<br/>You can add it by editing the survey <em>(Edit > Modify)</em></p>
+          </div>
+        </section>
+        <?php endif; ?>
+        
       </div>
       
     </div>

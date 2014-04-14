@@ -59,6 +59,8 @@ $config['permissions'] = array(
   // Survey statistics. Permissions to allow some granularity.
   // Agents without this permission will only see their own data.
   'view survey stats - call tasks full table' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  'view survey stats - respondents progress' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  'view survey stats - calls placed' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   
   
   // Although this permission exists should no be used.

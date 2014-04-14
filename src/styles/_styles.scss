@@ -380,3 +380,39 @@
     margin: rem-calc(32 32 0 32);
   }
 }
+
+.stats-placed-calls {
+  @extend .clearfix;
+  .chart {
+    width: 50%;
+    float: right;
+  }
+  .chart-legend {
+    width: 50%;
+    float: left;
+
+    .progress-bar-legend {
+      li:nth-child(1):before {
+        background: #047998;
+      }
+      li:nth-child(2):before {
+        background: #2A8DA8;
+      }
+      li:nth-child(3):before {
+        background: #4FA1B7;
+      }
+      li:nth-child(4):before {
+        background: #75B5C6;
+      }
+      li:nth-child(5):before {
+        background: #9AC9D6;
+      }
+      li:nth-child(6):before {
+        background: #C0DDE5;
+      }
+      li:nth-child(7):before {
+        background: #E5F1F4;
+      }
+    }
+  }
+}

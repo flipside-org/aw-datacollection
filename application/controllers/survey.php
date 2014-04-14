@@ -106,7 +106,7 @@ class Survey extends CI_Controller {
     
     // Call tasks, statistics and stuff.
     // We need call tasks to compute the progress bars and the cal tasks tables.
-    // Instead of doing complicated aggragate queries for each one, we just get all
+    // Instead of doing complicated aggregate queries for each one, we just get all
     // the call tasks and extract all the data we need.
     $all_call_tasks = $this->call_task_model->get_all($survey->sid);
     
@@ -128,6 +128,18 @@ class Survey extends CI_Controller {
         'success' => 0,
         'failed' => 0,
         'pending' => 0,
+      );
+    }
+    
+    // Prepare array for morris chart data.
+    $call_tasks_placed_calls = array(
+      'data' => array(),
+      'sum' => 0
+    );
+    foreach (Call_task_status::$labels as $status_code => $label) {
+      $call_tasks_placed_calls['data'][$status_code] = array(
+        'label' => $label,
+        'value' => 0
       );
     }
     
@@ -177,12 +189,21 @@ class Survey extends CI_Controller {
       // //END Prepare table data.
       /**********************************************/
       
+      // Count call activity status for morris chart.
+      if (!empty($call_task->activity)) {
+        foreach ($call_task->activity as $status) {
+          $call_tasks_placed_calls['data'][$status->code]['value']++;
+          $call_tasks_placed_calls['sum']++;
+        }
+      }
+      // //END Count call activity status for morris chart.
+      /**********************************************/
+      
     }
-    
+
     $data['call_tasks_status_bar'] = $call_tasks_status_bar;
     $data['call_tasks_table'] = $call_tasks_table;
-    
-    //krumo($data); die();
+    $data['call_tasks_placed_calls'] = $call_tasks_placed_calls;
 
     $this->load->view('base/html_start');
     $this->load->view('components/navigation', array('active_menu' => 'surveys'));

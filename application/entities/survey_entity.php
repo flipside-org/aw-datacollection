@@ -181,7 +181,6 @@ class Survey_entity extends Entity {
   );
 
   /**
-<<<<<<< HEAD
    * Allowed statuses of a survey.
    *
    * @var array
@@ -196,8 +195,6 @@ class Survey_entity extends Entity {
   );
 
   /**
-=======
->>>>>>> master
    * Survey entity constructor
    *
    * @param array
