@@ -53,27 +53,9 @@ module.exports = function(grunt) {
     uglify: {
       prod: {
         files: {
-          'assets/scripts/media.min.js': [
+          'assets/scripts/basic.min.js': [
             'src/bower_components/modernizr/modernizr.js',
-          ],
-          
-          'assets/scripts/foundation.min.js': [
-            'src/bower_components/jquery/dist/jquery.js',
-            
-            'src/bower_components/foundation/js/foundation/foundation.js',
-            //'src/bower_components/foundation/js/foundation/foundation.abide.js',
-            //'src/bower_components/foundation/js/foundation/foundation.accordion.js',
-            'src/bower_components/foundation/js/foundation/foundation.clearing.js',
-            'src/bower_components/foundation/js/foundation/foundation.dropdown.js',
-            'src/bower_components/foundation/js/foundation/foundation.interchange.js',
-            //'src/bower_components/foundation/js/foundation/foundation.joyride.js',
-            //'src/bower_components/foundation/js/foundation/foundation.magellan.js',
-            //'src/bower_components/foundation/js/foundation/foundation.offcanvas.js',
-            //'src/bower_components/foundation/js/foundation/foundation.orbit.js',
-            //'src/bower_components/foundation/js/foundation/foundation.reveal.js',
-            //'src/bower_components/foundation/js/foundation/foundation.tab.js',
-            //'src/bower_components/foundation/js/foundation/foundation.tooltips.js',
-            'src/bower_components/foundation/js/foundation/foundation.topbar.js'
+            'src/bower_components/jquery/dist/jquery.js'
           ],
 
           // Enketo stuff.
@@ -93,8 +75,29 @@ module.exports = function(grunt) {
           ],
 
           'assets/scripts/website.min.js': [
+            // Foundation includes.
+            'src/bower_components/foundation/js/foundation/foundation.js',
+            //'src/bower_components/foundation/js/foundation/foundation.abide.js',
+            //'src/bower_components/foundation/js/foundation/foundation.accordion.js',
+            'src/bower_components/foundation/js/foundation/foundation.clearing.js',
+            'src/bower_components/foundation/js/foundation/foundation.dropdown.js',
+            'src/bower_components/foundation/js/foundation/foundation.interchange.js',
+            //'src/bower_components/foundation/js/foundation/foundation.joyride.js',
+            //'src/bower_components/foundation/js/foundation/foundation.magellan.js',
+            //'src/bower_components/foundation/js/foundation/foundation.offcanvas.js',
+            //'src/bower_components/foundation/js/foundation/foundation.orbit.js',
+            //'src/bower_components/foundation/js/foundation/foundation.reveal.js',
+            //'src/bower_components/foundation/js/foundation/foundation.tab.js',
+            //'src/bower_components/foundation/js/foundation/foundation.tooltips.js',
+            'src/bower_components/foundation/js/foundation/foundation.topbar.js',
+
+            // Site scripts.
             'src/vendor/chosen/chosen.jquery.min.js',
             'src/vendor/jquery-toastmessage/src/main/javascript/jquery.toastmessage.js',
+
+            'src/vendor/raphael/raphael-min.js',
+            'src/vendor/morris/morris.js',
+
             'src/scripts/*.js'
            ],
         }
@@ -108,6 +111,7 @@ module.exports = function(grunt) {
           'assets/styles/main.css' : [
             'src/vendor/chosen/chosen.css',
             'src/vendor/jquery-toastmessage/src/main/resources/css/jquery.toastmessage.css',
+            'src/vendor/morris/morris.css',
             'src/temp/path_override.css',
             'src/temp/main.css'
           ]
@@ -118,6 +122,7 @@ module.exports = function(grunt) {
           'assets/styles/main.css' : [
             'src/vendor/chosen/chosen.min.css',
             'src/vendor/jquery-toastmessage/src/main/resources/css/jquery.toastmessage.css',
+            'src/vendor/morris/morris.css',
             'src/temp/path_override.css',
             'src/temp/main.css'
           ]

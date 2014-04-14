@@ -1,4 +1,3 @@
-<script src="<?= base_url('assets/scripts/foundation.min.js'); ?>"></script>
 <script src="<?= base_url('assets/scripts/website.min.js'); ?>"></script>
 
 <!-- Toast messages -->
