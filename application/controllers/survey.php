@@ -544,9 +544,9 @@ class Survey extends CI_Controller {
    * and call tasks still to complete.
    *
    * Route:
-   * /survey/:sid/call_activity
+   * /survey/:sid/call_activity/(completed|pending)
    */
-  public function survey_call_activity($sid) {
+  public function survey_call_activity($sid, $filter = NULL) {
     $survey = $this->survey_model->get($sid);
     if (!$survey) {
       show_404();
@@ -560,17 +560,36 @@ class Survey extends CI_Controller {
         show_403();
       }
     }
-
-    $resolved = $this->call_task_model->get_resolved($sid, current_user()->uid);
-    $unresolved = $this->call_task_model->get_unresolved($sid, current_user()->uid);
+    
+    switch ($filter) {
+      case 'completed':
+        $call_tasks = $this->call_task_model->get_resolved($sid, current_user()->uid);
+        break;
+        
+      case 'pending':
+        $call_tasks = $this->call_task_model->get_unresolved($sid, current_user()->uid);
+        break;
+      
+      default:
+        $resolved = $this->call_task_model->get_resolved($sid, current_user()->uid);
+        $unresolved = $this->call_task_model->get_unresolved($sid, current_user()->uid);
+        // Merge resolved and unresolved and order.
+        $call_tasks = array_merge($resolved, $unresolved);
+        break;
+    }
+    
+    uasort($call_tasks, function($a, $b) {
+      $a_last = end($a->activity);
+      $b_last = end($b->activity);
+      return $a_last->created->sec < $b_last->created->sec;
+    });
 
     $this->load->view('base/html_start');
     $this->load->view('components/navigation', array('active_menu' => 'surveys'));
     $this->load->view('surveys/survey_call_activity', array(
       'survey' => $survey,
-      'call_tasks_resolved' => $resolved,
-      'call_tasks_unresolved' => $unresolved)
-    );
+      'call_tasks' => $call_tasks
+    ));
     $this->load->view('base/html_end');
   }
 
@@ -1194,13 +1213,14 @@ class Survey extends CI_Controller {
 
     }
     elseif (isset($respondent['new_status']['code']) && isset($respondent['new_status']['msg'])) {
-
-      if ($respondent['new_status']['code'] == Call_task_status::SUCCESSFUL) {
+      $new_status_code = (int) $respondent['new_status']['code'];
+      
+      if ($new_status_code == Call_task_status::SUCCESSFUL) {
         return $this->api_output(500, 'Successful status can not be set manually.');
       }
 
       try {
-        $new_status = Call_task_status::create($respondent['new_status']['code'], xss_clean(trim($respondent['new_status']['msg'])));
+        $new_status = Call_task_status::create($new_status_code, xss_clean(trim($respondent['new_status']['msg'])));
         $call_task->add_status($new_status);
 
       } catch (Exception $e) {

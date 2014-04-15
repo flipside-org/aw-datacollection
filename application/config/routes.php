@@ -61,6 +61,7 @@ $route['survey/(:num)/respondents/manage/(:num)/(delete)'] = 'survey/survey_resp
 $route['survey/(:num)/xslt_transform'] = 'survey/survey_xslt_transform/$1';
 
 $route['survey/(:num)/call_activity'] = 'survey/survey_call_activity/$1';
+$route['survey/(:num)/call_activity/(completed|pending)'] = 'survey/survey_call_activity/$1/$2';
 $route['survey/(:num)/data_collection/(:num)'] = 'survey/survey_enketo_single/$1/$2';
 
 // URLs for enketo. To avoid confusion will call them api

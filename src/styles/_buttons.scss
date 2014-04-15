@@ -223,10 +223,7 @@ a.disabled {
   &:active {
     position: static;
     top: 0;
-  }
-  
-  &:hover {
-    background: none !important;
+    opacity: 0.4;
   }
 }
 

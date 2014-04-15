@@ -539,6 +539,7 @@ class Call_task_status {
    *   To allow chaining
    */
   public function set_code($code) {
+    $code = (int) $code;
     if (!array_key_exists($code, Call_task_status::$labels)) {
       throw new Exception("Invalid code for a call task status: $code");
     }
