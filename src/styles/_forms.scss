@@ -1,0 +1,47 @@
+/* Most of the options are set in the settings file. */
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+input[type="file"],
+textarea {
+  border-radius: rem-calc(4);
+  margin: 0;
+  
+  &:focus {
+    box-shadow:inset 0 2px 0 0 palette(blue, x-light);
+  }
+}
+
+textarea {
+  resize: none;
+  height: rem-calc(200);
+}
+
+.form-control {
+  margin-bottom: rem-calc(16);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .help-text {
+    margin: rem-calc(8 0 0 0);
+    font-size: rem-calc(12);
+    color: palette(grey);
+  }
+  
+  .error {
+    margin: rem-calc(8 0 0 0);
+    border-radius: rem-calc(4);
+  }
+}

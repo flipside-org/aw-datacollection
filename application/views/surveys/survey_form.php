@@ -23,6 +23,9 @@
               </strong>
             </li>
             <li>
+              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="survey_submit">Save</a>
+            </li>
+            <li>
               <?php if ($survey) : ?>
               <a href="<?= $survey->get_url_view(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
               <?php else : ?>
@@ -36,36 +39,64 @@
     </header>
     
     <div class="content">
-    
-    <?= validation_errors(); ?>
-    <?= form_open_multipart(); ?>
-    
-      <?= form_label('Survey Title', 'survey_title'); ?>
-      <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title'))); ?>
-    
-      <?= form_label('Survey Client', 'survey_client'); ?>
-      <?= form_input('survey_client', set_value('survey_client', property_if_not_null($survey, 'client'))); ?>
-    
-      <?= form_label('Goal', 'survey_goal'); ?>
-      <?= form_input('survey_goal', set_value('survey_goal', property_if_not_null($survey, 'goal'))); ?>
       
-      <?= form_label('Status', 'survey_status'); ?>
-      <?= form_dropdown('survey_status',
-            Survey_entity::$statuses,
-            set_value('survey_status', property_if_not_null($survey, 'status', array()))); ?>
-            
-      <?= form_label('Survey Introduction', 'survey_introduction'); ?>
-      <?= form_textarea('survey_introduction', set_value('survey_introduction', property_if_not_null($survey, 'introduction'))); ?>
-            
-      <?= form_label('Survey Description', 'survey_description'); ?>
-      <?= form_textarea('survey_description', set_value('survey_description', property_if_not_null($survey, 'description'))); ?>
-            
-      <?= form_upload('survey_file'); ?>
+      <?= form_open_multipart(); ?>
+      <div class="columns small-6">
+        <fieldset class="contained">
+          <div class="form-control">
+            <?= form_label('Title <small>Required</small>', 'survey_title'); ?>
+            <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title')), 'id="survey_title"'); ?>
+            <?= form_error('survey_title'); ?>
+          </div>
+          
+          <div class="form-control">
+            <?= form_label('Client <small>Required</small>', 'survey_client'); ?>
+            <?= form_input('survey_client', set_value('survey_client', property_if_not_null($survey, 'client')), 'id="survey_client"'); ?>
+            <?= form_error('survey_client'); ?>
+          </div>
+          
+          <div class="form-control">
+            <?= form_label('Goal', 'survey_goal'); ?>
+            <?= form_input('survey_goal', set_value('survey_goal', property_if_not_null($survey, 'goal')), 'id="survey_goal"'); ?>
+            <p class="help-text">Minimum amount of respondents for the survey to be considered done.</p>
+            <?= form_error('survey_goal'); ?>
+          </div>
+          
+          <div class="form-control">
+            <?= form_label('Description', 'survey_description'); ?>
+            <?= form_textarea('survey_description', set_value('survey_description', property_if_not_null($survey, 'description')), 'id="survey_description"'); ?>
+            <?= form_error('survey_description'); ?>
+          </div>
+        </fieldset>
+      </div>
       
-      <?= form_submit('survey_submit', 'Submit Survey'); ?>
-    
-    <?= form_close(); ?>
-
+      <div class="columns small-6">
+        <fieldset class="contained">
+          <div class="form-control">
+            <?= form_label('Definition file', 'survey_file'); ?>
+            <?= form_upload('survey_file', '', 'id="survey_file"'); ?>
+            <?= form_error('survey_file'); ?>
+          </div>
+        </fieldset>
+        <fieldset class="contained">
+          <div class="form-control">
+            <?= form_label('Introductory text', 'survey_introduction'); ?>
+            <?= form_textarea('survey_introduction', set_value('survey_introduction', property_if_not_null($survey, 'introduction')), 'id="survey_introduction"'); ?>
+            <?= form_error('survey_introduction'); ?>
+          </div>
+        </fieldset>
+      </div>
+      
+      <?= form_button(array(
+        'type' => 'submit',
+        'name' => 'survey_submit',
+        'id' => 'survey_submit',
+        'value' => 'survey_submit',
+        'class' => 'hide',
+        'content' => 'Submit Survey'));
+      ?>
+      
+      <?= form_close(); ?>
 
     </div>
   </section>

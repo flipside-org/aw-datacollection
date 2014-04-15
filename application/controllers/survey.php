@@ -269,13 +269,15 @@ class Survey extends CI_Controller {
     $this->load->helper('pyxform');
 
     // Set form validation rules.
-    $this->form_validation->set_rules('survey_title', 'Survey Title', 'required');
-    $this->form_validation->set_rules('survey_client', 'Survey Client', 'required');
-    $this->form_validation->set_rules('survey_goal', 'Survey Goal', 'is_natural_no_zero');
-    $this->form_validation->set_rules('survey_status', 'Survey Status', 'required|callback__cb_survey_status_valid');
-    $this->form_validation->set_rules('survey_introduction', 'Survey Introduction', 'xss_clean');
-    $this->form_validation->set_rules('survey_description', 'Survey Description', 'xss_clean');
-    $this->form_validation->set_rules('survey_file', 'Survey File', 'callback__cb_survey_file_handle');
+    $this->form_validation->set_rules('survey_title', 'Title', 'required');
+    $this->form_validation->set_rules('survey_client', 'Client', 'required');
+    $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
+    //  $this->form_validation->set_rules('survey_status', 'Status', 'required|callback__cb_survey_status_valid');
+    $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
+    $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
+    $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
 
     // If no data submitted show the form.
     if ($this->form_validation->run() == FALSE) {
@@ -292,7 +294,8 @@ class Survey extends CI_Controller {
           $survey_data['title'] = $this->input->post('survey_title', TRUE);
           $survey_data['client'] = $this->input->post('survey_client', TRUE);
           $survey_data['goal'] = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
-          $survey_data['status'] = (int) $this->input->post('survey_status');
+          //$survey_data['status'] = (int) $this->input->post('survey_status');
+          $survey_data['status'] = Survey_entity::STATUS_DRAFT;
           $survey_data['introduction'] = $this->input->post('survey_introduction', TRUE);
           $survey_data['description'] = $this->input->post('survey_description', TRUE);
 
@@ -301,18 +304,40 @@ class Survey extends CI_Controller {
 
           // Save survey.
           // Survey files can only be handled after the survey is saved.
-          // TODO: Handle error during save.
-          $this->survey_model->save($new_survey);
+          if (!$this->survey_model->save($new_survey)) {
+            Status_msg::error('An error occurred when saving the survey. Please try again.');
+            redirect('surveys');
+          }
 
           // The survey is saved. We can rename the file that was just uploaded
           // if there's one.
           $file = $this->input->post('survey_file');
-          if ($file ==! FALSE) {
+          if ($file !== FALSE) {
             $new_survey->save_xls($file);
             $result = $new_survey->convert_xls_to_xml();
+            
+            // If the conversion failed, delete the xls file.
+            if ($result->code == 999) {
+              if (file_exists($new_survey->get_xls_full_path())) {
+                unlink($new_survey->get_xls_full_path());
+                // Remove also from survey object.
+                $new_survey->files['xls'] = NULL;
+              }
+            }
+            
             // Save again.
-            // TODO: Handle error during save.
-            $this->survey_model->save($new_survey);
+            // If the save files, delete both files.
+            if (!$this->survey_model->save($new_survey)) {
+              // Attempt to delete the uploaded file.
+              if (file_exists($new_survey->get_xls_full_path())) {
+                unlink($new_survey->get_xls_full_path());
+              }
+              if (file_exists($new_survey->get_xml_full_path())) {
+                unlink($new_survey->get_xml_full_path());
+              }
+              Status_msg::error('An error occurred when saving the survey. Please try again.');
+              redirect('surveys');
+            }
 
             // Set status messages.
             switch ($result->code) {
@@ -332,8 +357,8 @@ class Survey extends CI_Controller {
 
           // If it reaches this point the survey was saved.
           Status_msg::success('Survey successfully created.');
-
           redirect('/survey/' . $new_survey->sid);
+          
           break;
         case 'edit':
 
@@ -341,13 +366,13 @@ class Survey extends CI_Controller {
           $survey->title = $this->input->post('survey_title', TRUE);
           $survey->client = $this->input->post('survey_client', TRUE);
           $survey->goal = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
-          $survey->status = (int) $this->input->post('survey_status');
+          //$survey->status = (int) $this->input->post('survey_status');
           $survey->introduction = $this->input->post('survey_introduction', TRUE);
           $survey->description = $this->input->post('survey_description', TRUE);
 
-          // Handle uploaded file:
+          // Handle uploaded file.
           $file = $this->input->post('survey_file');
-          if ($file ==! FALSE) {
+          if ($file !== FALSE) {
             $survey->save_xls($file);
             $result = $survey->convert_xls_to_xml();
 
@@ -366,12 +391,22 @@ class Survey extends CI_Controller {
             }
 
           }
-
-          // TODO: Handle error during save.
-          $this->survey_model->save($survey);
+          
+          if (!$this->survey_model->save($survey)) {
+            // If the user uploaded a file and the save fail, delete the file.
+            /*if (file_exists($survey->files['xls'])) {
+              unlink($survey->files['xls']);
+            }
+            if (file_exists($survey->files['xml'])) {
+              unlink($survey->files['xml']);
+            }*/
+            Status_msg::error('An error occurred when saving the survey. Please try again.');
+            redirect('surveys');
+          }
+          
           Status_msg::success('Survey successfully updated.');
-
           redirect('/survey/' . $survey->sid);
+          
           break;
       }
     }

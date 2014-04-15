@@ -305,7 +305,7 @@
   $ft-size: 28;
   font-size: rem-calc($ft-size);
   line-height: ($ft-size + 8) / $ft-size;
-  font-weight: 700;
+  font-weight: $body-font-bold;
   letter-spacing: -0.5px;
   margin: rem-calc(0 0 16 0);
   padding: 0;
@@ -318,7 +318,7 @@
   $ft-size: 24;
   font-size: rem-calc($ft-size);
   line-height: ($ft-size + 8) / $ft-size;
-  font-weight: 700;
+  font-weight: $body-font-bold;
   letter-spacing: -0.5px;
   margin: rem-calc(0 0 16 0);
   padding: 0;
@@ -327,7 +327,7 @@
   $ft-size: 20;
   font-size: rem-calc($ft-size);
   line-height: ($ft-size + 8) / $ft-size;
-  font-weight: 700;
+  font-weight: $body-font-bold;
   letter-spacing: -0.5px;
   margin: rem-calc(0 0 16 0);
   padding: 0;
@@ -336,7 +336,7 @@
   $ft-size: 16;
   font-size: rem-calc($ft-size);
   line-height: ($ft-size + 8) / $ft-size;
-  font-weight: 700;
+  font-weight: $body-font-bold;
   margin: rem-calc(0 0 16 0);
   padding: 0;
   
