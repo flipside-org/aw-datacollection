@@ -173,11 +173,13 @@ class User_model extends CI_Model {
     }
         
     if ($entity->is_new()) {
+      // Add new properties.
       $entity->uid = increment_counter(self::COUNTER_COLLECTION);
-      $prepared_data['uid'] = $entity->uid;
-      // Set creation date:
-      $prepared_data['created'] = $date;
+      $entity->created = clone $date;
       
+      // Add properties to prepared_data.
+      $prepared_data['uid'] = $entity->uid;
+      $prepared_data['created'] = $entity->created;
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
       return $result !== FALSE ? TRUE : FALSE;
