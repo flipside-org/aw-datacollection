@@ -373,6 +373,29 @@ class Survey extends CI_Controller {
           // Handle uploaded file.
           $file = $this->input->post('survey_file');
           if ($file !== FALSE) {
+            // If the user has uploaded a file we save the survey before
+            // handling it. If the file conversion fails no ghost files
+            // will be present.
+            
+            // Unlink previous files if they exist.
+            if (file_exists($survey->files['xls'])) {
+              unlink($survey->files['xls']);
+            }
+            if (file_exists($survey->files['xml'])) {
+              unlink($survey->files['xml']);
+            }
+            // Nullify
+            $survey->files['xls'] = NULL;
+            $survey->files['xml'] = NULL;
+            
+            // Save
+            if (!$this->survey_model->save($survey)) {
+              Status_msg::error('An error occurred when saving the survey. Please try again.');
+              redirect('surveys');
+            }
+            
+            
+            // Now handle the file.
             $survey->save_xls($file);
             $result = $survey->convert_xls_to_xml();
 
@@ -393,13 +416,6 @@ class Survey extends CI_Controller {
           }
           
           if (!$this->survey_model->save($survey)) {
-            // If the user uploaded a file and the save fail, delete the file.
-            /*if (file_exists($survey->files['xls'])) {
-              unlink($survey->files['xls']);
-            }
-            if (file_exists($survey->files['xml'])) {
-              unlink($survey->files['xml']);
-            }*/
             Status_msg::error('An error occurred when saving the survey. Please try again.');
             redirect('surveys');
           }
