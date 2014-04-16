@@ -743,6 +743,8 @@ class Survey extends CI_Controller {
         break;
     }
     
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
+    
     // If the import has invalid respondents they are added to the textarea
     // to allow the user to correct them.
     $invalid_respondents = array();
