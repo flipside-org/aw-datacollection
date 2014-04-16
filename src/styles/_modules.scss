@@ -353,30 +353,31 @@
 .confirm-box-wrapper {
   opacity: 0;
   visibility: hidden;
-  
-  @include transform(translate3d(0, 0, 0));
-  @include transition-property(opacity, visibility);
-  @include transition-duration(0.1s, 0.1s);
-  @include transition-timing-function(ease, linear);
-  @include transition-delay(0, 0);
-  
+
   .confirm-box {
     opacity: 0;
     margin-top: rem-calc(-48);
     visibility: hidden;
-    
-    @include transform(translate3d(0, 0, 0));
-    @include transition-property(opacity, margin, visibility);
-    @include transition-duration(0.1s, 0.1s, 0.1s);
-    @include transition-timing-function(ease, ease, linear);
-    @include transition-delay(0.2s, 0.2s, 0.2s);
+   
   }
   
   &.revealed {
+    @include transform(translate3d(0, 0, 0));
+    @include transition-property(opacity, visibility);
+    @include transition-duration(0.1s, 0.1s);
+    @include transition-timing-function(ease, linear);
+    @include transition-delay(0, 0);
+    
     opacity: 1;
     visibility: visible;
     
     .confirm-box {
+      @include transform(translate3d(0, 0, 0));
+      @include transition-property(opacity, margin, visibility);
+      @include transition-duration(0.1s, 0.1s, 0.1s);
+      @include transition-timing-function(ease, ease, linear);
+      @include transition-delay(0.2s, 0.2s, 0.2s);
+      
       opacity: 1;
       margin-top: 0;
       visibility: visible;
