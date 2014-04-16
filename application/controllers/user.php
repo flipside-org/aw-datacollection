@@ -241,8 +241,20 @@ class User extends CI_Controller {
         $this->email->from($this->config->item('aw_admin_email'), $this->config->item('aw_admin_name'));
         $this->email->to($user->email);
         
-        $this->email->subject('Account Created');
-        $this->email->message("An account has been created for you.\nUsername:" . $user->username . "\nPassword:" . $this->input->post('user_new_password'));
+        // Load message data from config.
+        $this->config->load('email_messages');
+        $message_account_created = $this->config->item('message_account_created');
+        // Replace placeholders.
+        $placeholders = array(
+          '{{username}}' => $user->username,
+          '{{name}}' => $user->name,
+          '{{password}}' => $this->input->post('user_new_password')
+        );
+        $message_account_created['subject'] = strtr($message_account_created['subject'], $placeholders);
+        $message_account_created['message'] = strtr($message_account_created['message'], $placeholders);
+        
+        $this->email->subject($message_account_created['subject']);
+        $this->email->message($message_account_created['message']);
         
         $this->email->send();
       }
@@ -273,9 +285,7 @@ class User extends CI_Controller {
     }
     
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__cb_check_email_exists');
-    
-    $user = current_user();
-    
+
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
       $this->load->view('users/user_recover_password');
@@ -284,16 +294,29 @@ class User extends CI_Controller {
     else {
       $this->load->model('recover_password_model');
       $email = $this->input->post('user_email');
+      $user = $this->user_model->get_by_email($email);
       
       $hash = $this->recover_password_model->generate($email);
-      
       if ($hash) {
+        // Send email.
         $this->load->library('email');
         $this->email->from($this->config->item('aw_admin_email'), $this->config->item('aw_admin_name'));
         $this->email->to($email);
         
-        $this->email->subject('Airwolf - Recover Password');
-        $this->email->message('Use the following link. ' . base_url('user/reset_password/' . $hash));
+        // Load message data from config.
+        $this->config->load('email_messages');
+        $message_pwd_recover = $this->config->item('message_pwd_recover');
+        // Replace placeholders.
+        $placeholders = array(
+          '{{username}}' => $user->username,
+          '{{name}}' => $user->name,
+          '{{reset_link}}' => base_url('user/reset_password/' . $hash)
+        );
+        $message_pwd_recover['subject'] = strtr($message_pwd_recover['subject'], $placeholders);
+        $message_pwd_recover['message'] = strtr($message_pwd_recover['message'], $placeholders);
+        
+        $this->email->subject($message_pwd_recover['subject']);
+        $this->email->message($message_pwd_recover['message']);
         
         $this->email->send();
         

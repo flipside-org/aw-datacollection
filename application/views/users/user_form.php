@@ -81,7 +81,7 @@
             <?php endif; ?>
             <?= form_password('user_new_password', '', 'id="user_new_password"'); ?>
             <p class="help-text">If you would like to change the password type a new one. Otherwise leave this blank.</p>
-            <p class="help-text">Hint: The password should be at least seven characters long. To make it stronger, use upper and lower case letters, numbers and symbols like ! &quot; ? $ % &circ; &amp; ).</p>
+            <p class="help-text">Hint: The password should be at least eight characters long. To make it stronger, use upper and lower case letters, numbers and symbols like ! &quot; ? $ % &circ; &amp; ).</p>
             <?= form_error('user_new_password'); ?>
           </div>
             
