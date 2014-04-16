@@ -34,7 +34,7 @@ var confirmBox = function(msg, options) {
   var $close_bttn = $confirm_box.find('.confirm-close');
   
   // Set message.
-  $confirm_box.find('.confirm-message').text(msg);
+  $confirm_box.find('.confirm-message').html(msg);
 
   // Other properties if set.
   if (settings.title) {
