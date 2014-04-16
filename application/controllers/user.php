@@ -135,8 +135,12 @@ class User extends CI_Controller {
         $user->set_password(hash_password($pwd));
       }
       
-      $this->user_model->save($user);
-      // TODO: Saving own profile. Handle success, error.
+      if ($this->user_model->save($user)) {
+        Status_msg::success('Profile successfully updated.');
+      }
+      else {
+        Status_msg::error('Error updating profile. Try again.');
+      }
       redirect();
     }
   }
@@ -171,8 +175,12 @@ class User extends CI_Controller {
         ->set_roles($this->input->post('user_roles'));
       
       // Save
-      $this->user_model->save($user);
-      // TODO: Saving user. Handle success, error.
+      if ($this->user_model->save($user)) {
+        Status_msg::success('User account successfully updated.');
+      }
+      else {
+        Status_msg::error('Error updating user account. Try again.');
+      }
       redirect('users');
     }
   }
@@ -230,8 +238,7 @@ class User extends CI_Controller {
       // Notify user?
       if ($this->input->post('user_notify') == 'notify') {
         $this->load->library('email');
-        // TODO: Email data. Use settings as much as possible.
-        $this->email->from('aw-datacollection@airwolf.edispilf.org', 'Aw-datacollection Admin');
+        $this->email->from($this->config->item('aw_admin_email'), $this->config->item('aw_admin_name'));
         $this->email->to($user->email);
         
         $this->email->subject('Account Created');
@@ -240,7 +247,12 @@ class User extends CI_Controller {
         $this->email->send();
       }
       
-      // TODO: Saving user. Handle success, error.
+      if ($this->user_model->save($user)) {
+        Status_msg::success('User successfully created.');
+      }
+      else {
+        Status_msg::error('Error creating user. Try again.');
+      }
       redirect('users');
       
     }
