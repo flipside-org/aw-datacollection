@@ -114,9 +114,11 @@ class User extends CI_Controller {
    */
   protected function _edit_own_account() {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
-    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__cb_check_user_password');
+    $this->form_validation->set_rules('user_password', 'Password', 'trim|xss_clean|callback__cb_required_if_set[user_new_password]|callback__cb_check_user_password');
     $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
-    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_check_confirm_password');
+    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_required_if_set[user_new_password]|matches[user_new_password]');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
     
     $user = current_user();
     
@@ -135,7 +137,7 @@ class User extends CI_Controller {
       
       $this->user_model->save($user);
       // TODO: Saving own profile. Handle success, error.
-      redirect('user');
+      redirect();
     }
   }
   
@@ -145,11 +147,12 @@ class User extends CI_Controller {
    */
   protected function _edit_other_account($user) {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
-    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__cb_check_user_password');
     $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
-    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_check_confirm_password');
+    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_required_if_set[user_new_password]|matches[user_new_password]');
     $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
     $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
@@ -197,6 +200,8 @@ class User extends CI_Controller {
     $this->form_validation->set_rules('user_new_password', 'Password', 'trim|required');
     $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
     $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
@@ -483,6 +488,25 @@ class User extends CI_Controller {
     else {
       $this->form_validation->set_message('_cb_check_unique', 'There is already a user with the chosen %s');
       return FALSE;
+    }
+  }
+
+  /**
+   * Checks for uniqueness. Used for email and username.
+   * Form validation callback.
+   */
+  public function _cb_required_if_set($value, $field) {
+    if ($this->input->post($field) != '') {
+      if ($value) {
+        return TRUE;
+      }
+      else {
+        $this->form_validation->set_message('_cb_required_if_set', 'The %s field is required.');
+        return FALSE;
+      }
+    }
+    else {
+      return TRUE;
     }
   }
 

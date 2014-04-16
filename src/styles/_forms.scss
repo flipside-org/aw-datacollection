@@ -18,7 +18,17 @@ textarea {
   margin: 0;
   
   &:focus {
-    box-shadow:inset 0 2px 0 0 palette(blue, x-light);
+    box-shadow: inset 0 2px 0 0 palette(blue, x-light);
+  }
+}
+
+input[type="file"],
+input[type="checkbox"],
+input[type="radio"],
+select {
+  &:hover {
+    background: white;
+    box-shadow: none;
   }
 }
 
@@ -29,6 +39,7 @@ textarea {
 
 .form-control {
   margin-bottom: rem-calc(16);
+  @extend .clearfix;
   
   &:last-child {
     margin-bottom: 0;
@@ -43,5 +54,21 @@ textarea {
   .error {
     margin: rem-calc(8 0 0 0);
     border-radius: rem-calc(4);
+  }
+  
+  .inline-label {
+    font-size: rem-calc(14);
+    font-weight: normal;
+    float: left;
+    clear: both;
+    
+    input {
+      margin: 0;
+    }
+    
+    /* Clear the float on inline labels siblings. */
+    & + * {
+      clear: both;
+    }
   }
 }
