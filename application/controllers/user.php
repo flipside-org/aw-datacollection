@@ -115,7 +115,7 @@ class User extends CI_Controller {
   protected function _edit_own_account() {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
     $this->form_validation->set_rules('user_password', 'Password', 'trim|xss_clean|callback__cb_required_if_set[user_new_password]|callback__cb_check_user_password');
-    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
+    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|min_length[8]');
     $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_required_if_set[user_new_password]|matches[user_new_password]');
     
     $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
@@ -151,7 +151,7 @@ class User extends CI_Controller {
    */
   protected function _edit_other_account($user) {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
-    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
+    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|min_length[8]');
     $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_required_if_set[user_new_password]|matches[user_new_password]');
     $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
     $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
@@ -205,7 +205,7 @@ class User extends CI_Controller {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
     $this->form_validation->set_rules('user_username', 'Username', 'trim|required|xss_clean|alpha_dash|callback__cb_check_unique[username]');
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__cb_check_unique[email]');
-    $this->form_validation->set_rules('user_new_password', 'Password', 'trim|required');
+    $this->form_validation->set_rules('user_new_password', 'Password', 'trim|required|min_length[8]');
     $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
     $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
     
