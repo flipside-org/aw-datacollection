@@ -53,6 +53,9 @@
                     <?php if (has_permission('edit any account')) :?>
                     <a href="<?= $user_entity->get_url_edit() ?>" class="bttn bttn-primary bttn-small">Edit</a>
                     <?php endif; ?>
+                    <?php if (has_permission('delete any account')) :?>
+                      <?= anchor_csrf($user_entity->get_url_delete(), 'Delete', array('class' => 'bttn bttn-danger bttn-small')); ?>
+                    <?php endif; ?>
                   </td>
                 </tr>
                 <?php endforeach; ?>

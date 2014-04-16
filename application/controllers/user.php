@@ -271,6 +271,38 @@ class User extends CI_Controller {
       
     }
   }
+
+  /**
+   * Delete handler for users.
+   * Route
+   * /user/:sid/delete
+   */
+  public function user_delete_by_id($uid){
+    verify_csrf_get();
+    
+    if (!has_permission('delete any account')) {
+      show_403();
+    }
+    
+    $user = $this->user_model->get($uid);
+    if (!$user) {
+      show_404();
+    }
+    
+    // The user is not actually delete.
+    // It stays in the database with it's status set to deleted (99)
+    $user->status = User_entity::STATUS_DELETED;
+    
+    if ($this->user_model->save($user)) {
+      Status_msg::success('User successfully deleted.');
+    }
+    else {
+      Status_msg::error('An error occurred while deleting the user.');
+    }
+    
+    redirect('/users');
+    
+  }
   
   /**
    * Recover password.

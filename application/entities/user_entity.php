@@ -33,11 +33,13 @@ class User_entity extends Entity {
   /**
    * User statuses labels.
    * Useful for printing.
+   * 
+   * Blocked doesn't fit here because it's a final state,
+   * it's not possible to recover form that.
    */
   static $statuses = array(
     self::STATUS_ACTIVE  => 'Active',
     self::STATUS_BLOCKED => 'Blocked',
-    self::STATUS_DELETED => 'Deleted'
   );
   
   /********************************
@@ -344,9 +346,21 @@ class User_entity extends Entity {
    */
   public function get_url_edit() {
     if ($this->uid == NULL) {
-      throw new Exception("Trying to get link for a nonexistent user.");       
+      throw new Exception("Trying to get link for a nonexistent user.");
     }    
     return base_url('user/' . $this->uid . '/edit') ;
+  }
+  
+  /**
+   * Returns the url to delete a user.
+   * @access public
+   * @return string
+   */
+  public function get_url_delete() {
+    if ($this->uid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent user.");
+    }
+    return base_url('user/' . $this->uid . '/delete') ;
   }
   /**
    * End of public methods.
