@@ -382,14 +382,17 @@ class Survey_entity extends Entity {
 
   /**
    * Returns the url to edit a survey.
+   * @param $filter
+   *  Filter for call activity - (complete|pending)
+   * 
    * @access public
    * @return string
    */
-  public function get_url_call_activity() {
+  public function get_url_call_activity($filter = '') {
     if ($this->sid == NULL) {
       throw new Exception("Trying to get link for a nonexistent survey.");
     }
-    return base_url('survey/' . $this->sid . '/call_activity') ;
+    return rtrim(base_url('survey/' . $this->sid . '/call_activity/' . $filter), '/');
   }
 
   /**

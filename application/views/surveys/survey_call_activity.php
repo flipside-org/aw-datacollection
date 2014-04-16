@@ -1,22 +1,3 @@
-<?php
-// Some permission checking that are going to be used in different places.
-$show_actions_enketo_data_collection = FALSE;
-if (has_permission('enketo collect data any')) {
-  $show_actions_enketo_data_collection = TRUE;
-}
-else if (has_permission('enketo collect data assigned') && $survey->is_assigned_agent(current_user()->uid)){
-  $show_actions_enketo_data_collection = TRUE;
-}
-
-$show_actions_enketo_testrun = FALSE;
-if (has_permission('enketo testrun any')) {
-  $show_actions_enketo_testrun = TRUE;
-}
-else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent(current_user()->uid)){
-  $show_actions_enketo_testrun = TRUE;
-}
-?>
-
 <main id="site-body">
   <section class="row">
     <header id="page-head">
@@ -39,44 +20,6 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               </ul>
             </li>
             
-            <?php if (has_permission('download any survey files')) : ?>
-            <li>
-              <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Export</a>
-              <ul class="action-dropdown">
-                <li><a href="<?= $survey->get_url_file('xls'); ?>" class="<?= !$survey->has_xls() ? 'disabled' : ''; ?>">Definition file (XLS)</a></li>
-                <li><a href="<?= $survey->get_url_file('xml'); ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Definition file (XML)</a></li>
-              </ul>
-            </li>
-            <?php endif; ?>
-            
-            <?php if (has_permission('edit any survey') || has_permission('delete any survey')) : ?>
-            <li>
-              <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Edit</a>
-              <ul class="action-dropdown">
-                <?php if (has_permission('edit any survey')) : ?>
-                <li><a href="<?= $survey->get_url_edit(); ?>">Modify</a></li>
-                <?php endif; ?>
-                
-                <?php if (has_permission('delete any survey')) : ?>
-                <li><?= anchor_csrf($survey->get_url_delete(), 'Delete', array('class' => 'danger')); ?></li>
-                <?php endif; ?>
-              </ul>
-            </li>
-            <?php endif; ?>
-            
-            <li>
-              <a href="" class="bttn bttn-success bttn-medium bttn-dropdown" data-dropdown="action-bttn">Run</a>
-              <ul class="action-dropdown">
-                <?php if ($show_actions_enketo_testrun) :?>
-                <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Testrun</a></li>
-                <?php endif; ?>
-                
-                <?php if ($show_actions_enketo_data_collection) :?>
-                <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Collect Data</a></li>
-                <?php endif; ?>
-              </ul>
-            </li>
-            
           </ul>
         </nav>
         
@@ -84,57 +27,74 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
     </header>
 
 
-    <!-- TO FORMAT AND PUT IN PROPER PLACE!!!!!! -->
+    <div class="content">
+      <div class="columns small-12">
+        
+        <section class="contained">
+          <header class="contained-head">
 
-<h1>Completed</h1>
-  <table width='100%' class="call_task_resolved_list">
-    <thead>
-      <tr>
-        <th width='10%'>Number</th>
-        <th width='55%'>Message</th>
-        <th width='35%'>Actions</th>
-      </tr>
-    </thead>
+            <ul class="bttn-group bttn-center filters">
+              <?php $active_filter = $this->uri->segment(4); ?>
+              <li><a href="<?= $survey->get_url_call_activity(); ?>" class="bttn bttn-default bttn-small <?= $active_filter === FALSE ? 'current' : ''; ?>">All</a></li>
+              <li><a href="<?= $survey->get_url_call_activity('completed'); ?>" class="bttn bttn-default bttn-small <?= $active_filter === 'completed' ? 'current' : ''; ?>">Completed</a></li>
+              <li><a href="<?= $survey->get_url_call_activity('pending'); ?>" class="bttn bttn-default bttn-small <?= $active_filter === 'pending' ? 'current' : ''; ?>">Pending</a></li>
+            </ul>
+            
+          </header>
+
+          <div class="contained-body">
+            <table class="table-nested-4-col">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Number</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              
+              <?php foreach ($call_tasks as $call_task_entity):?>
+              <tbody>
+                <tr>
+                  <td><strong class="status"><?= $call_task_entity->is_resolved() ? 'Completed' : 'Pending'; ?></strong></td>
+                  <td><a href="#" class="expand-link" data-expand="ct-<?= $call_task_entity->ctid; ?>"><strong class="highlight"><?= $call_task_entity->number ?></strong></a></td>
+                  <?php $last_call = end($call_task_entity->activity); ?>
+                  <td><?= date('d M, Y', $last_call->created->sec) ?> <small>Last call placed</small></td>
+                  <?php $disabled = $call_task_entity->is_resolved() ? 'disabled' : ''; ?>
+                  <td>
+                    <ul class="bttn-toolbar">
+                      <li>
+                        <a href="<?= $call_task_entity->get_url_single_data_collection() ?>" class="bttn bttn-success bttn-small <?= $disabled; ?>">Collect data</a>
+                      </li>
+                    </ul>
+                </tr>
+                <tr>
+                  <td colspan="4">
+                    <div id="ct-<?= $call_task_entity->ctid; ?>" class="expandable">
+                      <table>
+                        <?php foreach ($call_task_entity->activity as $call_task_activity_item):?>
+                        <tr>
+                          <td></td>
+                          <td>
+                            <p><strong><?= $call_task_activity_item->get_label(); ?></strong></p>
+                            <p><em><?= $call_task_activity_item->message; ?></em></p>
+                          </td>
+                          <td><?= date('d M, Y \a\t H:i', $call_task_activity_item->created->sec) ?></td>
+                          <td></td>
+                        </tr>
+                        <?php endforeach; ?>
+                      </table>
+                    </div>                    
+                  </td>
+                </tr>
+              </tbody>
+              <?php endforeach; ?>
+              
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
     
-    <tbody>
-    <?php foreach ($call_tasks_resolved as $call_task_entity):?>
-      <tr>
-        <td><?= $call_task_entity->number ?></td>
-        <td>Last status here</td>
-        <td>no actions</td>
-      </tr>
-    <?php endforeach; ?>
-    
-    </tbody>
-  </table>
-  
-  <h1>To do</h1>
-  <table width='100%' class="call_task_unresolved_list">
-    <thead>
-      <tr>
-        <th width='10%'>Number</th>
-        <th width='55%'>Message</th>
-        <th width='35%'>Actions</th>
-      </tr>
-    </thead>
-    
-    <tbody>
-    <?php foreach ($call_tasks_unresolved as $call_task_entity):?>
-      <tr>
-        <td><?= $call_task_entity->number ?></td>
-        <td></td>
-        <td><a href="<?= $call_task_entity->get_url_single_data_collection() ?>" class="button tiny secondary">Collect data</a></td>
-      </tr>
-    <?php endforeach; ?>
-    
-    </tbody>
-  </table>
-
-<!-- // TO FORMAT AND PUT IN PROPER PLACE!!!!!! -->
-
-
-
-
-
   </section>
 </main>
