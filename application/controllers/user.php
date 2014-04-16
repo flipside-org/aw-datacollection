@@ -29,6 +29,8 @@ class User extends CI_Controller {
 
     $this->form_validation->set_rules('signin_username', 'Username', 'trim|required|xss_clean');
     $this->form_validation->set_rules('signin_password', 'Password', 'trim|required|xss_clean|callback__cb_check_login_data');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
 
     if ($this->form_validation->run() == FALSE) {
   		$this->load->view('base/html_start');
@@ -285,6 +287,8 @@ class User extends CI_Controller {
     }
     
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__cb_check_email_exists');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
 
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
@@ -343,6 +347,8 @@ class User extends CI_Controller {
     if ($user_email) {
       $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|required');
       $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|required|callback__cb_check_confirm_password');
+      
+      $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
       
       if ($this->form_validation->run() == FALSE) {
         $this->load->view('base/html_start');

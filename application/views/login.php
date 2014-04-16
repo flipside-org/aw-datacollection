@@ -14,18 +14,28 @@
       </header>
       
       <div class="contained-body">
-        <?= form_error('signin_username', '<div class="error" data-ref="signin_username">', '</div>'); ?>
-        <?= form_error('signin_password', '<div class="error" data-ref="signin_password">', '</div>'); ?>
         
         <?= form_open('', array('id' => 'login-form')); ?>
-        
+          <div class="form-control">
           <?= form_label('Username', 'signin_username'); ?>
-          <?= form_input('signin_username'); ?>
-        
+          <?= form_input('signin_username', '', 'id="signin_username"'); ?>
+          <?= form_error('signin_username'); ?>
+          </div>
+          
+          <div class="form-control">
           <?= form_label('Password', 'signin_password'); ?>
-          <?= form_password('signin_password'); ?>
+          <?= form_password('signin_password', '', 'id="signin_username"'); ?>
+          <?= form_error('signin_password'); ?>
+          </div>
           <?= anchor('user/recover', 'Recover password'); ?>
-          <?= form_submit('signin_submit', 'Login'); ?>
+          <?= form_button(array(
+            'type' => 'submit',
+            'name' => 'signin_submit',
+            'id' => 'signin_submit',
+            'value' => 'signin_submit',
+            'class' => 'bttn bttn-success bttn-medium',
+            'content' => 'Login'));
+          ?>
         
         <?= form_close(); ?>
       </div>
