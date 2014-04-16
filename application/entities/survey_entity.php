@@ -107,10 +107,35 @@ class Survey_entity extends Entity {
   /**
    * Survey introduction.
    * Text presented to the CC Agent when collecting data.
-   * @var int
+   * @var string
    * @access public
    */
   public $introduction;
+
+  /**
+   * Survey description.
+   * Description of the survey.
+   * @var string
+   * @access public
+   */
+  public $description;
+
+  /**
+   * Survey Client.
+   * The client that requested this survey.
+   * @var string
+   * @access public
+   */
+  public $client;
+
+  /**
+   * Survey Gaol.
+   * The number of complete call tasks needed to consider the survey done.
+   * It merely informative. There're no logical implications.
+   * @var int
+   * @access public
+   */
+  public $goal;
 
   /**
    * Survey files.
@@ -156,7 +181,6 @@ class Survey_entity extends Entity {
   );
 
   /**
-<<<<<<< HEAD
    * Allowed statuses of a survey.
    *
    * @var array
@@ -171,8 +195,6 @@ class Survey_entity extends Entity {
   );
 
   /**
-=======
->>>>>>> master
    * Survey entity constructor
    *
    * @param array

@@ -52,9 +52,16 @@ $config['permissions'] = array(
   'edit any survey'           => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'create survey'             => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'delete any survey'         => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
-  'download survey files'     => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR, ROLE_CC_AGENT),
+  'download any survey files'     => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'assign agents'             => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
   'manage respondents any survey' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  
+  // Survey statistics. Permissions to allow some granularity.
+  // Agents without this permission will only see their own data.
+  'view survey stats - call tasks full table' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  'view survey stats - respondents progress' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  'view survey stats - calls placed' => array(ROLE_ADMINISTRATOR, ROLE_MODERATOR),
+  
   
   // Although this permission exists should no be used.
   // It allows non assigned users to collect data which should not happen.

@@ -87,8 +87,11 @@ class Fixtures extends CI_Controller {
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Meteor usage',
+        'client' => 'Flipside',
         'status' => 1,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
+        'description' => 'This survey will help us understand the reach of meteor.',
         'files' => array(
           'xls' => "survey_1_xls.xls",
           'xml' => "survey_1_xml.xml",
@@ -98,13 +101,17 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
         'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Handlebars vs something else',
+        'client' => 'Flipside',
         'status' => 2,
+        'goal' => 20,
         'introduction' => 'The text the user has to read.',
+        'description' => 'This survey description',
         'files' => array(
           'xls' => "survey_2_xls.xls",
           'xml' => "survey_2_xml.xml",
@@ -114,14 +121,18 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
         // Assign user 3 (agent)
         'agents' => array(3)
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Cat ladies around the neighborhood',
+        'client' => 'Flipside',
         'status' => 2,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
+        'description' => 'This survey description',
         'files' => array(
           'xls' => NULL,
           'xml' => NULL,
@@ -131,13 +142,17 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
         'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Knowledge of html',
+        'client' => 'Flipside',
         'status' => 2,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
+        'description' => 'This survey description',
         'files' => array(
           'xls' => NULL,
           'xml' => NULL,
@@ -147,13 +162,17 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
         'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Running out of titles',
+        'client' => 'The world',
         'status' => 3,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
+        'description' => 'This survey description',
         'files' => array(
           'xls' => NULL,
           'xml' => NULL,
@@ -163,13 +182,17 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
         'agents' => array(),
       ),
       array(
         'sid' => increment_counter('survey_sid'),
         'title' => 'Another survey',
+        'client' => 'The world',
         'status' => 99,
+        'goal' => NULL,
         'introduction' => 'The text the user has to read.',
+        'description' => NULL,
         'files' => array(
           'xls' => NULL,
           'xml' => NULL,
@@ -179,6 +202,7 @@ class Fixtures extends CI_Controller {
           )
         ),
         'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
         'agents' => array(),
       ),
     ));

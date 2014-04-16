@@ -83,9 +83,8 @@ class Survey extends CI_Controller {
       }
     }
 
-    $data = array(
-      'survey' => $survey
-    );
+    $data = array();
+    $data['survey'] = $survey;
 
     // Agents. Each array element contains the user and
     // properties for the select. (selected, disabled)
@@ -103,8 +102,108 @@ class Survey extends CI_Controller {
       }
 
     }
-
     $data['agents'] = $agents;
+    
+    // Call tasks, statistics and stuff.
+    // We need call tasks to compute the progress bars and the cal tasks tables.
+    // Instead of doing complicated aggregate queries for each one, we just get all
+    // the call tasks and extract all the data we need.
+    $all_call_tasks = $this->call_task_model->get_all($survey->sid);
+    
+    $call_tasks_status_bar = array(
+      'total' => count($all_call_tasks),
+      'success' => 0,
+      'failed' => 0,
+      'pending' => 0,
+      'remaining' => 0,
+    );
+    
+    // Prepare call tasks table by looping over assigned agents.
+    $call_tasks_table = array();
+    foreach ($survey->agents as $uid) {
+      $user = $this->user_model->get($uid);          
+      $call_tasks_table[$uid] = array(
+        'name' => $user->name,
+        'sum' => 0,
+        'success' => 0,
+        'failed' => 0,
+        'pending' => 0,
+      );
+    }
+    
+    // Prepare array for morris chart data.
+    $call_tasks_placed_calls = array(
+      'data' => array(),
+      'sum' => 0
+    );
+    foreach (Call_task_status::$labels as $status_code => $label) {
+      $call_tasks_placed_calls['data'][$status_code] = array(
+        'label' => $label,
+        'value' => 0
+      );
+    }
+    
+    // The mighty call tasks loop.
+    foreach ($all_call_tasks as $call_task) {
+      
+      // Compute call tasks status bar.
+      if ($call_task->is_unresolved()) {
+        $call_tasks_status_bar['pending']++;
+      }
+      else if ($call_task->is_success()) {
+        $call_tasks_status_bar['success']++;
+      }
+      else if ($call_task->is_failed()) {
+        $call_tasks_status_bar['failed']++;
+      }
+      else {
+        $call_tasks_status_bar['remaining']++;
+      }
+      // //END Compute call tasks status bar.
+      /**********************************************/
+      
+      // Prepare table data.
+      if ($call_task->is_assigned()) {
+        $uid = $call_task->assignee_uid;
+        
+        if (isset($call_tasks_table[$uid])) {
+          if ($call_task->is_unresolved()) {
+            $call_tasks_table[$uid]['pending']++;
+            $call_tasks_table[$uid]['sum']++;
+          }
+          else if ($call_task->is_success()) {
+            $call_tasks_table[$uid]['success']++;
+            $call_tasks_table[$uid]['sum']++;
+          }
+          else if ($call_task->is_failed()) {
+            $call_tasks_table[$uid]['failed']++;
+            $call_tasks_table[$uid]['sum']++;
+          }
+          // else
+          // Call tasks that are reserved (assigned but without activity)
+          // do not interest us. Skip them.
+        }
+        // else
+        // The agent was probably unassigned. just ignore it.
+      }
+      // //END Prepare table data.
+      /**********************************************/
+      
+      // Count call activity status for morris chart.
+      if (!empty($call_task->activity)) {
+        foreach ($call_task->activity as $status) {
+          $call_tasks_placed_calls['data'][$status->code]['value']++;
+          $call_tasks_placed_calls['sum']++;
+        }
+      }
+      // //END Count call activity status for morris chart.
+      /**********************************************/
+      
+    }
+
+    $data['call_tasks_status_bar'] = $call_tasks_status_bar;
+    $data['call_tasks_table'] = $call_tasks_table;
+    $data['call_tasks_placed_calls'] = $call_tasks_placed_calls;
 
     $this->load->view('base/html_start');
     $this->load->view('components/navigation', array('active_menu' => 'surveys'));
@@ -171,8 +270,11 @@ class Survey extends CI_Controller {
 
     // Set form validation rules.
     $this->form_validation->set_rules('survey_title', 'Survey Title', 'required');
+    $this->form_validation->set_rules('survey_client', 'Survey Client', 'required');
+    $this->form_validation->set_rules('survey_goal', 'Survey Goal', 'is_natural_no_zero');
     $this->form_validation->set_rules('survey_status', 'Survey Status', 'required|callback__cb_survey_status_valid');
     $this->form_validation->set_rules('survey_introduction', 'Survey Introduction', 'xss_clean');
+    $this->form_validation->set_rules('survey_description', 'Survey Description', 'xss_clean');
     $this->form_validation->set_rules('survey_file', 'Survey File', 'callback__cb_survey_file_handle');
 
     // If no data submitted show the form.
@@ -188,8 +290,11 @@ class Survey extends CI_Controller {
           // Prepare survey data to construct a new survey_entity
           $survey_data = array();
           $survey_data['title'] = $this->input->post('survey_title', TRUE);
+          $survey_data['client'] = $this->input->post('survey_client', TRUE);
+          $survey_data['goal'] = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
           $survey_data['status'] = (int) $this->input->post('survey_status');
           $survey_data['introduction'] = $this->input->post('survey_introduction', TRUE);
+          $survey_data['description'] = $this->input->post('survey_description', TRUE);
 
           // Construct survey.
           $new_survey = Survey_entity::build($survey_data);
@@ -234,8 +339,11 @@ class Survey extends CI_Controller {
 
           // Set data from form.
           $survey->title = $this->input->post('survey_title', TRUE);
+          $survey->client = $this->input->post('survey_client', TRUE);
+          $survey->goal = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
           $survey->status = (int) $this->input->post('survey_status');
           $survey->introduction = $this->input->post('survey_introduction', TRUE);
+          $survey->description = $this->input->post('survey_description', TRUE);
 
           // Handle uploaded file:
           $file = $this->input->post('survey_file');
@@ -303,7 +411,7 @@ class Survey extends CI_Controller {
    * /survey/:sid/files/(xls|xml)
    */
   public function survey_file_download($sid, $type) {
-    if (!has_permission('download survey files')) {
+    if (!has_permission('download any survey files')) {
       show_403();
     }
 

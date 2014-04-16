@@ -10,3 +10,9 @@
 [submodule "src/vendor/jquery-toastmessage"]
 	path = src/vendor/jquery-toastmessage
 	url = git@github.com:akquinet/jquery-toastmessage-plugin.git
+[submodule "src/vendor/morris"]
+	path = src/vendor/morris
+	url = git@github.com:morrisjs/morris.js.git
+[submodule "src/vendor/raphael"]
+	path = src/vendor/raphael
+	url = git@github.com:DmitryBaranovskiy/raphael.git

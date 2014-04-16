@@ -345,3 +345,9 @@
     margin-bottom: 0;
   }
 }
+
+[class*=' hd-'], [class^='hd-'] {
+  b {
+    font-weight: normal;
+  }
+}

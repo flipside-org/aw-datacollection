@@ -39,7 +39,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               </ul>
             </li>
             
-            <?php if (has_permission('download survey files')) : ?>
+            <?php if (has_permission('download any survey files')) : ?>
             <li>
               <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Export</a>
               <ul class="action-dropdown">
