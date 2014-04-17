@@ -34,22 +34,55 @@ class Survey extends CI_Controller {
   /**
    * Lists all surveys.
    * Route:
-   * /surveys
+   * /surveys/(draft|open|closed|canceled)
    */
-  public function surveys_list(){    
+  public function surveys_list($filter = NULL){    
     if (!has_permission('view survey list any') && !has_permission('view survey list assigned')) {
       show_403();
     }
 
     if (has_permission('view survey list any')) {
-      $surveys = $this->survey_model->get_all();
+      switch ($filter) {
+        case 'draft':
+          $allowed_statuses = array(Survey_entity::STATUS_DRAFT);
+          break;
+        case 'open':
+          $allowed_statuses = array(Survey_entity::STATUS_OPEN);
+          break;
+        case 'closed':
+          $allowed_statuses = array(Survey_entity::STATUS_CLOSED);
+          break;
+        case 'canceled':
+          $allowed_statuses = array(Survey_entity::STATUS_CANCELED);
+          break;
+        default:
+          $allowed_statuses = NULL;
+          break;
+      }
+      $surveys = $this->survey_model->get_all($allowed_statuses);
     }
     else if (has_permission('view survey list assigned')) {
-      $allowed_statuses = array(
-        Survey_entity::STATUS_OPEN,
-        Survey_entity::STATUS_CLOSED,
-        Survey_entity::STATUS_CANCELED
-      );
+      switch ($filter) {
+        case 'draft':
+          show_403();
+          break;
+        case 'open':
+          $allowed_statuses = array(Survey_entity::STATUS_OPEN);
+          break;
+        case 'closed':
+          $allowed_statuses = array(Survey_entity::STATUS_CLOSED);
+          break;
+        case 'canceled':
+          $allowed_statuses = array(Survey_entity::STATUS_CANCELED);
+          break;
+        default:
+          $allowed_statuses = array(
+            Survey_entity::STATUS_OPEN,
+            Survey_entity::STATUS_CLOSED,
+            Survey_entity::STATUS_CANCELED
+          );
+          break;
+      }
       $surveys = $this->survey_model->get_all($allowed_statuses, current_user()->uid);
     }
 
@@ -447,6 +480,13 @@ class Survey extends CI_Controller {
     }
     
     if ($this->survey_model->delete($sid)) {
+      // Remove files.
+      if (file_exists($survey->get_xls_full_path())) {
+        unlink($survey->get_xls_full_path());
+      }
+      if (file_exists($survey->get_xml_full_path())) {
+        unlink($survey->get_xml_full_path());
+      }
       Status_msg::success('Survey successfully deleted.');
     }
     else {

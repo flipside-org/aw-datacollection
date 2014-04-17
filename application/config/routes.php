@@ -44,6 +44,7 @@ $route['404_override'] = '';
 
 // CUSTOM ROUTES
 $route['surveys'] = 'survey/surveys_list';
+$route['surveys/(draft|open|closed|canceled)'] = 'survey/surveys_list/$1';
 $route['survey/add'] = 'survey/survey_add';
 $route['survey/(:num)'] = 'survey/survey_by_id/$1';
 $route['survey/(:num)/edit'] = 'survey/survey_edit_by_id/$1';

@@ -531,7 +531,7 @@ class Survey_entity extends Entity {
    *   The survey status in human readable format
    */
   public function get_status_label() {
-    if (!$this->status){
+    if ($this->status === NULL){
       return NULL;
     }
     return Survey_entity::$statuses[$this->status];
@@ -540,11 +540,14 @@ class Survey_entity extends Entity {
   /**
    * Returns the survey status for use as html class.
    *
+   * @param $prefix
+   *   Prefix to append to class
+   *
    * @return string
    *   The survey status for use as html class.
    */
   public function get_status_html_class($prefix = '') {
-    if (!$this->status){
+    if ($this->status === NULL){
       return NULL;
     }
     return $prefix . Survey_entity::$statuses_html_classes[$this->status];
