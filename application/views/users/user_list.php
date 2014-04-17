@@ -68,7 +68,7 @@
                           <?php endif; ?>
       
                           <?php if (has_permission('delete any account')) : ?>
-                          <li><?= anchor_csrf($user_entity->get_url_delete(), 'Delete', array('class' => 'danger')); ?></li>
+                          <li><?= anchor_csrf($user_entity->get_url_delete(), 'Delete', array('class' => 'danger', 'data-confirm-action' => 'Are you sure you want to delete: <em>' . $user_entity->name . '</em>?')) ?></li>
                           <?php endif; ?>
                         </ul>
                       </li>
