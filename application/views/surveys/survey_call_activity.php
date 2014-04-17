@@ -42,6 +42,12 @@
             
           </header>
 
+          <?php if (empty($call_tasks)): ?>
+            <div class="contained-empty">
+              <h1>Nothing to show</h1>
+              <p>There is no activity with the selected filter.</p>
+            </div>
+          <?php else : ?>
           <div class="contained-body">
             <table class="table-nested-4-col">
               <thead>
@@ -89,9 +95,9 @@
                 </tr>
               </tbody>
               <?php endforeach; ?>
-              
             </table>
           </div>
+          <?php endif; ?>
         </section>
       </div>
     </div>

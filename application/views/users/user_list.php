@@ -33,7 +33,13 @@
             </ul>
             
           </header>
-            
+          
+          <?php if (empty($users)): ?>
+            <div class="contained-empty">
+              <h1>Nothing to show</h1>
+              <p>There are no users with the selected filter.</p>
+            </div>
+          <?php else : ?>
           <div class="contained-body">
             <table>
               <thead>
@@ -72,21 +78,10 @@
                   </td>
                 </tr>
                 <?php endforeach; ?>
-                
-                <?php if (empty($users)): ?>
-                  <tr>
-                  	<td colspan="4">
-                      <div class="contained-empty">
-                        <h1>Nothing to show</h1>
-                        <p>There are no users with the selected filter.</p>
-                      </div>
-                  	</td>
-                  </tr>
-                <?php endif; ?>
-                
               </tbody>
             </table>
           </div>
+          <?php endif; ?> 
         </section>
       </div>
     </div>
