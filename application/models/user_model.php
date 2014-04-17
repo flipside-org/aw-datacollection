@@ -39,7 +39,7 @@ class User_model extends CI_Model {
    * @return array of User_entity
    */
   public function get_all($statuses = NULL) {
-    if ($statuses != NULL) {
+    if ($statuses !== NULL) {
       $statuses = !is_array($statuses) ? array($statuses) : $statuses;
       $this->mongo_db->whereIn('status', $statuses);
     }

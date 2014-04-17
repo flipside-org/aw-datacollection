@@ -423,14 +423,25 @@ class User extends CI_Controller {
    * List with all the users.
    * 
    * Route:
-   * /users
+   * /users/(active|blocked)
    */
-  public function users_list() {
+  public function users_list($filter = NULL) {
     if (!has_permission('view user list')) {
       show_403();
     }
     
-    $users = $this->user_model->get_all();
+    switch ($filter) {
+      case 'active':
+        $users = $this->user_model->get_all(User_entity::STATUS_ACTIVE);
+        break;
+      case 'blocked':
+        $users = $this->user_model->get_all(User_entity::STATUS_BLOCKED);
+        break;
+      
+      default:
+        $users = $this->user_model->get_all();
+        break;
+    }    
     
     $this->load->view('base/html_start');
     $this->load->view('components/navigation', array('active_menu' => 'users'));

@@ -42,6 +42,18 @@ class User_entity extends Entity {
     self::STATUS_BLOCKED => 'Blocked',
   );
   
+  /**
+   * Html classes for user status.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses_html_classes = array(
+    self::STATUS_ACTIVE  => 'status-active',
+    self::STATUS_BLOCKED => 'status-blocked',
+  );
+  
   /********************************
    ********************************
    * Start of user fields.
@@ -185,13 +197,24 @@ class User_entity extends Entity {
    */
   
   /**
-   * Builds the permissions for a user
+   * Builds the permissions for a user.
    * @param array $perms.
    *   The permission array form the config file.
    * @return this
    */
   public function set_permissions_array($perms) {
     $this->settings['permissions'] = $perms;
+    return $this;
+  }
+  
+  /**
+   * Sets roles labels for a user.
+   * @param array $labels.
+   *   The labes array form the config file.
+   * @return this
+   */
+  public function set_roles_labels($roles) {
+    $this->settings['roles_labels'] = $roles;
     return $this;
   }
   
@@ -212,7 +235,9 @@ class User_entity extends Entity {
     $CI = get_instance();
     
     // Inject dependencies.
-    $user->set_permissions_array($CI->config->item('permissions'));
+    $user
+      ->set_permissions_array($CI->config->item('permissions'))
+      ->set_roles_labels($CI->config->item('roles'));
     
     return $user;
   }
@@ -337,6 +362,54 @@ class User_entity extends Entity {
    */
   public function is_active() {
     return $this->status === User_entity::STATUS_ACTIVE;
+  }
+  
+  /**
+   * Returns the user status in human readable format.
+   *
+   * @return string
+   *   The user status in human readable format
+   */
+  public function get_status_label() {
+    if ($this->status === NULL){
+      return NULL;
+    }
+    return User_entity::$statuses[$this->status];
+  }
+
+  /**
+   * Returns the user status for use as html class.
+   *
+   * @param $prefix
+   *   Prefix to append to class
+   * 
+   * @return string
+   *   The user status for use as html class.
+   */
+  public function get_status_html_class($prefix = '') {
+    if ($this->status === NULL){
+      return NULL;
+    }
+    return $prefix . User_entity::$statuses_html_classes[$this->status];
+  }
+  
+  /**
+   * Returns the user roles in human readable format.
+   *
+   * @return string
+   *   The user roles in human readable format
+   */
+  public function get_roles_label() {
+    if (empty($this->roles)){
+      return array();
+    }
+    $roles = array();
+    foreach ($this->roles as $role) {
+      $roles[] = $this->settings['roles_labels'][$role];
+    }
+    
+    sort($roles);
+    return $roles;
   }
   
   /**

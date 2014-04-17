@@ -305,7 +305,8 @@
   }
 }
 
-.status-open {
+.status-open,
+.status-active {
   &:before {
     @extend %status-base;
     background-color: palette(green);
@@ -319,7 +320,8 @@
   }
 }
 
-.status-canceled {
+.status-canceled,
+.status-blocked {
   &:before {
     @extend %status-base;
     background-color: palette(red);

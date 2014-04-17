@@ -82,6 +82,7 @@ $route['user/(:num)/edit'] = 'user/user_edit_by_id/$1';
 $route['user/recover'] = 'user/user_recover_password';
 $route['user/reset_password/(:any)'] = 'user/user_reset_password/$1';
 $route['users'] = 'user/users_list';
+$route['users/(active|blocked)'] = 'user/users_list/$1';
 $route['user/add'] = 'user/user_add';
 $route['user/(:num)/delete'] = 'user/user_delete_by_id/$1';
 
