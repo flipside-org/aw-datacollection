@@ -136,7 +136,12 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     }
     
     // Enketo form stuff.
-    var $data = $(xml_form);
+    // XML Parser.
+    var parser = new DOMParser();
+    var $data = parser.parseFromString(xml_form, 'text/xml');
+    // Convert to jQuery object to allow find.
+    $data = $($data);
+    
     formStr = (new XMLSerializer() ).serializeToString($data.find( 'form:eq(0)' )[0]);
     modelStr = (new XMLSerializer() ).serializeToString($data.find( 'model:eq(0)' )[0]);
     
