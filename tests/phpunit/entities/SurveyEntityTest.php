@@ -68,6 +68,7 @@ class Survey_entity_test extends PHPUnit_Framework_TestCase
    */
   public function test_get_file_path() {
     $data = array(
+      'author' => 100,
       'title' => 'A survey',
       'files' => array(
         'xml' => 'survey_1_xml.xml',
@@ -78,6 +79,7 @@ class Survey_entity_test extends PHPUnit_Framework_TestCase
     $survey = new Survey_entity($data);
     
     $this->assertEquals('survey_1_xml.xml', $survey->get_xml_full_path());
+    $this->assertEquals(100, $survey->author);
     $this->assertFalse($survey->get_xls_full_path());
     
     $survey->set_file_location('file/location/');

@@ -82,7 +82,13 @@ class Survey_entity extends Entity {
    * @access public
    */
   public $updated = NULL;
-
+  
+  /**
+   * Survey author.
+   * @var int
+   */
+  public $author = NULL;
+  
   /**
    * Survey Id.
    * @var int

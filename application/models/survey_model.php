@@ -112,6 +112,10 @@ class Survey_model extends CI_Model {
     // Set update date:
     $entity->updated = $date;
     
+    if ($entity->author === NULL) {
+      $entity->author = current_user()->uid;
+    }
+    
     $prepared_data = array();
     foreach ($entity as $field_name => $field_value) {
       $prepared_data[$field_name] = $field_value;
