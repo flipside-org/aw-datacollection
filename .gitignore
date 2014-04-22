@@ -8,6 +8,7 @@ application/logs/*
 
 #User files
 files/*
+tests/tmp
 
 #System files
 .project

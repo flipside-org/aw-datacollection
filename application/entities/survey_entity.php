@@ -408,7 +408,7 @@ class Survey_entity extends Entity {
   }
 
   /**
-   * Returns the url to edit a survey.
+   * Saves the survey file to disk
    *
    * @access public
    * @param array $file_data

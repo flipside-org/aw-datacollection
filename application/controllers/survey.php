@@ -1293,10 +1293,53 @@ class Survey extends CI_Controller {
     // Was the survey completed?
     // If there's a form_data it's finished
     if (isset($respondent['form_data'])) {
-      // TODO: api_survey_enketo_form_submit : Check if the data is valid.
-
-      // TODO: api_survey_enketo_form_submit : Save the data.
-
+      // Check if the data is valid.
+      // Restore error handler to PHP to 'catch' libxml 'errors'
+      restore_error_handler();
+      libxml_use_internal_errors(true);
+      //clear any previous errors
+      libxml_clear_errors();
+      // Construct object.
+      $doc = simplexml_load_string($respondent['form_data']);
+      $errors = libxml_get_errors();
+      // Empty errors
+      libxml_clear_errors();
+      // Restore CI error handler
+      set_error_handler('_exception_handler');
+      
+      if (!empty($errors)) {
+        return $this->api_output(500, 'Invalid data.');
+      }
+      
+      // Load model
+      $this->load->model('survey_result_model');
+      
+      $survey_result_data = array(
+        'call_task_ctid' => $call_task->ctid,
+        'survey_sid' => $survey->sid
+      );
+      $survey_result = Survey_result_entity::build($survey_result_data);
+      
+      // Save result to get an ID
+      if (!$this->survey_result_model->save($survey_result)) {
+        // The data is valid but save failed.
+        return $this->api_output(201, 'Saving survey result failed.');
+      }
+      
+      // Save data to file.
+      $survey_result->save_xml($doc->asXML());
+      
+      // Save again.
+      // If the save files, delete file.
+      if (!$this->survey_result_model->save($survey_result)) {
+        // Attempt to delete the uploaded file.
+        if (file_exists($survey_result->get_xml_full_path())) {
+          unlink($survey_result->get_xml_full_path());
+        }
+        // The data is valid but save failed.
+        return $this->api_output(201, 'Saving survey result failed.');
+      }
+      
       // Set successful status.
       try {
         $call_task->add_status(Call_task_status::create(Call_task_status::SUCCESSFUL, ''));

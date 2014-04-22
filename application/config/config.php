@@ -372,6 +372,8 @@ $config['aw_mongo_counter_collection'] = 'counters';
 
 $config['aw_survey_files_location'] = './files/surveys/';
 
+$config['aw_survey_results_location'] = './files/survey_results/';
+
 $config['aw_pyxform_lib'] = './application/third_party/pyxform/';
 
 $config['aw_enketo_xslt_lib'] = './application/third_party/enketo-xslt/';
