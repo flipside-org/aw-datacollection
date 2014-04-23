@@ -1098,6 +1098,33 @@ class Survey extends CI_Controller {
     redirect($survey->get_url_respondents());
   }
 
+  public function survey_change_status($sid, $status) {
+    verify_csrf_get();
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    else if (!has_permission('change status any survey')) {
+      show_403();
+    }
+
+    if (!$survey->is_allowed_status_change($status)) {
+      show_error('Invalid status.');
+    }
+    
+    $survey->status = (int) $status;
+    
+    // Save.
+    if ($this->survey_model->save($survey)) {
+      Status_msg::success('Status successfully changed.');
+    }
+    else {
+      Status_msg::error('An error occurred when saving the survey. Please try again.');
+    }
+    
+    redirect($survey->get_url_view());
+  }
+  
   /**
    * Enketo API
    * Converts the survey xml file to html for enketo to use

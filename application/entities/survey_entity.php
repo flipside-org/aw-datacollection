@@ -38,6 +38,26 @@ class Survey_entity extends Entity {
   );
   
   /**
+   * Matrix for status changes of a survey.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses_matrix = array(
+    Survey_entity::STATUS_DRAFT => array(
+      Survey_entity::STATUS_OPEN, Survey_entity::STATUS_CANCELED
+    ),
+    Survey_entity::STATUS_OPEN => array(
+      Survey_entity::STATUS_CLOSED, Survey_entity::STATUS_CANCELED
+    ),
+    Survey_entity::STATUS_CLOSED => array(
+      Survey_entity::STATUS_CANCELED
+    ),
+    Survey_entity::STATUS_CANCELED => array(),
+  );
+  
+  /**
    * Html classes for survey status.
    * 
    * @var array
@@ -414,6 +434,18 @@ class Survey_entity extends Entity {
   }
 
   /**
+   * Returns the url to change status.
+   * @access public
+   * @return string
+   */
+  public function get_url_change_status($status) {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent survey.");
+    }
+    return base_url('survey/' . $this->sid . '/change_status/' . $status) ;
+  }
+
+  /**
    * Saves the survey file to disk
    *
    * @access public
@@ -485,9 +517,25 @@ class Survey_entity extends Entity {
 
     return $conversion_result;
   }
-
-  public static function is_valid_status($status) {
-    return array_key_exists($status, self::$statuses);
+  
+  /**
+   * Returns the allowed status changes for the survey.
+   * @param $status
+   *   The status code
+   * @return array
+   */
+  public function allowed_status_change() {
+    return Survey_entity::$statuses_matrix[$this->status];
+  }
+  
+  /**
+   * Checks if the given status is allowed
+   * @param $status
+   *   The status code
+   * @return boolean
+   */
+  public function is_allowed_status_change($status) {
+    return in_array($status, Survey_entity::$statuses_matrix[$this->status]);
   }
 
   /**
@@ -615,7 +663,46 @@ class Survey_entity extends Entity {
    ********************************
    * Start of private and protected methods.
    */
+   
+  /**
+   * Checks if the given status code is valid.
+   * @static
+   * @param $status
+   *   The status code
+   * @return boolean
+   */
+  public static function is_valid_status($status) {
+    return array_key_exists($status, self::$statuses);
+  }
+  
+  /**
+   * Returns the survey status in human readable format.
+   * 
+   * @param $status
+   *   Specific status to get the label for. Default to NULL
+   *
+   * @return string
+   *   The survey status in human readable format
+   */
+  public static function status_label($status) {
+    return isset(Survey_entity::$statuses[$status]) ? Survey_entity::$statuses[$status] : NULL;
+  }
 
+  /**
+   * Returns the survey status for use as html class.
+   *
+   * @param $prefix
+   *   Prefix to append to class
+   * @param $status
+   *   Specific status to get the class for. Default to NULL
+   *
+   * @return string
+   *   The survey status for use as html class.
+   */
+  public static function status_html_class($status, $prefix = '') {
+    return isset(Survey_entity::$statuses_html_classes[$status]) ? $prefix . Survey_entity::$statuses_html_classes[$status] : NULL;
+  }
+   
   /**
    * End of private and protected methods.
    *******************************/

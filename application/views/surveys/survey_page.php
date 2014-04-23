@@ -211,10 +211,12 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
       </div>
       
       <div class="columns small-6">
+        <?php if (has_permission('change status any survey') || has_permission('assign agents') || has_permission('download any survey files')) : ?>
         <section class="contained">
           <h1 class="visually-hidden">Settings</h1>
           <div class="contained-body">
             
+            <?php if (has_permission('change status any survey')) : ?>
             <article class="widget widget-bfc">
               <header class="widget-head">
                 <h1 class="hd-s">Status</h1>
@@ -222,15 +224,24 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               <div class="widget-body">
                 <ul class="bttn-toolbar">
                   <li>
-                    <a href="#" class="bttn bttn-default-light bttn-small bttn-dropdown status-open" data-dropdown="action-bttn">Draft</a>
+                    <?php $available_statuses = $survey->allowed_status_change();?>
+                    <a href="#" class="bttn bttn-default-light bttn-small bttn-dropdown <?= $survey->get_status_html_class() ?> <?= empty($available_statuses) ? 'disabled' : '' ?>" data-dropdown="action-bttn"><?= $survey->get_status_label() ?></a>
                     <ul class="action-dropdown for-bttn-small">
-                      <li><a href="#" class="status-open" data-confirm-action="Are you sure?" data-confirm-title="Title set by data attribute">Status 1</a></li>
-                      <li><a href="#" class="status-canceled" data-confirm-action="Are you sure?">Status 2</a></li>
+                      <?php foreach($available_statuses as $status_code) : ?>
+                      <li><?=
+                        anchor_csrf($survey->get_url_change_status($status_code), Survey_entity::status_label($status_code), array(
+                          'class' => Survey_entity::status_html_class($status_code),
+                          'data-confirm-action' => "Status changes are irreversible. Are you sure you want to change the status to <em>" . Survey_entity::status_label($status_code) . "</em>?",
+                          'data-confirm-title' => "Change survey status"
+                        ));
+                      ?></li>
+                      <?php endforeach; ?>
                     </ul>
                   </li>
                 </ul>
               </div>
             </article>
+            <?php endif; ?>
             
             <?php if (has_permission('assign agents')) : ?>
             <article class="widget widget-bfc">
@@ -278,6 +289,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             
           </div>
         </section>
+        <?php endif; ?>
         
         <?php if (has_permission('view survey stats - call tasks full table')) : ?>
           <section class="contained">
