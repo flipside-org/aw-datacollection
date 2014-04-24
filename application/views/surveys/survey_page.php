@@ -70,11 +70,13 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               <a href="" class="bttn bttn-success bttn-medium bttn-dropdown" data-dropdown="action-bttn">Run</a>
               <ul class="action-dropdown">
                 <?php if ($show_actions_enketo_testrun) :?>
-                <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Testrun</a></li>
+                <?php $disbled = !$survey->has_xml() || !$survey->status_allows('enketo collect data') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= $disbled; ?>">Testrun</a></li>
                 <?php endif; ?>
                 
                 <?php if ($show_actions_enketo_data_collection) :?>
-                <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Collect Data</a></li>
+                <?php $disbled = !$survey->has_xml() || !$survey->status_allows('enketo testrun') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= $disbled; ?>">Collect Data</a></li>
                 <?php endif; ?>
               </ul>
             </li>

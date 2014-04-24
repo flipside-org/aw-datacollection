@@ -137,7 +137,7 @@ class Survey_model extends CI_Model {
       $result = $this->mongo_db
         ->set($prepared_data)
         ->where('sid', $entity->sid)
-        ->update(self::COLLECTION);
+        ->update(self::COLLECTION, array('upsert' => TRUE));
       
       return $result !== FALSE ? TRUE : FALSE;
     }

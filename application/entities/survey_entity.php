@@ -18,58 +18,6 @@
  * IMPORTANT: Only use public field for fields that need to be saved to mongodb
  */
 class Survey_entity extends Entity {
-  const STATUS_DRAFT = 1;
-  const STATUS_OPEN = 2;
-  const STATUS_CLOSED = 3;
-  const STATUS_CANCELED = 99;
-  
-  /**
-   * Statuses of a survey.
-   * 
-   * @var array
-   * @access public
-   * @static
-   */
-  static $statuses = array(
-    Survey_entity::STATUS_DRAFT => 'Draft',
-    Survey_entity::STATUS_OPEN => 'Open',
-    Survey_entity::STATUS_CLOSED => 'Closed',
-    Survey_entity::STATUS_CANCELED => 'Canceled',
-  );
-  
-  /**
-   * Matrix for status changes of a survey.
-   * 
-   * @var array
-   * @access public
-   * @static
-   */
-  static $statuses_matrix = array(
-    Survey_entity::STATUS_DRAFT => array(
-      Survey_entity::STATUS_OPEN, Survey_entity::STATUS_CANCELED
-    ),
-    Survey_entity::STATUS_OPEN => array(
-      Survey_entity::STATUS_CLOSED, Survey_entity::STATUS_CANCELED
-    ),
-    Survey_entity::STATUS_CLOSED => array(
-      Survey_entity::STATUS_CANCELED
-    ),
-    Survey_entity::STATUS_CANCELED => array(),
-  );
-  
-  /**
-   * Html classes for survey status.
-   * 
-   * @var array
-   * @access public
-   * @static
-   */
-  static $statuses_html_classes = array(
-    Survey_entity::STATUS_DRAFT => 'status-draft',
-    Survey_entity::STATUS_OPEN => 'status-open',
-    Survey_entity::STATUS_CLOSED => 'status-closed',
-    Survey_entity::STATUS_CANCELED => 'status-canceled',
-  );
 
   /********************************
    ********************************
@@ -192,6 +140,64 @@ class Survey_entity extends Entity {
   /**
    * End of survey fields.
    *******************************/
+   
+  const STATUS_DRAFT = 1;
+  const STATUS_OPEN = 2;
+  const STATUS_CLOSED = 3;
+  const STATUS_CANCELED = 99;
+  
+  /**
+   * Statuses of a survey.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses = array(
+    Survey_entity::STATUS_DRAFT => 'Draft',
+    Survey_entity::STATUS_OPEN => 'Open',
+    Survey_entity::STATUS_CLOSED => 'Closed',
+    Survey_entity::STATUS_CANCELED => 'Canceled',
+  );
+  
+  /**
+   * Html classes for survey status.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses_html_classes = array(
+    Survey_entity::STATUS_DRAFT => 'status-draft',
+    Survey_entity::STATUS_OPEN => 'status-open',
+    Survey_entity::STATUS_CLOSED => 'status-closed',
+    Survey_entity::STATUS_CANCELED => 'status-canceled',
+  );
+  
+  /**
+   * Matrix for status changes of a survey.
+   * 
+   * @var array
+   * @access public
+   * @static
+   */
+  static $statuses_matrix = array(
+    Survey_entity::STATUS_DRAFT => array(
+      Survey_entity::STATUS_OPEN, Survey_entity::STATUS_CANCELED
+    ),
+    Survey_entity::STATUS_OPEN => array(
+      Survey_entity::STATUS_CLOSED, Survey_entity::STATUS_CANCELED
+    ),
+    Survey_entity::STATUS_CLOSED => array(
+      Survey_entity::STATUS_CANCELED
+    ),
+    Survey_entity::STATUS_CANCELED => array(),
+  );
+  
+  /**
+   * Status restrictions.
+   */
+  protected $status_restrictions = NULL;
 
   /**
    * Setting passed to the Survey entity.
@@ -203,21 +209,8 @@ class Survey_entity extends Entity {
    * @access private
    */
   protected $settings = array(
-    'file_loc' => ''
-  );
-
-  /**
-   * Allowed statuses of a survey.
-   *
-   * @var array
-   * @access public
-   * @static
-   */
-  static $allowed_status = array(
-    1 => 'Draft',
-    2 => 'Open',
-    3 => 'Closed',
-    99 => 'Canceled'
+    'file_loc' => '',
+    'status_restriction' => array(),
   );
 
   /**
@@ -261,7 +254,18 @@ class Survey_entity extends Entity {
   public function set_file_location($loc) {
     $this->settings['file_loc'] = $loc;
   }
-
+  
+  /**
+   * Stores the status restriction for a survey.
+   * @param array $perms.
+   *   The status restriction array form the config file.
+   * @return this
+   */
+  public function set_status_restrictions_array($perms) {
+    $this->settings['status_restrictions'] = $perms;
+    return $this;
+  }
+  
   /**
    * Creates Survey_entity injecting dependencies.
    * Input params must be the same as in the __construct
@@ -277,9 +281,13 @@ class Survey_entity extends Entity {
   public static function build($survey_data) {
     $survey = new Survey_entity($survey_data);
     $CI = get_instance();
+    
+    $CI->config->load('status_restrictions');
 
     // Inject dependencies.
-    $survey->set_file_location($CI->config->item('aw_survey_files_location'));
+    $survey
+      ->set_status_restrictions_array($CI->config->item('status_restrictions'))
+      ->set_file_location($CI->config->item('aw_survey_files_location'));
 
     return $survey;
   }
@@ -654,7 +662,23 @@ class Survey_entity extends Entity {
     }
     return FALSE;
   }
-
+  
+  /**
+   * Checks if the given action is available to the survey taking
+   * it status into account.
+   * @access public
+   * @param string $perm
+   *   The permission to check.
+   * @return boolean
+   */
+  public function status_allows($perm) {
+    // Only build status_restrictions once.
+    if ($this->status_restrictions === NULL) {
+      $this->_build_status_restrictions();
+    }
+    return in_array($perm, $this->status_restrictions);
+  }
+  
   /**
    * End of public methods.
    *******************************/
@@ -664,6 +688,22 @@ class Survey_entity extends Entity {
    * Start of private and protected methods.
    */
    
+   /**
+    * Builds the status restrictions. In the config files the permissions
+    * are grouped by name. We loop through all the permissions to check
+    * which are available to the survey.
+    * @access private
+    */
+   protected function _build_status_restrictions() {
+     $restrictions = array();
+     foreach ($this->settings['status_restrictions'] as $status_restrictions_name => $status_restrictions_affected_status) {
+       if (in_array($this->status, $status_restrictions_affected_status)) {
+         $restrictions[] = $status_restrictions_name;
+       }
+     }
+     $this->status_restrictions = $restrictions;
+   }
+
   /**
    * Checks if the given status code is valid.
    * @static
