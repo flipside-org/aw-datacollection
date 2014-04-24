@@ -1,0 +1,1786 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>survey_3_xls</h:title>
+    <model>
+      <instance>
+        <survey_3_xls id="survey_3_xls">
+          <start/>
+          <end/>
+          <q0_1/>
+          <q0_2/>
+          <note_consent/>
+          <note_consent1/>
+          <note_consent2/>
+          <q0_3/>
+          <q0_4/>
+          <q0_5/>
+          <q1>
+            <q1_1/>
+            <q1_2/>
+            <q1_3a/>
+            <q1_3b/>
+            <q1_4a/>
+            <q1_4b/>
+          </q1>
+          <q2>
+            <q2_note/>
+            <q2_1a_1/>
+            <q2_1a_2/>
+            <q2_1b/>
+            <q2_2a/>
+            <q2_2b/>
+            <q2_3/>
+            <q2_4/>
+            <q2_5/>
+            <q2_6/>
+            <q2_6_other/>
+            <q2_7/>
+            <q2_7_other/>
+            <q2_8/>
+            <q2_9/>
+            <q2_9_other/>
+            <q2_10/>
+          </q2>
+          <q3>
+            <q3_note/>
+            <q3_1/>
+            <q3_2/>
+            <q3_3/>
+            <q3_4a/>
+            <q3_4b/>
+          </q3>
+          <q4>
+            <q4_note/>
+            <q4_1a/>
+            <q4_1a_other/>
+            <q4_1b/>
+            <q4_2/>
+            <q4_2_other/>
+            <q4_3/>
+            <q4_4/>
+            <q4_5a/>
+            <q4_5b/>
+            <q4_6a/>
+            <q4_6b/>
+            <q4_7/>
+            <q4_8a/>
+            <q4_8b/>
+            <q4_9/>
+            <q4_10/>
+            <q4_11a/>
+            <q4_11b/>
+            <q4_12/>
+          </q4>
+          <q5>
+            <q5_note/>
+            <q5_1a/>
+            <q5_1b/>
+            <q5_1b_other/>
+          </q5>
+          <q6>
+            <q6_note/>
+            <q6_1/>
+            <q6_2/>
+            <q6_3/>
+            <q6_4/>
+          </q6>
+          <q7>
+            <q7_note/>
+            <q7_1a/>
+            <battery_powered_devices jr:template="">
+              <q7_1b/>
+              <q7_1b_other/>
+              <q7_2/>
+              <q7_3/>
+              <q7_4/>
+              <note_battery_powered_devices/>
+            </battery_powered_devices>
+          </q7>
+          <q8>
+            <q8_note/>
+            <q8_1/>
+            <q8_2/>
+            <q8_3a/>
+            <q8_3b/>
+            <q8_4/>
+            <q8_5a/>
+            <q8_5b/>
+            <q8_5b_other/>
+            <q8_6/>
+            <q8_7/>
+            <q8_8/>
+            <q8_8_other/>
+            <q8_9/>
+            <q8_9_other/>
+            <q8_10/>
+            <q8_10a/>
+            <q8_10b/>
+            <q8_10c/>
+            <q8_10d/>
+            <q8_10e/>
+            <q8_10f/>
+            <q8_10g/>
+            <q8_10h/>
+            <q8_10i/>
+            <q8_10j/>
+            <q8_10k/>
+          </q8>
+          <conclusion/>
+          <meta>
+            <instanceID/>
+          </meta>
+        </survey_3_xls>
+      </instance>
+      <bind jr:preload="timestamp" jr:preloadParams="start" nodeset="/survey_3_xls/start" type="dateTime"/>
+      <bind jr:preload="timestamp" jr:preloadParams="end" nodeset="/survey_3_xls/end" type="dateTime"/>
+      <bind nodeset="/survey_3_xls/q0_1" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q0_2" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/note_consent" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/note_consent1" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/note_consent2" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q0_3" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q0_4" relevant=" /survey_3_xls/q0_3  = '1'" type="select1"/>
+      <bind nodeset="/survey_3_xls/q0_5" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q1" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q1/q1_1" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q1/q1_2" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q1/q1_3a" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q1/q1_3b" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q1/q1_4a" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q1/q1_4b" relevant=" /survey_3_xls/q1/q1_4a  = '1'" required="true()" type="select"/>
+      <bind nodeset="/survey_3_xls/q2" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q2/q2_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q2/q2_1a_1" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q2/q2_1a_2" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q2/q2_1b" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q2/q2_2a" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q2/q2_2b" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q2/q2_3" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q2/q2_4" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q2/q2_5" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q2/q2_6" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q2/q2_6_other" relevant=" /survey_3_xls/q2/q2_6  = '5'" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q2/q2_7" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q2/q2_7_other" relevant=" /survey_3_xls/q2/q2_7  = '10'" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q2/q2_8" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q2/q2_9" type="select"/>
+      <bind nodeset="/survey_3_xls/q2/q2_9_other" relevant="selected( /survey_3_xls/q2/q2_9 , '6')" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q2/q2_10" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q3" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q3/q3_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q3/q3_1" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q3/q3_2" relevant=" /survey_3_xls/q3/q3_1  = '1'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q3/q3_3" relevant=" /survey_3_xls/q3/q3_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q3/q3_4a" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q3/q3_4b" relevant=" /survey_3_xls/q3/q3_4a  = '1'" required="true()" type="select"/>
+      <bind nodeset="/survey_3_xls/q4" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q4/q4_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q4/q4_1a" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q4/q4_1a_other" relevant=" /survey_3_xls/q4/q4_1a  = '10'" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q4/q4_1b" relevant=" /survey_3_xls/q4/q4_1a  = '11'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q4/q4_2" relevant=" /survey_3_xls/q4/q4_1a  = '9'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q4/q4_2_other" relevant=" /survey_3_xls/q4/q4_2  = '10'" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q4/q4_3" relevant="not( /survey_3_xls/q4/q4_1a  = '11')" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_4" relevant="not( /survey_3_xls/q4/q4_1a  = '11') and not( /survey_3_xls/q4/q4_1a  = '9')" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_5a" relevant=" /survey_3_xls/q4/q4_1a  = '1' or  /survey_3_xls/q4/q4_1a  = '2'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_5b" relevant=" /survey_3_xls/q4/q4_1a  = '1' or  /survey_3_xls/q4/q4_1a  = '2'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q4/q4_6a" relevant=" /survey_3_xls/q4/q4_1a  = '1' or  /survey_3_xls/q4/q4_1a  = '2'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_6b" relevant=" /survey_3_xls/q4/q4_1a  = '1' or  /survey_3_xls/q4/q4_1a  = '2'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_7" relevant=" /survey_3_xls/q4/q4_1a  = '1' or  /survey_3_xls/q4/q4_1a  = '2'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q4/q4_8a" relevant=" /survey_3_xls/q4/q4_1a  = '1' or  /survey_3_xls/q4/q4_1a  = '2'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_8b" relevant=" /survey_3_xls/q4/q4_1a  = '1' or  /survey_3_xls/q4/q4_1a  = '2'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_9" relevant=" /survey_3_xls/q4/q4_1a  = '3' or  /survey_3_xls/q4/q4_1a  = '4'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_10" relevant=" /survey_3_xls/q4/q4_1a  = '3' or  /survey_3_xls/q4/q4_1a  = '4'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q4/q4_11a" relevant=" /survey_3_xls/q4/q4_1a  = '3' or  /survey_3_xls/q4/q4_1a  = '4'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_11b" relevant=" /survey_3_xls/q4/q4_1a  = '3' or  /survey_3_xls/q4/q4_1a  = '4'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q4/q4_12" relevant=" /survey_3_xls/q4/q4_1a  = '5' or  /survey_3_xls/q4/q4_1a  = '6' or  /survey_3_xls/q4/q4_1a  = '7' or  /survey_3_xls/q4/q4_1a  = '8' or  /survey_3_xls/q4/q4_1a  = '10'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q5" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q5/q5_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q5/q5_1a" relevant="not( /survey_3_xls/q4/q4_1a  = '11')" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q5/q5_1b" relevant=" /survey_3_xls/q5/q5_1a  = '2'" required="true()" type="select"/>
+      <bind nodeset="/survey_3_xls/q5/q5_1b_other" relevant="selected( /survey_3_xls/q5/q5_1b , '5')" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q6" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q6/q6_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q6/q6_1" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q6/q6_2" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q6/q6_3" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q6/q6_4" relevant=" /survey_3_xls/q6/q6_3  = '7' or  /survey_3_xls/q6/q6_3  = '8' or  /survey_3_xls/q6/q6_3  = '9'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q7" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q7/q7_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q7/q7_1a" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q7/battery_powered_devices" relevant=" /survey_3_xls/q7/q7_1a  = '1'" required="true()"/>
+      <bind nodeset="/survey_3_xls/q7/battery_powered_devices/q7_1b" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q7/battery_powered_devices/q7_1b_other" relevant=" /survey_3_xls/q7/battery_powered_devices/q7_1b  = '6'" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q7/battery_powered_devices/q7_2" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q7/battery_powered_devices/q7_3" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q7/battery_powered_devices/q7_4" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q7/battery_powered_devices/note_battery_powered_devices" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q8" relevant=" /survey_3_xls/q0_4  = '1'"/>
+      <bind nodeset="/survey_3_xls/q8/q8_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q8/q8_1" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_2" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_3a" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_3b" relevant=" /survey_3_xls/q8/q8_1  = '1' and  /survey_3_xls/q8/q8_3a  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_4" relevant=" /survey_3_xls/q8/q8_1  = '1' and  /survey_3_xls/q8/q8_3a  = '1'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q8/q8_5a" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_5b" relevant=" /survey_3_xls/q8/q8_1  = '1' and  /survey_3_xls/q8/q8_5a  = '2'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_5b_other" relevant=" /survey_3_xls/q8/q8_1  = '1' and  /survey_3_xls/q8/q8_5b  = '7'" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q8/q8_6" relevant=" /survey_3_xls/q8/q8_5a  = '1'" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/q8/q8_7" relevant=" /survey_3_xls/q8/q8_5a  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_8" relevant=" /survey_3_xls/q8/q8_5a  = '1'" required="true()" type="select"/>
+      <bind nodeset="/survey_3_xls/q8/q8_8_other" relevant=" /survey_3_xls/q8/q8_5a  = '1' and selected( /survey_3_xls/q8/q8_8 , '15')" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q8/q8_9" relevant=" /survey_3_xls/q8/q8_5a  = '1'" required="true()" type="select"/>
+      <bind nodeset="/survey_3_xls/q8/q8_9_other" relevant="selected( /survey_3_xls/q8/q8_9 , '5')" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10" readonly="true()" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="string"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10a" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10b" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10c" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10d" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10e" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10f" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10g" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10h" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10i" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10j" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/q8/q8_10k" relevant=" /survey_3_xls/q8/q8_1  = '1'" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/conclusion" readonly="true()" type="string"/>
+      <bind calculate="concat('uuid:', uuid())" nodeset="/survey_3_xls/meta/instanceID" readonly="true()" type="string"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/survey_3_xls/q0_1">
+      <label>Phone number of the respondent</label>
+      <hint>Please provide the phone number of the respondent (eg. 256779618452)</hint>
+    </input>
+    <select1 ref="/survey_3_xls/q0_2">
+      <label>Name of enumerator</label>
+      <item>
+        <label>Leah Nabilah</label>
+        <value>1</value>
+      </item>
+      <item>
+        <label>Stella Nankya</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>Martha Namara</label>
+        <value>3</value>
+      </item>
+      <item>
+        <label>Humphrey Okullu</label>
+        <value>4</value>
+      </item>
+      <item>
+        <label>Walter Owinja</label>
+        <value>5</value>
+      </item>
+    </select1>
+    <input ref="/survey_3_xls/note_consent">
+      <label>I am [name of interviewer] and I am from an NGO called [TTC], and we are conducting a research project in your locality. The purpose of this project is to measure people’s knowledge, attitudes about, and practices regarding solar light.</label>
+    </input>
+    <input ref="/survey_3_xls/note_consent1">
+      <label>This survey will take about 20 minutes. Participation in this survey is completely voluntary, and you may stop giving information at any point in time. If you accept to complete this survey, your answers will be used to get a better understanding of the use of and need for solar energy in your locality.</label>
+    </input>
+    <input ref="/survey_3_xls/note_consent2">
+      <label>All information that you provide is completely confidential and will be used only for research purposes. We will NOT share this information with any other organization. If you complete the survey, we will thank you with 1,000 UGX of airtime.</label>
+    </input>
+    <select1 ref="/survey_3_xls/q0_3">
+      <label>Do you agree to participate in this survey?</label>
+      <item>
+        <label>Yes</label>
+        <value>1</value>
+      </item>
+      <item>
+        <label>No</label>
+        <value>2</value>
+      </item>
+    </select1>
+    <select1 ref="/survey_3_xls/q0_4">
+      <label>Are you either the head of the household, or the spouse of the head of the household?</label>
+      <item>
+        <label>Yes</label>
+        <value>1</value>
+      </item>
+      <item>
+        <label>No</label>
+        <value>2</value>
+      </item>
+    </select1>
+    <select1 ref="/survey_3_xls/q0_5">
+      <label>Do you give permission to be contacted more often to participate in similar surveys?</label>
+      <item>
+        <label>Yes</label>
+        <value>1</value>
+      </item>
+      <item>
+        <label>No</label>
+        <value>2</value>
+      </item>
+    </select1>
+    <group ref="/survey_3_xls/q1">
+      <label>1. Interview details and identification</label>
+      <select1 ref="/survey_3_xls/q1/q1_1">
+        <label>1.1 Language of interview</label>
+        <item>
+          <label>Acholi</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>English</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Luo</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Luganda</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Runyankole</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Runyoro</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Kinyarwanda</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Rukonjo</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Rutooro</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Kwanba</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>Kiswahili</label>
+          <value>11</value>
+        </item>
+        <item>
+          <label>Arabic</label>
+          <value>12</value>
+        </item>
+        <item>
+          <label>Other (please specify)</label>
+          <value>13</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q1/q1_2">
+        <label>1.2 Respondent's home location</label>
+        <item>
+          <label>Gulu -&gt; Aswa County -&gt; Awach</label>
+          <value>502301</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Aswa County -&gt; Bungatira</label>
+          <value>502302</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Aswa County -&gt; Paicho</label>
+          <value>502303</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Aswa County -&gt; Palaro</label>
+          <value>502304</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Aswa County -&gt; Patiko</label>
+          <value>502305</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Aswa County -&gt; Unyama</label>
+          <value>502306</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Omoro County -&gt; Bobi</label>
+          <value>502601</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Omoro County -&gt; Koro</label>
+          <value>502602</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Omoro County -&gt; Lakwana</label>
+          <value>502603</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Omoro County -&gt; Lalogi</label>
+          <value>502604</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Omoro County -&gt; Odek</label>
+          <value>502605</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Omoro County -&gt; Ongako</label>
+          <value>502606</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Gulu Municipality -&gt; BarDege</label>
+          <value>502701</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Gulu Municipality -&gt; Laroo</label>
+          <value>502702</value>
+        </item>
+        <item>
+          <label>Gulu -&gt; Gulu Municipality -&gt; Layibi</label>
+          <value>502703</value>
+        </item>
+        <item>
+          <label>Nwoya -&gt; Nwoya County -&gt; Alero</label>
+          <value>11002501</value>
+        </item>
+        <item>
+          <label>Nwoya -&gt; Nwoya County -&gt; Anaka (Payira</label>
+          <value>11002502</value>
+        </item>
+        <item>
+          <label>Nwoya -&gt; Nwoya County -&gt; Koch-Goma</label>
+          <value>11002503</value>
+        </item>
+        <item>
+          <label>Nwoya -&gt; Nwoya County -&gt; Purongo</label>
+          <value>11002504</value>
+        </item>
+        <item>
+          <label>Nwoya -&gt; Nwoya County -&gt; Anaka Town Council</label>
+          <value>11002505</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q1/q1_3a">
+        <label>1.3a Given name</label>
+        <hint>Of the respondent</hint>
+      </input>
+      <input ref="/survey_3_xls/q1/q1_3b">
+        <label>1.3b Family name</label>
+        <hint>Of the respondent</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q1/q1_4a">
+        <label>1.4a Do you share this phone with other members of your household?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select ref="/survey_3_xls/q1/q1_4b">
+        <label>1.4b Which other members of your household also use this phone?</label>
+        <hint>List all that apply</hint>
+        <item>
+          <label>Respondent</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Spouse</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Son / daughter</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Son / daughter in law</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Grandson / daughter</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Parent</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Brother / sister</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Nephew / niece</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Nephew / niece of spouse</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Cousin</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>Brother / sister in law</label>
+          <value>11</value>
+        </item>
+        <item>
+          <label>Parent in law</label>
+          <value>12</value>
+        </item>
+        <item>
+          <label>Other relative</label>
+          <value>13</value>
+        </item>
+        <item>
+          <label>Other, no relation</label>
+          <value>14</value>
+        </item>
+      </select>
+    </group>
+    <group ref="/survey_3_xls/q2">
+      <label>2. Socioeconomic and Demographic information</label>
+      <input ref="/survey_3_xls/q2/q2_note">
+        <label>Now I would like to ask you some more questions about yourself and your household.</label>
+      </input>
+      <input ref="/survey_3_xls/q2/q2_1a_1">
+        <label>2.1a What is the given name of the head of your household?</label>
+      </input>
+      <input ref="/survey_3_xls/q2/q2_1a_2">
+        <label>2.1a What is the family name of the head of your household?</label>
+      </input>
+      <select1 ref="/survey_3_xls/q2/q2_1b">
+        <label>2.1b What is the relationship of the head of the household to you?</label>
+        <item>
+          <label>Respondent</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Spouse</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Son / daughter</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Son / daughter in law</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Grandson / daughter</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Parent</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Brother / sister</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Nephew / niece</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Nephew / niece of spouse</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Cousin</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>Brother / sister in law</label>
+          <value>11</value>
+        </item>
+        <item>
+          <label>Parent in law</label>
+          <value>12</value>
+        </item>
+        <item>
+          <label>Other relative</label>
+          <value>13</value>
+        </item>
+        <item>
+          <label>Other, no relation</label>
+          <value>14</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q2/q2_2a">
+        <label>2.2a How many people live in your household on a permanent basis?</label>
+      </input>
+      <input ref="/survey_3_xls/q2/q2_2b">
+        <label>2.2b How many children under 16 years of age live in your household on a permanent basis?</label>
+        <hint>Including those in boarding school</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q2/q2_3">
+        <label>2.3 What is your gender?</label>
+        <item>
+          <label>Male</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Female</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q2/q2_4">
+        <label>2.4 How old are you?</label>
+        <hint>To the nearest year</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q2/q2_5">
+        <label>2.5 What is your highest education level achieved?</label>
+        <item>
+          <label>Never attended</label>
+          <value>0</value>
+        </item>
+        <item>
+          <label>P1</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>P2</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>P3</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>P4</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>P5</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>P6</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>P7</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Technical school</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>S1 / Junior 1</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>S2 / Junior 2</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>S3</label>
+          <value>11</value>
+        </item>
+        <item>
+          <label>S4</label>
+          <value>12</value>
+        </item>
+        <item>
+          <label>Tertiary after O level</label>
+          <value>13</value>
+        </item>
+        <item>
+          <label>S5</label>
+          <value>14</value>
+        </item>
+        <item>
+          <label>S6</label>
+          <value>15</value>
+        </item>
+        <item>
+          <label>Some university</label>
+          <value>16</value>
+        </item>
+        <item>
+          <label>University degree</label>
+          <value>17</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q2/q2_6">
+        <label>2.6 What is your marital status?</label>
+        <item>
+          <label>single</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>married</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>seperated</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>widow/er</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Other (specify)</label>
+          <value>5</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q2/q2_6_other">
+        <label>2.6 Please specify 'other'</label>
+      </input>
+      <select1 ref="/survey_3_xls/q2/q2_7">
+        <label>2.7 What is your occupation?</label>
+        <item>
+          <label>Farmer (own land)</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Farmer (rent land)</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Wage worker (labourer)</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Fisher (wo)man</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Pastoralist</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Small scale business owner</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Domestic work</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Irregular employment</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Unemployed</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Other (please specify)</label>
+          <value>10</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q2/q2_7_other">
+        <label>2.7 Please specify 'other'</label>
+      </input>
+      <input ref="/survey_3_xls/q2/q2_8">
+        <label>2.8 What is your household's average monthly income?</label>
+        <hint>In UGX</hint>
+      </input>
+      <select ref="/survey_3_xls/q2/q2_9">
+        <label>2.9 During the last 12 months, what were the sources of your household income?</label>
+        <hint>List all that apply</hint>
+        <item>
+          <label>Own job / work</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Money from other HH members' jobs / work</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Interest on savings / rent on assets</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Remittances / money from family or friends outside HH</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Governmental financial support</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Other (please specify)</label>
+          <value>6</value>
+        </item>
+      </select>
+      <input ref="/survey_3_xls/q2/q2_9_other">
+        <label>2.9 Please specify 'other'</label>
+      </input>
+      <select1 ref="/survey_3_xls/q2/q2_10">
+        <label>2.10 Within your household, who decides on household expenditure?</label>
+        <item>
+          <label>Men only</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Women only</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Both men and women</label>
+          <value>3</value>
+        </item>
+      </select1>
+    </group>
+    <group ref="/survey_3_xls/q3">
+      <label>3. Access to Electricity</label>
+      <input ref="/survey_3_xls/q3/q3_note">
+        <label>Now I would like to ask you some questions about your access to electricity</label>
+      </input>
+      <select1 ref="/survey_3_xls/q3/q3_1">
+        <label>3.1 Is your household currently connected to the main power grid (UMEME)?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Don't know</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q3/q3_2">
+        <label>3.2 How much do you pay for electricity each month?</label>
+        <hint>In UGX</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q3/q3_3">
+        <label>3.3 How often do you experience power cuts?</label>
+        <item>
+          <label>Daily</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Several times a week</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Once a week</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Once a month</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Once every three months</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Once every six months</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Once a year</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Never</label>
+          <value>8</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q3/q3_4a">
+        <label>3.4a Do you currently have any electrical appliances in your household?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select ref="/survey_3_xls/q3/q3_4b">
+        <label>3.4b What appliances / devices are these?</label>
+        <hint>List all that apply</hint>
+        <item>
+          <label>Clock</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Coil water heater</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Computer</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Cooker</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Deep fat fryer</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Dishwasher</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>DVD player</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Electric kettle</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Fan</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Grill</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>Hair straightener / curler</label>
+          <value>11</value>
+        </item>
+        <item>
+          <label>Iron</label>
+          <value>12</value>
+        </item>
+        <item>
+          <label>Lamp</label>
+          <value>13</value>
+        </item>
+        <item>
+          <label>Microwave oven</label>
+          <value>14</value>
+        </item>
+        <item>
+          <label>Radio</label>
+          <value>15</value>
+        </item>
+        <item>
+          <label>Refrigerator</label>
+          <value>16</value>
+        </item>
+        <item>
+          <label>Sewing machine</label>
+          <value>17</value>
+        </item>
+        <item>
+          <label>Shaver / hair clippers</label>
+          <value>18</value>
+        </item>
+        <item>
+          <label>Television</label>
+          <value>19</value>
+        </item>
+        <item>
+          <label>Toaster</label>
+          <value>20</value>
+        </item>
+        <item>
+          <label>Tumble dryer</label>
+          <value>21</value>
+        </item>
+        <item>
+          <label>Vacuum cleaner</label>
+          <value>22</value>
+        </item>
+        <item>
+          <label>Warming plate</label>
+          <value>23</value>
+        </item>
+        <item>
+          <label>Washing machine</label>
+          <value>24</value>
+        </item>
+        <item>
+          <label>Water heater (for showers)</label>
+          <value>25</value>
+        </item>
+      </select>
+    </group>
+    <group ref="/survey_3_xls/q4">
+      <label>4. Light usage</label>
+      <input ref="/survey_3_xls/q4/q4_note">
+        <label>Now I would like to ask you some questions about how you light your home</label>
+      </input>
+      <select1 ref="/survey_3_xls/q4/q4_1a">
+        <label>4.1a What do you usually use to light your home at night?</label>
+        <item>
+          <label>Laput (or tadooba; locally made paraffin lamp)</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Tara; lantern with glass cover using paraffn / kerosene</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Candle</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Wood fire</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Solar lamp</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Light connected to solar panel</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Battery operated torch</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Battery operated lantern</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Light connected to mains (UMEME)</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Other (specify)</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>Nothing - my home is usually not lit at night</label>
+          <value>11</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q4/q4_1a_other">
+        <label>4.1a Please specify 'other'</label>
+      </input>
+      <select1 ref="/survey_3_xls/q4/q4_1b">
+        <label>4.1b Why doesn't your household use a light during the night?</label>
+        <item>
+          <label>We do not need a light</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>We do not own a light</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Our light is not charged</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Our light does not have fuel</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Other</label>
+          <value>5</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q4/q4_2">
+        <label>4.2 What is your source of light at night when you experience power cuts?</label>
+        <item>
+          <label>None</label>
+          <value>0</value>
+        </item>
+        <item>
+          <label>Laput (or tadooba; locally made paraffin lamp)</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Tara; lantern with glass cover using paraffn / kerosene</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Candle</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Wood fire</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Solar lamp</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Light connected to solar panel</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Battery operated torch</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Battery operated lantern</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Light connected to mains (UMEME)</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Other (specify)</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>Nothing - my home is usually not at night</label>
+          <value>11</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q4/q4_2_other">
+        <label>4.2 Please specify</label>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_3">
+        <label>4.3 How many hours do you usually use the [primary light source] to light your home each night?</label>
+        <hint>To the nearest hour</hint>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_4">
+        <label>4.4 How many [primary light source] do you use each night?</label>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_5a">
+        <label>4.5a How much did you pay for the laput / tara when you last purchased it?</label>
+        <hint>In UGX</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q4/q4_5b">
+        <label>4.5b How often do you have to replace the laput / tara?</label>
+        <item>
+          <label>Once a week</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Once a month</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Once every three months</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Once every six months</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Once a year</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Less than once a year</label>
+          <value>6</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q4/q4_6a">
+        <label>4.6a How much kerosene or paraffin, in liters, do you use each month?</label>
+        <hint>In liters</hint>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_6b">
+        <label>4.6b How much do you spend on kerosene / paraffin each month?</label>
+        <hint>In UGX</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q4/q4_7">
+        <label>4.7 How far from your home is the place where you purchase kerosene or paraffin?</label>
+        <item>
+          <label>0 - 5 kilometers</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>5 - 20 kilometers</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>more than 20 kilometers</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q4/q4_8a">
+        <label>4.8a How much does it cost you to travel to and from this place?</label>
+        <hint>In UGX</hint>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_8b">
+        <label>4.8b How many times every month do you or someone in your household make this trip?</label>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_9">
+        <label>4.9 How much do you spend on candles / wood bundles each month?</label>
+        <hint>In UGX</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q4/q4_10">
+        <label>4.10 How far from your home is the place where you purchase (or collect) the candles or wood bundles?</label>
+        <item>
+          <label>0 - 5 kilometers</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>5 - 20 kilometers</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>more than 20 kilometers</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q4/q4_11a">
+        <label>4.11a How much does it cost you to travel to and from this place?</label>
+        <hint>In UGX</hint>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_11b">
+        <label>4.11b How many times every month do you or someone in your household make this trip?</label>
+      </input>
+      <input ref="/survey_3_xls/q4/q4_12">
+        <label>4.12 How much did you pay for the [solar lamp / panel / torch / lantern / other] when you last purchased it?</label>
+        <hint>In UGX (99 = didn't purchase it)</hint>
+      </input>
+    </group>
+    <group ref="/survey_3_xls/q5">
+      <label>5. Amount of light</label>
+      <input ref="/survey_3_xls/q5/q5_note">
+        <label>Now I would like to ask you some questions about your opinion of how well lit your home is.</label>
+      </input>
+      <select1 ref="/survey_3_xls/q5/q5_1a">
+        <label>5.1a On a typical night when lighting your home with the [primary light source], do you feel your home is sufficiently lit?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select ref="/survey_3_xls/q5/q5_1b">
+        <label>5.1b You consider your home insufficiently lit because...</label>
+        <hint>Read options, check all that apply</hint>
+        <item>
+          <label>Some rooms that needed light did not have light</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>In rooms that had light, the light was not bright enough</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>The lights were not on / lit for long enough</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Umeme power cuts</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Other (specify)</label>
+          <value>5</value>
+        </item>
+      </select>
+      <input ref="/survey_3_xls/q5/q5_1b_other">
+        <label>5.1b Please specify 'other'</label>
+      </input>
+    </group>
+    <group ref="/survey_3_xls/q6">
+      <label>6. Mobile phones</label>
+      <input ref="/survey_3_xls/q6/q6_note">
+        <label>Now I would like to ask you some questions about the mobile phone(s) in your household.</label>
+      </input>
+      <input ref="/survey_3_xls/q6/q6_1">
+        <label>6.1 How many mobile phones does your household currently own?</label>
+      </input>
+      <input ref="/survey_3_xls/q6/q6_2">
+        <label>6.2 For one phone, how many times do you have to charge each week?</label>
+      </input>
+      <select1 ref="/survey_3_xls/q6/q6_3">
+        <label>6.3 What is the primary way these mobile phones are charged?</label>
+        <item>
+          <label>Home, mains or generator</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Home, solar panel</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Home, solar lamp</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Friend or family home, mains or generator</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Friend or family home, solar panel</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Friend or family home, solar lamp</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Charging station, mains or generator</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Charging station, solar panel</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Charging station, solar lamp</label>
+          <value>9</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q6/q6_4">
+        <label>6.4 How much does it cost for one charge at the charging station?</label>
+        <hint>In UGX</hint>
+      </input>
+    </group>
+    <group ref="/survey_3_xls/q7">
+      <label>7. Devices using batteries</label>
+      <input ref="/survey_3_xls/q7/q7_note">
+        <label>Now I would like to ask you some questions about devices used by your household that use batteries</label>
+      </input>
+      <select1 ref="/survey_3_xls/q7/q7_1a">
+        <label>7.1a Does your household currently use any devices that are powered by or use battery?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <group ref="/survey_3_xls/q7/battery_powered_devices">
+        <label>Battery powered device</label>
+        <repeat nodeset="/survey_3_xls/q7/battery_powered_devices">
+          <select1 ref="/survey_3_xls/q7/battery_powered_devices/q7_1b">
+            <label>7.1b What device is this?</label>
+            <item>
+              <label>Clock</label>
+              <value>1</value>
+            </item>
+            <item>
+              <label>Flashlight (torch)</label>
+              <value>2</value>
+            </item>
+            <item>
+              <label>Lamp / lantern</label>
+              <value>3</value>
+            </item>
+            <item>
+              <label>Radio</label>
+              <value>4</value>
+            </item>
+            <item>
+              <label>Shaver / hair clippers</label>
+              <value>5</value>
+            </item>
+            <item>
+              <label>Other (specify)</label>
+              <value>6</value>
+            </item>
+          </select1>
+          <input ref="/survey_3_xls/q7/battery_powered_devices/q7_1b_other">
+            <label>Please specify</label>
+          </input>
+          <input ref="/survey_3_xls/q7/battery_powered_devices/q7_2">
+            <label>7.2 How many batteries does this device use?</label>
+          </input>
+          <input ref="/survey_3_xls/q7/battery_powered_devices/q7_3">
+            <label>7.3 How many times in one month do you have to replace the batteries of this device?</label>
+          </input>
+          <input ref="/survey_3_xls/q7/battery_powered_devices/q7_4">
+            <label>7.4 How much is spent on batteries each month for this device?</label>
+            <hint>In UGX</hint>
+          </input>
+          <input ref="/survey_3_xls/q7/battery_powered_devices/note_battery_powered_devices">
+            <label>You can add more devices by clicking the '+'</label>
+          </input>
+        </repeat>
+      </group>
+    </group>
+    <group ref="/survey_3_xls/q8">
+      <label>8. Solar lamps</label>
+      <input ref="/survey_3_xls/q8/q8_note">
+        <label>Now I would like to ask you some questions about solar lamps.</label>
+      </input>
+      <select1 ref="/survey_3_xls/q8/q8_1">
+        <label>8.1 Are you familiar with (know of, have heard of) solar lamps/lanterns?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_2">
+        <label>8.2 Do you or anyone in your household own a solar lamp / lantern?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_3a">
+        <label>8.3a Do you know where you can purchase a solar lamp / lantern?</label>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_3b">
+        <label>8.3b How far is your home from the place where you purchase a solar lamp / lantern?</label>
+        <item>
+          <label>0 - 5 kilometers</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>5 - 20 kilometers</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>more than 20 kilometers</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q8/q8_4">
+        <label>8.4 How much does it cost to purchase a solar lamp at this place?</label>
+        <hint>In UGX</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q8/q8_5a">
+        <label>8.5a Are you interested in purchasing a solar lamp sometime in the future?</label>
+        <hint>Or another device if you already own one</hint>
+        <item>
+          <label>Yes</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_5b">
+        <label>8.5b Why not?</label>
+        <item>
+          <label>I do not need a solar lamp</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>The lighting devices I am using are good</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Too expensive</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>I don't know the products well enough</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>The product is not good quality</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>I already have a solar lamp</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Other (specify)</label>
+          <value>7</value>
+        </item>
+      </select1>
+      <input ref="/survey_3_xls/q8/q8_5b_other">
+        <label>8.5b Please specify other</label>
+      </input>
+      <input ref="/survey_3_xls/q8/q8_6">
+        <label>8.6 How much would you spend / are you comfortable to pay for a solar lamp / lantern?</label>
+        <hint>In UGX</hint>
+      </input>
+      <select1 ref="/survey_3_xls/q8/q8_7">
+        <label>8.7 What would be your preferable payment method?</label>
+        <hint>Please read the options</hint>
+        <item>
+          <label>Pay all at once</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Pay in installments</label>
+          <value>2</value>
+        </item>
+      </select1>
+      <select ref="/survey_3_xls/q8/q8_8">
+        <label>8.8 What about solar lamps (what features) makes you want to purchase the device?</label>
+        <hint>Check all that apply</hint>
+        <item>
+          <label>They save money</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Brightness of light</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Wide outreach light</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Easy to use</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Easy to repair</label>
+          <value>5</value>
+        </item>
+        <item>
+          <label>Durability of the product</label>
+          <value>6</value>
+        </item>
+        <item>
+          <label>Charges quickly</label>
+          <value>7</value>
+        </item>
+        <item>
+          <label>Once changed, can be used for a long time</label>
+          <value>8</value>
+        </item>
+        <item>
+          <label>Can use in variety of positions (on table, hanging, etc)</label>
+          <value>9</value>
+        </item>
+        <item>
+          <label>Better for health than other types of light</label>
+          <value>10</value>
+        </item>
+        <item>
+          <label>Good for the environment</label>
+          <value>11</value>
+        </item>
+        <item>
+          <label>Will help households to do things at night</label>
+          <value>12</value>
+        </item>
+        <item>
+          <label>Can be used to charge mobile phones</label>
+          <value>13</value>
+        </item>
+        <item>
+          <label>Can be used to power electrical applicanes</label>
+          <value>14</value>
+        </item>
+        <item>
+          <label>Other (specify)</label>
+          <value>15</value>
+        </item>
+      </select>
+      <input ref="/survey_3_xls/q8/q8_8_other">
+        <label>8.8 Please specify other</label>
+      </input>
+      <select ref="/survey_3_xls/q8/q8_9">
+        <label>8.9 If you purchased a solar lamp, what would you or members of your household use it for?</label>
+        <item>
+          <label>General lighting</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Charging phones</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Powering appliances</label>
+          <value>3</value>
+        </item>
+        <item>
+          <label>Backup light source</label>
+          <value>4</value>
+        </item>
+        <item>
+          <label>Other (specify)</label>
+          <value>5</value>
+        </item>
+      </select>
+      <input ref="/survey_3_xls/q8/q8_9_other">
+        <label>8.9 Please specify other</label>
+      </input>
+      <input ref="/survey_3_xls/q8/q8_10">
+        <label>8.10 Please indicate if you agree or disagree with these statements about solar lamps</label>
+      </input>
+      <select1 ref="/survey_3_xls/q8/q8_10a">
+        <label>8.10a Solar lamps save money</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10b">
+        <label>8.10b Solar lamps are affordable to purchase</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10c">
+        <label>8.10c Solar lamps give off a bright light</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10d">
+        <label>8.10d Solar lamps are able to light a large area</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10e">
+        <label>8.10e Solar lamps are easy to use</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10f">
+        <label>8.10f Solar lamps are easy to repair if they break</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10g">
+        <label>8.10g Solar lamps are durable (they don't break easily)</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10h">
+        <label>8.10h Solar lamps charge quickly</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10i">
+        <label>8.10i When fully charged, solar lamps can be used for a long time before they need to be recharged</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10j">
+        <label>8.10j Solar lamps are better for your health than other types of lamps or light sources</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+      <select1 ref="/survey_3_xls/q8/q8_10k">
+        <label>8.10k Solar lamps are good for the environment</label>
+        <item>
+          <label>Agree</label>
+          <value>1</value>
+        </item>
+        <item>
+          <label>Neutral</label>
+          <value>2</value>
+        </item>
+        <item>
+          <label>Disagree</label>
+          <value>3</value>
+        </item>
+      </select1>
+    </group>
+    <input ref="/survey_3_xls/conclusion">
+      <label>Thank you for your time</label>
+    </input>
+  </h:body>
+</h:html>
