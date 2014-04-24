@@ -100,13 +100,16 @@ class User_model_test extends PHPUnit_Framework_TestCase
   
   public function test_get_all() {
     $users = self::$CI->user_model->get_all();
-    $this->assertCount(5, $users);
+    $this->assertCount(4, $users);
     
     $users = self::$CI->user_model->get_all(User_entity::STATUS_ACTIVE);
     $this->assertCount(3, $users);
     
     $users = self::$CI->user_model->get_all(array(User_entity::STATUS_BLOCKED, User_entity::STATUS_DELETED));
-    $this->assertCount(2, $users);
+    $this->assertCount(1, $users);
+    
+    $users = self::$CI->user_model->get_all(array(User_entity::STATUS_DELETED));
+    $this->assertCount(0, $users);
   }
   
   public function test_get_user_by_uid() {
@@ -120,6 +123,9 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $user_three = self::$CI->user_model->get('abc');
     $this->assertFalse($user_three);
+    
+    $user_deleted = self::$CI->user_model->get(4);
+    $this->assertFalse($user_deleted);
   }
   
   public function test_get_user_by_username() {
@@ -131,6 +137,9 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $user_two = self::$CI->user_model->get_by_username('abc');
     $this->assertFalse($user_two);
+    
+    $user_deleted = self::$CI->user_model->get_by_username('deleted');
+    $this->assertFalse($user_deleted);
   }
   
   public function test_get_user_by_email() {
@@ -142,6 +151,9 @@ class User_model_test extends PHPUnit_Framework_TestCase
     
     $user_two = self::$CI->user_model->get_by_email('abc');
     $this->assertFalse($user_two);
+    
+    $user_deleted = self::$CI->user_model->get_by_email('deleted@airwolf.dev');
+    $this->assertFalse($user_deleted);
   }
   
   public function test_get_with_role() {
@@ -165,12 +177,17 @@ class User_model_test extends PHPUnit_Framework_TestCase
     $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED);
     $this->assertCount(3, $users);
     
+    // It's not possible to get users with deleted status.
     $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED, array(User_entity::STATUS_BLOCKED, User_entity::STATUS_DELETED));
-    $this->assertCount(2, $users);
+    $this->assertCount(1, $users);
+    
+    // It's not possible to get users with deleted status.
+    $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED, array(User_entity::STATUS_DELETED));
+    $this->assertCount(0, $users);
     
     // When statuses is null, the status is ignored.
     $users = self::$CI->user_model->get_with_role(ROLE_REGISTERED, NULL);
-    $this->assertCount(5, $users);
+    $this->assertCount(4, $users);
   }
   
   /**
@@ -228,8 +245,8 @@ class User_model_test extends PHPUnit_Framework_TestCase
   }
   
   public function test_unique() {
-    $this->assertTrue(self::$CI->user_model->check_unique('username', 'non_existen_user'));
     $this->assertFalse(self::$CI->user_model->check_unique('username', 'admin'));
+    $this->assertTrue(self::$CI->user_model->check_unique('username', 'non_existen_user'));
     
     $this->assertTrue(self::$CI->user_model->check_unique('email', 'new_user_email@localhost.dev'));
     $this->assertFalse(self::$CI->user_model->check_unique('email', 'admin@localhost.dev'));
@@ -237,6 +254,9 @@ class User_model_test extends PHPUnit_Framework_TestCase
     // Invalid fields should return true.
     // It's not in the scope of the function to check field validity.
     $this->assertTrue(self::$CI->user_model->check_unique('invalid_field', 'nothing'));
+    
+    // Users with deleted status behave like if they didn't exist.
+    $this->assertTrue(self::$CI->user_model->check_unique('username', 'deleted'));
   }
 }
 
