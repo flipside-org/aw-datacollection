@@ -41,6 +41,7 @@ $config['permissions'] = array(
   // Users.
   'edit own account'  => array(ROLE_REGISTERED),
   'edit any account'  => array(ROLE_ADMINISTRATOR),
+  'delete any account'  => array(ROLE_ADMINISTRATOR),
   'create account'    => array(ROLE_ADMINISTRATOR),
   'view user list'    => array(ROLE_ADMINISTRATOR),
   

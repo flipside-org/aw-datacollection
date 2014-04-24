@@ -44,6 +44,7 @@ $route['404_override'] = '';
 
 // CUSTOM ROUTES
 $route['surveys'] = 'survey/surveys_list';
+$route['surveys/(draft|open|closed|canceled)'] = 'survey/surveys_list/$1';
 $route['survey/add'] = 'survey/survey_add';
 $route['survey/(:num)'] = 'survey/survey_by_id/$1';
 $route['survey/(:num)/edit'] = 'survey/survey_edit_by_id/$1';
@@ -82,7 +83,9 @@ $route['user/(:num)/edit'] = 'user/user_edit_by_id/$1';
 $route['user/recover'] = 'user/user_recover_password';
 $route['user/reset_password/(:any)'] = 'user/user_reset_password/$1';
 $route['users'] = 'user/users_list';
+$route['users/(active|blocked)'] = 'user/users_list/$1';
 $route['user/add'] = 'user/user_add';
+$route['user/(:num)/delete'] = 'user/user_delete_by_id/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

@@ -79,9 +79,9 @@ module.exports = function(grunt) {
             'src/bower_components/foundation/js/foundation/foundation.js',
             //'src/bower_components/foundation/js/foundation/foundation.abide.js',
             //'src/bower_components/foundation/js/foundation/foundation.accordion.js',
-            'src/bower_components/foundation/js/foundation/foundation.clearing.js',
-            'src/bower_components/foundation/js/foundation/foundation.dropdown.js',
-            'src/bower_components/foundation/js/foundation/foundation.interchange.js',
+              //'src/bower_components/foundation/js/foundation/foundation.clearing.js',
+              //'src/bower_components/foundation/js/foundation/foundation.dropdown.js',
+              //'src/bower_components/foundation/js/foundation/foundation.interchange.js',
             //'src/bower_components/foundation/js/foundation/foundation.joyride.js',
             //'src/bower_components/foundation/js/foundation/foundation.magellan.js',
             //'src/bower_components/foundation/js/foundation/foundation.offcanvas.js',
@@ -89,7 +89,7 @@ module.exports = function(grunt) {
             //'src/bower_components/foundation/js/foundation/foundation.reveal.js',
             //'src/bower_components/foundation/js/foundation/foundation.tab.js',
             //'src/bower_components/foundation/js/foundation/foundation.tooltips.js',
-            'src/bower_components/foundation/js/foundation/foundation.topbar.js',
+              //'src/bower_components/foundation/js/foundation/foundation.topbar.js',
 
             // Site scripts.
             'src/vendor/chosen/chosen.jquery.min.js',

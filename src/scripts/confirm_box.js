@@ -6,7 +6,7 @@
       <a href="#" class="confirm-close confirm-icon-close"><span class="visually-hidden">Close</span></a>
     </header>
     <div class="confirm-box-body">
-      <p class="confirm_message">Are you sure?</p>
+      <p class="confirm-message">Are you sure?</p>
     </div>
     <footer class="confirm-box-foot">
       <ul class="bttn-toolbar">
@@ -34,7 +34,7 @@ var confirmBox = function(msg, options) {
   var $close_bttn = $confirm_box.find('.confirm-close');
   
   // Set message.
-  $confirm_box.find('.confirm-message').text(msg);
+  $confirm_box.find('.confirm-message').html(msg);
 
   // Other properties if set.
   if (settings.title) {

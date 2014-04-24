@@ -14,14 +14,21 @@
       </header>
       
       <div class="contained-body">
-        <?= validation_errors(); ?>
         <?= form_open(); ?>
         
+          <div class="form-control">
           <?= form_label('Email', 'user_email'); ?>
-          <?= form_input('user_email', set_value('user_email')); ?>
-          
-          <?= form_submit('user_submit', 'Save'); ?>
-        
+          <?= form_input('user_email', set_value('user_email'), 'id="user_email"'); ?>
+          <?= form_error('user_email'); ?>
+        </div>
+        <?= form_button(array(
+          'type' => 'submit',
+          'name' => 'user_submit',
+          'id' => 'user_submit',
+          'value' => 'user_submit',
+          'class' => 'bttn bttn-success bttn-medium',
+          'content' => 'Recover password'));
+        ?>
         <?= form_close(); ?>
       </div>
       

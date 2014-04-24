@@ -14,19 +14,28 @@
       </header>
       
       <div class="contained-body">
-      <?= validation_errors(); ?>
       <?= form_open(); ?>
-      
-        <?= form_label('New Password', 'user_new_password'); ?>
-        <?= form_password('user_new_password'); ?>
-        <?= form_label('New Password Confirmation', 'user_new_password_confirm'); ?>
-        <?= form_password('user_new_password_confirm'); ?>
+        <div class="form-control">
+          <?= form_label('New Password', 'user_new_password'); ?>
+          <?= form_password('user_new_password', '', 'id="user_new_password"'); ?>
+          <?= form_error('user_new_password'); ?>
+        </div>
         
-        <?= form_submit('user_submit', 'Save'); ?>
-      
+        <div class="form-control">
+          <?= form_label('New Password Confirmation', 'user_new_password_confirm'); ?>
+          <?= form_password('user_new_password_confirm', '', 'id="user_new_password_confirm"'); ?>
+          <?= form_error('user_new_password_confirm'); ?>
+        </div>
+        <?= form_button(array(
+          'type' => 'submit',
+          'name' => 'user_submit',
+          'id' => 'user_submit',
+          'value' => 'user_submit',
+          'class' => 'bttn bttn-success bttn-medium',
+          'content' => 'Reset password'));
+        ?>
       <?= form_close(); ?>
       </div>
-      
     </section>
     
     </div>

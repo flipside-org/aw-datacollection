@@ -25,7 +25,7 @@
   
   .contained-head, .contained-foot {
     position: relative;
-    @include clearfix();
+    @extend .clearfix;
     background-color: palette(grey, dark);
     color: palette(grey);
     padding: rem-calc(16 32);
@@ -76,6 +76,7 @@
   
   .contained-body {
     margin: rem-calc(0 -32 0 -32);
+    @extend .clearfix;
   }
   
   table {

@@ -466,11 +466,13 @@ class Call_task_model extends CI_Model {
     }
     
     if ($entity->is_new()) {
+      // Add new properties.
       $entity->ctid = increment_counter(self::COUNTER_COLLECTION);
-      $prepared_data['ctid'] = $entity->ctid;
-      // Set creation date:
-      $prepared_data['created'] = $date;
+      $entity->created = clone $date;
       
+      // Add properties to prepared_data.
+      $prepared_data['ctid'] = $entity->ctid;
+      $prepared_data['created'] = $entity->created;
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
       return $result !== FALSE ? TRUE : FALSE;

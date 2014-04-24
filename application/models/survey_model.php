@@ -116,13 +116,14 @@ class Survey_model extends CI_Model {
     foreach ($entity as $field_name => $field_value) {
       $prepared_data[$field_name] = $field_value;
     }
-    
     if ($entity->is_new()) {
+      // Add new properties.
       $entity->sid = increment_counter(self::COUNTER_COLLECTION);
-      $prepared_data['sid'] = $entity->sid;
-      // Set creation date:
-      $prepared_data['created'] = $date;
+      $entity->created = clone $date;
       
+      // Add properties to prepared_data.
+      $prepared_data['sid'] = $entity->sid;
+      $prepared_data['created'] = $entity->created;
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
       return $result !== FALSE ? TRUE : FALSE;

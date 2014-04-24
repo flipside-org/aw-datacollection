@@ -305,7 +305,8 @@
   }
 }
 
-.status-open {
+.status-open,
+.status-active {
   &:before {
     @extend %status-base;
     background-color: palette(green);
@@ -319,7 +320,8 @@
   }
 }
 
-.status-canceled {
+.status-canceled,
+.status-blocked {
   &:before {
     @extend %status-base;
     background-color: palette(red);
@@ -378,6 +380,19 @@
   
   form {
     margin: rem-calc(32 32 0 32);
+  }
+  
+  .contained-head {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    
+    .hd-s {
+      border: none;
+    }
+  }
+  
+  .bttn {
+    float: right;
   }
 }
 

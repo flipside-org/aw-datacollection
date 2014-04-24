@@ -13,6 +13,9 @@
               <strong class="bttn-sector">Add Respondents</strong>
             </li>
             <li>
+              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="respondents_add_submit">Import</a>
+            </li>
+            <li>
               <a href="<?= $survey->get_url_respondents(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
             </li>
           </ul>
@@ -22,24 +25,36 @@
     </header>
 
     <div class="content">
-
-
-
-    <?= validation_errors(); ?>
-    <?= form_open_multipart(); ?>
-    
-    <h2>Add respondents</h2>
-    
-    <?php if ($import_type == 'direct') : ?>
-      <?= form_label('Respondents Text', 'survey_respondents_text'); ?>
-      <?= form_textarea('survey_respondents_text', implode("\n", $invalid_respondents)); ?>
-    <?php else: ?>
-      <?= form_upload('survey_respondents_file'); ?>
-    <?php endif; ?>
+      <?= form_open_multipart(); ?>
+      <div class="columns small-12">
+        <fieldset class="contained">
+          <div class="form-control">
+          <?php if ($import_type == 'direct') : ?>
+            <?= form_label('Direct import', 'survey_respondents_text'); ?>
+            <?= form_textarea('survey_respondents_text', implode("\n", $invalid_respondents), 'id="survey_respondents_text"'); ?>
+            <p class="help-text">Insert on number per line</p>
+            <?= form_error('survey_respondents_text'); ?>
+            
+          <?php else: ?>
+            <?= form_label('File import', 'survey_respondents_file'); ?>
+            <?= form_upload('survey_respondents_file', '', 'id="survey_respondents_file"'); ?>
+            <?= form_error('survey_respondents_file'); ?>
+            
+          <?php endif; ?>
+          </div>
+        </fieldset>
+      </div>
       
-    <?= form_submit('survey_respondents_submit', 'Add respondents'); ?>
-  
-  <?= form_close(); ?>
+      <?= form_button(array(
+        'type' => 'submit',
+        'name' => 'respondents_add_submit',
+        'id' => 'respondents_add_submit',
+        'value' => 'respondents_add_submit',
+        'class' => 'hide',
+        'content' => 'Import respondents'));
+      ?>
+      
+      <?= form_close(); ?>  
   
     </div>
   </section>

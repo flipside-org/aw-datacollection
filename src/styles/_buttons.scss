@@ -1,24 +1,26 @@
 /* Generic link styles */
-a:link,
-a:visited {
-  color: palette(blue);
-  @include transform(translate3d(0, 0, 0));
-  @include transition-property(opacity, top, left, right);
-  @include transition-duration(0.2s, 0.1s, 0.2s, 0.2s);
-  @include transition-timing-function(ease, ease, ease, ease);
-  @include transition-delay(0, 0, 0, 0);
-  cursor: pointer;
-}
-
-a:hover,
-a:focus {
-  outline: none;
-  opacity: 0.7;
-}
-
-a:active {
-  position: relative;
-  top: 2px;
+a, button {
+  &:link,
+  &:visited {
+    color: palette(blue);
+    @include transform(translate3d(0, 0, 0));
+    @include transition-property(opacity, top, left, right);
+    @include transition-duration(0.2s, 0.1s, 0.2s, 0.2s);
+    @include transition-timing-function(ease, ease, ease, ease);
+    @include transition-delay(0, 0, 0, 0);
+    cursor: pointer;
+  }
+  
+  &:hover,
+  &:focus {
+    outline: none;
+    opacity: 0.7;
+  }
+  
+  &:active {
+    position: relative;
+    top: 2px;
+  }
 }
 /* // Generic link styles */
 
@@ -112,7 +114,10 @@ a:active {
 
 /* Button colors */
 .bttn-primary {
-  @include button-skin(palette(blue));
+  @include button-skin(palette(blue));  
+  &:hover, &:focus {
+    @include button-skin(palette(blue));
+  }
   
   &:active, &.current {
     @include button-skin(palette(blue), 'active');
@@ -120,6 +125,9 @@ a:active {
 }
 .bttn-success {
   @include button-skin(palette(green));
+  &:hover, &:focus {
+    @include button-skin(palette(green));
+  }
   
   &:active, &.current {
     @include button-skin(palette(green), 'active');
@@ -127,6 +135,9 @@ a:active {
 }
 .bttn-danger {
   @include button-skin(palette(red));
+  &:hover, &:focus {
+    @include button-skin(palette(red));
+  }
   
   &:active, &.current {
     @include button-skin(palette(red), 'active');
@@ -134,6 +145,9 @@ a:active {
 }
 .bttn-default {
   @include button-skin(palette(grey, mid-dark), $tint_prc: 10%);
+  &:hover, &:focus {
+    @include button-skin(palette(grey, mid-dark), $tint_prc: 10%);
+  }
   
   &:active, &.current {
     @include button-skin(palette(grey, mid-dark), $status: 'active', $tint_prc: 10%);
@@ -147,6 +161,9 @@ a:active {
   }
   
   @include button-skin(palette(grey, x-light), $tint_prc: 10%);
+  &:hover, &:focus {
+    @include button-skin(palette(grey, x-light), $tint_prc: 10%);
+  }
   
   &:active, &.current {
     @include button-skin(palette(grey, x-light), $status: 'active', $tint_prc: 10%);
@@ -216,17 +233,18 @@ a:active {
   }
 }
 
-a.disabled {
-  opacity: 0.4;
-  cursor: default;
-  
-  &:active {
-    position: static;
-    top: 0;
+a, button {
+  &.disabled {
     opacity: 0.4;
+    cursor: default;
+    
+    &:active {
+      position: static;
+      top: 0;
+      opacity: 0.4;
+    }
   }
 }
-
 /* Dropdown */
 .action-dropdown {
   min-width: rem-calc(200);

@@ -33,15 +33,19 @@ class User_model extends CI_Model {
    *   providing all the statuses.
    *   By default only returns all users.
    * 
+   * Note: Users with deleted status will never be returned. They are left 
+   * in the database for consistency reasons but they are deleted.
+   * 
    * @return array of User_entity
    */
   public function get_all($statuses = NULL) {
-    if ($statuses != NULL) {
+    if ($statuses !== NULL) {
       $statuses = !is_array($statuses) ? array($statuses) : $statuses;
       $this->mongo_db->whereIn('status', $statuses);
     }
     
     $result = $this->mongo_db
+      ->whereNe('status', User_entity::STATUS_DELETED)
       ->orderBy(array('created' => 'desc'))
       ->get(self::COLLECTION);
     
@@ -57,10 +61,14 @@ class User_model extends CI_Model {
    * Returns the user with the given username.
    * @param string $username
    * 
+   * Note: Users with deleted status will never be returned. They are left 
+   * in the database for consistency reasons but they are deleted.
+   * 
    * @return User_entity
    */
   public function get_by_username($username) {
     $result = $this->mongo_db
+      ->whereNe('status', User_entity::STATUS_DELETED)
       ->where('username', $username)
       ->get(self::COLLECTION);
     
@@ -76,10 +84,14 @@ class User_model extends CI_Model {
    * Returns the user with the given email
    * @param string email
    * 
+   * Note: Users with deleted status will never be returned. They are left 
+   * in the database for consistency reasons but they are deleted.
+   * 
    * @return User_entity
    */
   public function get_by_email($email) {
     $result = $this->mongo_db
+      ->whereNe('status', User_entity::STATUS_DELETED)
       ->where('email', $email)
       ->get(self::COLLECTION);
     
@@ -95,10 +107,14 @@ class User_model extends CI_Model {
    * Returns the user with the given uid
    * @param int uid
    * 
+   * Note: Users with deleted status will never be returned. They are left 
+   * in the database for consistency reasons but they are deleted.
+   * 
    * @return User_entity
    */
   public function get($uid) {
     $result = $this->mongo_db
+      ->whereNe('status', User_entity::STATUS_DELETED)
       ->where('uid', (int) $uid)
       ->get(self::COLLECTION);
     
@@ -121,6 +137,9 @@ class User_model extends CI_Model {
    *   providing all the statuses.
    *   By default only returns all users.
    * 
+   * Note: Users with deleted status will never be returned. They are left 
+   * in the database for consistency reasons but they are deleted.
+   * 
    * @return User_entity
    */
   public function get_with_role($roles, $statuses = User_entity::STATUS_ACTIVE) {
@@ -142,7 +161,9 @@ class User_model extends CI_Model {
       }
     }
     
-    $result = $this->mongo_db->get(self::COLLECTION);
+    $result = $this->mongo_db
+      ->whereNe('status', User_entity::STATUS_DELETED)
+      ->get(self::COLLECTION);
     
     $users = array();
     foreach ($result as $value) {
@@ -150,6 +171,18 @@ class User_model extends CI_Model {
     }
     
     return $users;
+  }
+  
+  /**
+   * Deletes a user by its uid.
+   * @param int $sid
+   */
+  public function delete($uid) {
+    $result = $this->mongo_db
+      ->where('uid', (int) $uid)
+      ->delete(self::COLLECTION);
+    
+    return $result !== FALSE ? TRUE : FALSE;
   }
   
   /**
@@ -173,11 +206,13 @@ class User_model extends CI_Model {
     }
         
     if ($entity->is_new()) {
+      // Add new properties.
       $entity->uid = increment_counter(self::COUNTER_COLLECTION);
-      $prepared_data['uid'] = $entity->uid;
-      // Set creation date:
-      $prepared_data['created'] = $date;
+      $entity->created = clone $date;
       
+      // Add properties to prepared_data.
+      $prepared_data['uid'] = $entity->uid;
+      $prepared_data['created'] = $entity->created;
       $result = $this->mongo_db->insert(self::COLLECTION, $prepared_data);
       
       return $result !== FALSE ? TRUE : FALSE;
@@ -203,10 +238,15 @@ class User_model extends CI_Model {
    *   The field to check
    * @param string $value
    *   The field value
+   * 
+   * Note: Users with deleted status count as if they were not there.
+   * They are left in the database for consistency reasons.
+   * 
    * @return boolean
    */
   public function check_unique($field, $value) {
     $result = $this->mongo_db
+      ->whereNe('status', User_entity::STATUS_DELETED)
       ->where($field, $value)
       ->count(self::COLLECTION);
       

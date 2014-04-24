@@ -29,6 +29,8 @@ class User extends CI_Controller {
 
     $this->form_validation->set_rules('signin_username', 'Username', 'trim|required|xss_clean');
     $this->form_validation->set_rules('signin_password', 'Password', 'trim|required|xss_clean|callback__cb_check_login_data');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
 
     if ($this->form_validation->run() == FALSE) {
   		$this->load->view('base/html_start');
@@ -114,9 +116,11 @@ class User extends CI_Controller {
    */
   protected function _edit_own_account() {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
-    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__cb_check_user_password');
-    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
-    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_check_confirm_password');
+    $this->form_validation->set_rules('user_password', 'Password', 'trim|xss_clean|callback__cb_required_if_set[user_new_password]|callback__cb_check_user_password');
+    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|min_length[8]');
+    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_required_if_set[user_new_password]|matches[user_new_password]');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
     
     $user = current_user();
     
@@ -133,9 +137,13 @@ class User extends CI_Controller {
         $user->set_password(hash_password($pwd));
       }
       
-      $this->user_model->save($user);
-      // TODO: Saving own profile. Handle success, error.
-      redirect('user');
+      if ($this->user_model->save($user)) {
+        Status_msg::success('Profile successfully updated.');
+      }
+      else {
+        Status_msg::error('Error updating profile. Try again.');
+      }
+      redirect();
     }
   }
   
@@ -145,11 +153,12 @@ class User extends CI_Controller {
    */
   protected function _edit_other_account($user) {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
-    $this->form_validation->set_rules('user_password', 'Password', 'trim|required|xss_clean|callback__cb_check_user_password');
-    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim');
-    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_check_confirm_password');
+    $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|min_length[8]');
+    $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|callback__cb_required_if_set[user_new_password]|matches[user_new_password]');
     $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
     $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
@@ -168,8 +177,12 @@ class User extends CI_Controller {
         ->set_roles($this->input->post('user_roles'));
       
       // Save
-      $this->user_model->save($user);
-      // TODO: Saving user. Handle success, error.
+      if ($this->user_model->save($user)) {
+        Status_msg::success('User account successfully updated.');
+      }
+      else {
+        Status_msg::error('Error updating user account. Try again.');
+      }
       redirect('users');
     }
   }
@@ -194,9 +207,11 @@ class User extends CI_Controller {
     $this->form_validation->set_rules('user_name', 'Name', 'trim|required|xss_clean');
     $this->form_validation->set_rules('user_username', 'Username', 'trim|required|xss_clean|alpha_dash|callback__cb_check_unique[username]');
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__cb_check_unique[email]');
-    $this->form_validation->set_rules('user_new_password', 'Password', 'trim|required');
+    $this->form_validation->set_rules('user_new_password', 'Password', 'trim|required|min_length[8]');
     $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
     $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
+    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
     
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
@@ -225,20 +240,68 @@ class User extends CI_Controller {
       // Notify user?
       if ($this->input->post('user_notify') == 'notify') {
         $this->load->library('email');
-        // TODO: Email data. Use settings as much as possible.
-        $this->email->from('aw-datacollection@airwolf.edispilf.org', 'Aw-datacollection Admin');
+        $this->email->from($this->config->item('aw_admin_email'), $this->config->item('aw_admin_name'));
         $this->email->to($user->email);
         
-        $this->email->subject('Account Created');
-        $this->email->message("An account has been created for you.\nUsername:" . $user->username . "\nPassword:" . $this->input->post('user_new_password'));
+        // Load message data from config.
+        $this->config->load('email_messages');
+        $message_account_created = $this->config->item('message_account_created');
+        // Replace placeholders.
+        $placeholders = array(
+          '{{username}}' => $user->username,
+          '{{name}}' => $user->name,
+          '{{password}}' => $this->input->post('user_new_password')
+        );
+        $message_account_created['subject'] = strtr($message_account_created['subject'], $placeholders);
+        $message_account_created['message'] = strtr($message_account_created['message'], $placeholders);
+        
+        $this->email->subject($message_account_created['subject']);
+        $this->email->message($message_account_created['message']);
         
         $this->email->send();
       }
       
-      // TODO: Saving user. Handle success, error.
+      if ($this->user_model->save($user)) {
+        Status_msg::success('User successfully created.');
+      }
+      else {
+        Status_msg::error('Error creating user. Try again.');
+      }
       redirect('users');
       
     }
+  }
+
+  /**
+   * Delete handler for users.
+   * Route
+   * /user/:sid/delete
+   */
+  public function user_delete_by_id($uid){
+    verify_csrf_get();
+    
+    if (!has_permission('delete any account')) {
+      show_403();
+    }
+    
+    $user = $this->user_model->get($uid);
+    if (!$user) {
+      show_404();
+    }
+    
+    // The user is not actually delete.
+    // It stays in the database with it's status set to deleted (99)
+    $user->status = User_entity::STATUS_DELETED;
+    
+    if ($this->user_model->save($user)) {
+      Status_msg::success('User successfully deleted.');
+    }
+    else {
+      Status_msg::error('An error occurred while deleting the user.');
+    }
+    
+    redirect('/users');
+    
   }
   
   /**
@@ -257,8 +320,8 @@ class User extends CI_Controller {
     
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|xss_clean|valid_email|callback__cb_check_email_exists');
     
-    $user = current_user();
-    
+    $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
+
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('base/html_start');
       $this->load->view('users/user_recover_password');
@@ -267,16 +330,29 @@ class User extends CI_Controller {
     else {
       $this->load->model('recover_password_model');
       $email = $this->input->post('user_email');
+      $user = $this->user_model->get_by_email($email);
       
       $hash = $this->recover_password_model->generate($email);
-      
       if ($hash) {
+        // Send email.
         $this->load->library('email');
         $this->email->from($this->config->item('aw_admin_email'), $this->config->item('aw_admin_name'));
         $this->email->to($email);
         
-        $this->email->subject('Airwolf - Recover Password');
-        $this->email->message('Use the following link. ' . base_url('user/reset_password/' . $hash));
+        // Load message data from config.
+        $this->config->load('email_messages');
+        $message_pwd_recover = $this->config->item('message_pwd_recover');
+        // Replace placeholders.
+        $placeholders = array(
+          '{{username}}' => $user->username,
+          '{{name}}' => $user->name,
+          '{{reset_link}}' => base_url('user/reset_password/' . $hash)
+        );
+        $message_pwd_recover['subject'] = strtr($message_pwd_recover['subject'], $placeholders);
+        $message_pwd_recover['message'] = strtr($message_pwd_recover['message'], $placeholders);
+        
+        $this->email->subject($message_pwd_recover['subject']);
+        $this->email->message($message_pwd_recover['message']);
         
         $this->email->send();
         
@@ -303,6 +379,8 @@ class User extends CI_Controller {
     if ($user_email) {
       $this->form_validation->set_rules('user_new_password', 'New Password', 'trim|required');
       $this->form_validation->set_rules('user_new_password_confirm', 'New Password Confirm', 'trim|required|callback__cb_check_confirm_password');
+      
+      $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
       
       if ($this->form_validation->run() == FALSE) {
         $this->load->view('base/html_start');
@@ -345,14 +423,25 @@ class User extends CI_Controller {
    * List with all the users.
    * 
    * Route:
-   * /users
+   * /users/(active|blocked)
    */
-  public function users_list() {
+  public function users_list($filter = NULL) {
     if (!has_permission('view user list')) {
       show_403();
     }
     
-    $users = $this->user_model->get_all();
+    switch ($filter) {
+      case 'active':
+        $users = $this->user_model->get_all(User_entity::STATUS_ACTIVE);
+        break;
+      case 'blocked':
+        $users = $this->user_model->get_all(User_entity::STATUS_BLOCKED);
+        break;
+      
+      default:
+        $users = $this->user_model->get_all();
+        break;
+    }    
     
     $this->load->view('base/html_start');
     $this->load->view('components/navigation', array('active_menu' => 'users'));
@@ -483,6 +572,25 @@ class User extends CI_Controller {
     else {
       $this->form_validation->set_message('_cb_check_unique', 'There is already a user with the chosen %s');
       return FALSE;
+    }
+  }
+
+  /**
+   * Checks for uniqueness. Used for email and username.
+   * Form validation callback.
+   */
+  public function _cb_required_if_set($value, $field) {
+    if ($this->input->post($field) != '') {
+      if ($value) {
+        return TRUE;
+      }
+      else {
+        $this->form_validation->set_message('_cb_required_if_set', 'The %s field is required.');
+        return FALSE;
+      }
+    }
+    else {
+      return TRUE;
     }
   }
 
