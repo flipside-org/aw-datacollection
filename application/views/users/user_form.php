@@ -58,7 +58,7 @@
             
             <div class="form-control">
             <?= form_label('Email <small>Required</small>', 'user_email'); ?>
-            <?= form_input('user_email', set_value('user_email'), 'id="user_email"'); ?>
+            <?= form_input(array('type' => 'email', 'name' => 'user_email'), set_value('user_email'), 'id="user_email"'); ?>
             <?= form_error('user_email'); ?>
             </div>
           
