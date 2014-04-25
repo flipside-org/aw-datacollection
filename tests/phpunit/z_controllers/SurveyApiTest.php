@@ -1113,7 +1113,7 @@ class SurveyApiTest extends PHPUnit_Framework_TestCase {
     
     
     // Login user
-    $this->_change_user(9901);
+    $this->_change_user(9903);
     
     /////////////////////////////////////////////////////////////////
     
@@ -1123,21 +1123,36 @@ class SurveyApiTest extends PHPUnit_Framework_TestCase {
     $mock_config['enketo testrun'] = array(Survey_entity::STATUS_DRAFT);
     $this->_set_status_restrictions($mock_config);
     
-    // Logged user is 9901
-    // User is admin.
+    // Logged user is 9903
+    // User is agent.
     
     // Create survey.
-    // Status canceled.
+    // Status open.
     // Valid xml file.
-    // User is not assigned to survey.
+    // User is assigned to survey.
     $survey = Survey_entity::build(array(
       'sid' => 1,
-      'status' => Survey_entity::STATUS_CANCELED,
+      'status' => Survey_entity::STATUS_OPEN,
       'files' => array(
         'xml' => 'valid_survey.xml'
       ),
+      'agents' => array(9903)
     ));
     self::$CI->survey_model->save($survey);
+    
+    // Create call task
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1001,
+        'number' => "1100500000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 9903,
+        'survey_sid' => 1,
+        'activity' => array()
+      )
+    );
     
     self::$CI->api_survey_xslt_transform(1);
     $result = json_decode(self::$CI->output->get_output(), TRUE);
@@ -1148,6 +1163,52 @@ class SurveyApiTest extends PHPUnit_Framework_TestCase {
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
     
+    // User assigned to call task.
+    // Call task is assigned to survey.
+    // User is assigned to survey.
+    // Survey is the one data is being submitted for.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1001,
+        'form_data' => '<valid><tag/></valid>'
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
+    
+    /////////////////////////////////////////////////////////////////
+    // Test again with correct status restrictions.
+    $mock_config = self::$status_resctriction_config;
+    $mock_config['enketo collect data'] = array(Survey_entity::STATUS_OPEN);
+    $mock_config['enketo testrun'] = array(Survey_entity::STATUS_OPEN);
+    $this->_set_status_restrictions($mock_config);
+    
+    
+    self::$CI->api_survey_xslt_transform(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    $this->assertArrayHasKey('xml_form', $result);
+    
+    self::$CI->api_survey_request_respondents(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
+    
+    // User assigned to call task.
+    // Call task is assigned to survey.
+    // User is assigned to survey.
+    // Survey is the one data is being submitted for.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1001,
+        'form_data' => '<valid><tag/></valid>'
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
     
   }
 
