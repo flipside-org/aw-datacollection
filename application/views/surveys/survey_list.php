@@ -78,7 +78,9 @@
                           <?php endif; ?>
       
                           <?php if (has_permission('delete any survey')) : ?>
-                          <li><?= anchor_csrf($survey_entity->get_url_delete(), 'Delete', array('class' => 'danger', 'data-confirm-action' => 'Are you sure you want to delete: <em>' . $survey_entity->title . '</em>?')) ?></li>
+                          <?php $class = 'danger'; ?>
+                          <?php $class .= !$survey_entity->status_allows('delete any survey') ? ' disabled': ''; ?>
+                          <li><?= anchor_csrf($survey_entity->get_url_delete(), 'Delete', array('class' => $class, 'data-confirm-action' => 'Are you sure you want to delete: <em>' . $survey_entity->title . '</em>?')) ?></li>
                           <?php endif; ?>
                         </ul>
                       </li>

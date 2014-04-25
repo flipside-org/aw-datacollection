@@ -483,6 +483,11 @@ class Survey extends CI_Controller {
       show_404();
     }
     
+    // Status restriction.
+    if (!$survey->status_allows('delete any survey')) {
+      show_403();
+    }
+    
     if ($this->survey_model->delete($sid)) {
       // Remove files.
       if (file_exists($survey->get_xls_full_path())) {

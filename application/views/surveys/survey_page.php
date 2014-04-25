@@ -60,7 +60,9 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 <?php endif; ?>
                 
                 <?php if (has_permission('delete any survey')) : ?>
-                <li><?= anchor_csrf($survey->get_url_delete(), 'Delete', array('class' => 'danger', 'data-confirm-action' => 'Are you sure you want to delete the survey: ' . $survey->title)); ?></li>
+                <?php $class = 'danger'; ?>
+                <?php $class .= !$survey->status_allows('delete any survey') ? ' disabled': ''; ?>
+                <li><?= anchor_csrf($survey->get_url_delete(), 'Delete', array('class' => $class, 'data-confirm-action' => 'Are you sure you want to delete the survey: ' . $survey->title)); ?></li>
                 <?php endif; ?>
               </ul>
             </li>

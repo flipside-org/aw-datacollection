@@ -29,4 +29,6 @@ $config['status_restrictions'] = array(
   'enketo testrun' => array($draft, $open, $closed, $canceled),
   
   'manage agents' => array($draft, $open),
+  
+  'delete any survey' => array($draft),
 );
