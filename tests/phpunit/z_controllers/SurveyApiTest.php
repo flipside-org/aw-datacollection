@@ -2,7 +2,7 @@
 
 require_once ROOT_PATH . "application/controllers/survey.php";
 
-class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
+class SurveyApiTest extends PHPUnit_Framework_TestCase {
   
   private static $CI;
   
