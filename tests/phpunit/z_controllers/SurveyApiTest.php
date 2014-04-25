@@ -1100,6 +1100,9 @@ class SurveyApiTest extends PHPUnit_Framework_TestCase {
   }
 
   public function test_api_survey_with_status_restrictions() {
+    // Here we are testing all the API but only for status restrictions.
+    // Every other test case should be tested elsewhere.
+    
     // Cleanup
     self::$CI->mongo_db->dropCollection('aw_datacollection_test', 'surveys');
     self::$CI->mongo_db->dropCollection('aw_datacollection_test', 'call_tasks');
@@ -1210,6 +1213,72 @@ class SurveyApiTest extends PHPUnit_Framework_TestCase {
     $result = json_decode(self::$CI->output->get_output(), TRUE);
     $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
     
+    
+    /////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////
+    // To test the manage agents api we need an admin.
+    
+    $this->_change_user(9901);
+    // Logged user 9901.
+    // User is administrator.
+    
+    // Create survey.
+    // Status open.
+    // Valid xml file.
+    $survey = Survey_entity::build(array(
+      'sid' => 2,
+      'status' => Survey_entity::STATUS_OPEN,
+      'files' => array(
+        'xml' => 'valid_survey.xml'
+      ),
+      'agents' => array()
+    ));
+    self::$CI->survey_model->save($survey);
+    
+    // Create new agent.
+    // Absolute minimum properties for the test.
+    $user_agent = User_entity::build(array(
+      'uid' => 8801,
+      'status' => User_entity::STATUS_ACTIVE,
+      'roles' => array(ROLE_CC_AGENT)
+    ));
+    self::$CI->user_model->save($user_agent);
+    
+    // Set conditions.
+    $mock_config = self::$status_resctriction_config;
+    $mock_config['manage agents'] = array(Survey_entity::STATUS_DRAFT);
+    $this->_set_status_restrictions($mock_config);
+    
+    // User is an agent.
+    // Action assign
+    $_POST = array(
+      'uid' => 8801,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 403, 'message' => 'Not allowed.'), $result['status']);
+    
+    /////////////////////////////////////////////////////////////////
+    
+    // Set conditions.
+    $mock_config = self::$status_resctriction_config;
+    $mock_config['manage agents'] = array(Survey_entity::STATUS_OPEN);
+    $this->_set_status_restrictions($mock_config);
+    
+    // User is an agent.
+    // Action assign
+    $_POST = array(
+      'uid' => 8801,
+      'action' => 'assign',
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+    );
+    
+    self::$CI->api_survey_manage_agents(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status']);
   }
 
 }
