@@ -213,7 +213,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
       </div>
       
       <div class="columns small-6">
-        <?php if (has_permission('change status any survey') || has_permission('assign agents') || has_permission('download any survey files')) : ?>
+        <?php if (has_permission('change status any survey') || has_permission('manage agents') || has_permission('download any survey files')) : ?>
         <section class="contained">
           <h1 class="visually-hidden">Settings</h1>
           <div class="contained-body">
@@ -245,14 +245,15 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             </article>
             <?php endif; ?>
             
-            <?php if (has_permission('assign agents')) : ?>
+            <?php if (has_permission('manage agents')) : ?>
             <article class="widget widget-bfc">
               <header class="widget-head">
                 <h1 class="hd-s">Agents</h1>
               </header>
               <div class="widget-body">
                 <?= form_open($survey->get_url_manage_agents(), array('id' => 'assign-agents')); ?>
-                <select data-placeholder="Assign Call Center Agents" class="chosen-select" multiple>
+                <?php $disabled = !$survey->status_allows('manage agents') ? 'disabled' : ''; ?>
+                <select data-placeholder="Assign Call Center Agents" class="chosen-select" multiple <?= $disabled; ?>>
                   <option value=""></option>
                   <?php foreach ($agents as $agent) : ?>
                     <option value="<?= $agent['user']->uid ?>" <?= implode(' ', $agent['properties']) ?>><?= $agent['user']->name ?></option>

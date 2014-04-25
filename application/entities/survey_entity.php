@@ -430,7 +430,7 @@ class Survey_entity extends Entity {
   }
 
   /**
-   * Returns the url to assign agents.
+   * Returns the url to manage agents.
    * @access public
    * @return string
    */

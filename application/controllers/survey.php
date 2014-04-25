@@ -1448,7 +1448,7 @@ class Survey extends CI_Controller {
    * }
    */
   public function api_survey_manage_agents($sid) {
-    if (!has_permission('assign agents')) {
+    if (!has_permission('manage agents')) {
       return $this->api_output(403, 'Not allowed.');
     }
 
@@ -1459,13 +1459,19 @@ class Survey extends CI_Controller {
     if (!$survey) {
       return $this->api_output(500, 'Invalid survey.');
     }
-    // TODO : api_survey_assign_agents : additional checks (survey in right status, the user can be assigned | unassigned)
-
+    
+    // Status restriction.
+    if (!$survey->status_allows('manage agents')) {
+      return $this->api_output(403, 'Not allowed.');
+    }
+    
+    // Is the user to be managed valid?
     $user = $this->user_model->get($uid);
     if (!$user || !$user->is_active()) {
       return $this->api_output(500, 'Invalid user.');
     }
-
+    
+    // Is the user to be assigned an agent?
     if ($action == 'assign' && !$user->has_role(ROLE_CC_AGENT)) {
       return $this->api_output(500, 'User is not an agent.');
     }
@@ -1484,7 +1490,7 @@ class Survey extends CI_Controller {
       }
     }
 
-    // Only save if needed
+    // Only save if needed.
     if ($needs_saving && !$this->survey_model->save($survey)) {
       return $this->api_output(500, 'Failed saving the survey.');
     }

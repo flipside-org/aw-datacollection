@@ -27,4 +27,6 @@ $config['status_restrictions'] = array(
   
   'enketo collect data' => array($open),
   'enketo testrun' => array($draft, $open, $closed, $canceled),
+  
+  'manage agents' => array($draft, $open),
 );
