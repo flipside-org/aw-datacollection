@@ -23,14 +23,14 @@
               </strong>
             </li>
             <li>
-              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="user_submit">Save</a>
-            </li>
-            <li>
               <?php if(has_permission('view user list')) : ?>
               <a href="<?= base_url('users'); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
               <?php else : ?>
               <a href="<?= base_url(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
               <?php endif; ?>
+            </li>
+            <li>
+              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="user_submit">Save</a>
             </li>
           </ul>
         </nav>

@@ -23,14 +23,14 @@
               </strong>
             </li>
             <li>
-              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="survey_submit">Save</a>
-            </li>
-            <li>
               <?php if ($survey) : ?>
               <a href="<?= $survey->get_url_view(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
               <?php else : ?>
               <a href="<?= base_url('surveys'); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
               <?php endif; ?>
+            </li>
+            <li>
+              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="survey_submit">Save</a>
             </li>
           </ul>
         </nav>
