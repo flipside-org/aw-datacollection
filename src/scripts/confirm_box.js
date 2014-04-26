@@ -10,8 +10,8 @@
     </div>
     <footer class="confirm-box-foot">
       <ul class="bttn-toolbar">
-        <li><a href="#" class="bttn bttn-danger bttn-medium confirm-cancel">Cancel</a></li>
-        <li><a href="#" class="bttn bttn-success bttn-medium confirm-accept">Confirm</a></li>
+        <li><a href="#" class="bttn bttn-medium confirm-cancel">Cancel</a></li>
+        <li><a href="#" class="bttn bttn-medium confirm-accept">Confirm</a></li>
       </ul>
     </footer>
   </section>
@@ -23,6 +23,9 @@ var confirmBox = function(msg, options) {
     confirm: 'Confirm',
     cancel: 'Cancel',
     
+    confirm_skin : 'bttn-success',
+    cancel_skin : 'bttn-default',
+    
     onCancel: function(){},
     onConfirm: function(){}
   }, options );
@@ -32,6 +35,10 @@ var confirmBox = function(msg, options) {
   var $accept_bttn = $confirm_box.find('.confirm-accept');
   var $cancel_bttn = $confirm_box.find('.confirm-cancel');
   var $close_bttn = $confirm_box.find('.confirm-close');
+  
+  // Button skin.
+  $accept_bttn.addClass(settings.confirm_skin);
+  $cancel_bttn.addClass(settings.cancel_skin);
   
   // Set message.
   $confirm_box.find('.confirm-message').html(msg);
@@ -112,11 +119,16 @@ $(document).ready(function() {
       var txt_title = $self.attr('data-confirm-title');
       var txt_accept_bttn = $self.attr('data-confirm-accept');
       var txt_cancel_bttn = $self.attr('data-confirm-cancel');
+      var skin_accept_bttn = $self.attr('data-confirm-accept-skin');
+      var skin_cancel_bttn = $self.attr('data-confirm-cancel-skin');
       
       confirmBox(txt_message, {
         title: txt_title,
         confirm: txt_accept_bttn,
         cancel: txt_cancel_bttn,
+        
+        confirm_skin : skin_accept_bttn,
+        cancel_skin : skin_cancel_bttn,
         
         onConfirm: function(){
           // Block next action.
