@@ -9,7 +9,7 @@
     </div>
     <footer class="confirm-box-foot">
       <ul class="bttn-toolbar">
-        <li><a href="#" class="bttn bttn-danger bttn-medium confirm-cancel">Cancel</a></li>
+        <li><a href="#" class="bttn bttn-default bttn-medium confirm-cancel">Cancel</a></li>
         <li><a href="#" class="bttn bttn-success bttn-medium confirm-accept">Confirm</a></li>
       </ul>
     </footer>
