@@ -786,6 +786,10 @@ class Survey extends CI_Controller {
       show_403();
     }
     
+    if (!$survey->status_allows('import respondents any survey')) {
+      show_403();
+    }
+    
     // Form validation based on import type.
     switch ($type) {
       case 'file':

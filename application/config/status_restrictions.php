@@ -38,4 +38,6 @@ $config['status_restrictions'] = array(
   // However, the "enketo collect data" status restriction can't be used
   // because users can still see the call activity once the survey is closed.
   'view call activity' => array($open, $closed),
+  
+  'import respondents any survey' => array($draft, $open),
 );

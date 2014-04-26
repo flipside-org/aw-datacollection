@@ -18,7 +18,9 @@
 
             <?php if (has_permission('manage respondents any survey')) : ?>
             <li>
-              <a href="#" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Add new</a>
+              <?php $class = 'bttn bttn-primary bttn-medium bttn-dropdown'; ?>
+              <?php $class .= !$survey->status_allows('import respondents any survey') ? ' disabled': ''; ?>
+              <a href="#" class="<?= $class; ?>" data-dropdown="action-bttn">Add new</a>
               <ul class="action-dropdown">
                 <li><a href="<?= $survey->get_url_respondents_add('file'); ?>">Upload file</a></li>
                 <li><a href="<?= $survey->get_url_respondents_add('direct'); ?>">Direct input</a></li>
