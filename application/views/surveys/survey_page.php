@@ -35,8 +35,9 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 <li><a href="<?= $survey->get_url_respondents() ?>">Respondents</a></li>
                 <?php endif; ?>
                 
-                <?php if ($show_actions_enketo_data_collection) :?>
-                <li><a href="<?= $survey->get_url_call_activity() ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Call activity</a></li>
+                <?php if ($show_actions_enketo_data_collection) : ?>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('view call activity') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_call_activity() ?>" class="<?= $disabled ?>">Call activity</a></li>
                 <?php endif; ?>
               </ul>
             </li>
@@ -72,13 +73,13 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               <a href="" class="bttn bttn-success bttn-medium bttn-dropdown" data-dropdown="action-bttn">Run</a>
               <ul class="action-dropdown">
                 <?php if ($show_actions_enketo_testrun) :?>
-                <?php $disbled = !$survey->has_xml() || !$survey->status_allows('enketo collect data') ? 'disabled' : ''; ?>
-                <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= $disbled; ?>">Testrun</a></li>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('enketo testrun') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= $disabled; ?>">Testrun</a></li>
                 <?php endif; ?>
                 
                 <?php if ($show_actions_enketo_data_collection) :?>
-                <?php $disbled = !$survey->has_xml() || !$survey->status_allows('enketo testrun') ? 'disabled' : ''; ?>
-                <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= $disbled; ?>">Collect Data</a></li>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('enketo collect data') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= $disabled; ?>">Collect Data</a></li>
                 <?php endif; ?>
               </ul>
             </li>

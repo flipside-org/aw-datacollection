@@ -670,7 +670,7 @@ class Survey extends CI_Controller {
       }
     }
     
-    if (!$survey->status_allows('enketo collect data')) {
+    if (!$survey->status_allows('view call activity')) {
       show_403();
     }
     

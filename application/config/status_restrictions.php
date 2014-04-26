@@ -31,4 +31,11 @@ $config['status_restrictions'] = array(
   'manage agents' => array($draft, $open),
   
   'delete any survey' => array($draft),
+  
+  // There's no specific permission to view the call activity.
+  // It uses the "enketo collect data" permission since a user needs to be
+  // able to collect data to view a list of the data he/she collected.
+  // However, the "enketo collect data" status restriction can't be used
+  // because users can still see the call activity once the survey is closed.
+  'view call activity' => array($open, $closed),
 );
