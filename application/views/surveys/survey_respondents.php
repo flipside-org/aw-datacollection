@@ -51,7 +51,9 @@
                 <li>
                   <a href="#" class="bttn bttn-default bttn-small bttn-dropdown" data-dropdown="action-bttn">Bulk edit</a>
                   <ul class="action-dropdown for-bttn-small">
-                    <li><a href="#" class="danger" data-trigger-submit="respondent-delete" data-confirm-action="Are you sure?">Delete</a></li>
+                    <?php $class = 'danger'; ?>
+                    <?php $class .= !$survey->status_allows('delete respondents any survey') ? ' disabled': ''; ?>
+                    <li><a href="#" class="<?= $class; ?>" data-trigger-submit="respondent-delete" data-confirm-action="Are you sure?">Delete</a></li>
                   </ul>
                 </li>
               </ul>
@@ -93,7 +95,7 @@
                             <?php
                               $class = 'danger';
                               $activity = $resp->get_activity();
-                              if (!empty($activity)) {
+                              if (!empty($activity) || !$survey->status_allows('delete respondents any survey')) {
                                 $class .= ' disabled';
                               }
                             ?>

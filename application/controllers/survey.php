@@ -1064,6 +1064,10 @@ class Survey extends CI_Controller {
         $with_data = 0;
         // Bulk action - delete.
         if ($this->input->post('respondent-delete') == 'respondent-delete') {
+          // Status restrictions to delete respondents.
+          if (!$survey->status_allows('delete respondents any survey')) {
+            show_403();
+          }
           
           if ($all_selected) {
             // Delete all.
@@ -1118,6 +1122,11 @@ class Survey extends CI_Controller {
       case 'delete':
         // Verify CSRF token in url.
         verify_csrf_get();
+        
+        // Status restrictions to delete respondents.
+        if (!$survey->status_allows('delete respondents any survey')) {
+          show_403();
+        }
         
         $call_task = $this->call_task_model->get($ctid);
         

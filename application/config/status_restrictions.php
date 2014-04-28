@@ -5,7 +5,7 @@
 | Status restrictions
 |--------------------------------------------------------------------------
 |
-| Status restriction for surveys
+| Status restriction for surveys.
 |
 |
 |
@@ -40,6 +40,9 @@ $config['status_restrictions'] = array(
   'view call activity' => array($open, $closed),
   
   'import respondents any survey' => array($draft, $open),
+  // Even if the respondent passes the status restriction check, it won't
+  // be deleted if there's activity. The user will be warned.
+  'delete respondents any survey' => array($draft, $open, $closed, $canceled),
   
   'edit any survey metadata' => array($draft, $open),
   'edit any survey def file' => array($draft),
