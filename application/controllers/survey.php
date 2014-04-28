@@ -292,7 +292,7 @@ class Survey extends CI_Controller {
    * @param Survey_entity $survey.
    *   If editing the survey is passed to the function.
    */
-  protected function _survey_form_handle($action = 'add', $survey = null) {
+  protected function _survey_form_handle($action = 'add', $survey = NULL) {
 
     // Config data for the file upload.
     $file_upload_config = array(
@@ -304,16 +304,33 @@ class Survey extends CI_Controller {
     // Load needed libraries
     $this->load->library('upload', $file_upload_config);
     $this->load->helper('pyxform');
-
-    // Set form validation rules.
-    $this->form_validation->set_rules('survey_title', 'Title', 'required');
-    $this->form_validation->set_rules('survey_client', 'Client', 'required');
-    $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
-    //  $this->form_validation->set_rules('survey_status', 'Status', 'required|callback__cb_survey_status_valid');
-    $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
-    $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
-    $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
     
+    // Check for status restrictions when editing a survey.
+    if ($action == 'edit') {
+      if ($survey->status_allows('edit any survey def file')) {
+        // Set form validation rules.
+        $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
+      }
+      if ($survey->status_allows('edit any survey metadata')) {
+        // Set form validation rules.
+        $this->form_validation->set_rules('survey_title', 'Title', 'required');
+        $this->form_validation->set_rules('survey_client', 'Client', 'required');
+        $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
+        $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
+        $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
+      }
+      
+    }
+    else {
+      // Set form validation rules.
+      $this->form_validation->set_rules('survey_title', 'Title', 'required');
+      $this->form_validation->set_rules('survey_client', 'Client', 'required');
+      $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
+      $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
+      $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
+      $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
+    }
+
     $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
 
     // If no data submitted show the form.
@@ -399,16 +416,21 @@ class Survey extends CI_Controller {
           break;
         case 'edit':
 
-          // Set data from form.
-          $survey->title = $this->input->post('survey_title', TRUE);
-          $survey->client = $this->input->post('survey_client', TRUE);
-          $survey->goal = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
-          //$survey->status = (int) $this->input->post('survey_status');
-          $survey->introduction = $this->input->post('survey_introduction', TRUE);
-          $survey->description = $this->input->post('survey_description', TRUE);
+          if ($survey->status_allows('edit any survey metadata')) {
+            // Set data from form.
+            $survey->title = $this->input->post('survey_title', TRUE);
+            $survey->client = $this->input->post('survey_client', TRUE);
+            $survey->goal = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
+            $survey->introduction = $this->input->post('survey_introduction', TRUE);
+            $survey->description = $this->input->post('survey_description', TRUE);
+          }
+          
+          $file = FALSE;
+          if ($survey->status_allows('edit any survey def file')) {
+            // Handle uploaded file.
+            $file = $this->input->post('survey_file');
+          }
 
-          // Handle uploaded file.
-          $file = $this->input->post('survey_file');
           if ($file !== FALSE) {
             // If the user has uploaded a file we save the survey before
             // handling it. If the file conversion fails no ghost files
@@ -430,7 +452,6 @@ class Survey extends CI_Controller {
               Status_msg::error('An error occurred when saving the survey. Please try again.');
               redirect('surveys');
             }
-            
             
             // Now handle the file.
             $survey->save_xls($file);

@@ -40,4 +40,7 @@ $config['status_restrictions'] = array(
   'view call activity' => array($open, $closed),
   
   'import respondents any survey' => array($draft, $open),
+  
+  'edit any survey metadata' => array($draft, $open),
+  'edit any survey def file' => array($draft),
 );

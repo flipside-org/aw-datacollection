@@ -41,30 +41,33 @@
     <div class="content">
       
       <?= form_open_multipart(); ?>
+      <?php
+        $disabled_metadata = $survey != NULL && !$survey->status_allows('edit any survey metadata') ? ' disabled' : ''; ;
+      ?>
       <div class="columns small-6">
         <fieldset class="contained">
           <div class="form-control">
             <?= form_label('Title <small>Required</small>', 'survey_title'); ?>
-            <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title')), 'id="survey_title"'); ?>
+            <?= form_input('survey_title', set_value('survey_title', property_if_not_null($survey, 'title')), 'id="survey_title"' . $disabled_metadata); ?>
             <?= form_error('survey_title'); ?>
           </div>
           
           <div class="form-control">
             <?= form_label('Client <small>Required</small>', 'survey_client'); ?>
-            <?= form_input('survey_client', set_value('survey_client', property_if_not_null($survey, 'client')), 'id="survey_client"'); ?>
+            <?= form_input('survey_client', set_value('survey_client', property_if_not_null($survey, 'client')), 'id="survey_client"' . $disabled_metadata); ?>
             <?= form_error('survey_client'); ?>
           </div>
           
           <div class="form-control">
             <?= form_label('Goal', 'survey_goal'); ?>
-            <?= form_input('survey_goal', set_value('survey_goal', property_if_not_null($survey, 'goal')), 'id="survey_goal"'); ?>
+            <?= form_input('survey_goal', set_value('survey_goal', property_if_not_null($survey, 'goal')), 'id="survey_goal"' . $disabled_metadata); ?>
             <p class="help-text">Minimum amount of respondents for the survey to be considered done.</p>
             <?= form_error('survey_goal'); ?>
           </div>
           
           <div class="form-control">
             <?= form_label('Description', 'survey_description'); ?>
-            <?= form_textarea('survey_description', set_value('survey_description', property_if_not_null($survey, 'description')), 'id="survey_description"'); ?>
+            <?= form_textarea('survey_description', set_value('survey_description', property_if_not_null($survey, 'description')), 'id="survey_description"' . $disabled_metadata); ?>
             <?= form_error('survey_description'); ?>
           </div>
         </fieldset>
@@ -73,15 +76,18 @@
       <div class="columns small-6">
         <fieldset class="contained">
           <div class="form-control">
+            <?php
+              $disabled_def_file = $survey != NULL && !$survey->status_allows('edit any survey def file') ? ' disabled' : ''; ;
+            ?>
             <?= form_label('Definition file', 'survey_file'); ?>
-            <?= form_upload('survey_file', '', 'id="survey_file"'); ?>
+            <?= form_upload('survey_file', '', 'id="survey_file"' . $disabled_def_file); ?>
             <?= form_error('survey_file'); ?>
           </div>
         </fieldset>
         <fieldset class="contained">
           <div class="form-control">
             <?= form_label('Introductory text', 'survey_introduction'); ?>
-            <?= form_textarea('survey_introduction', set_value('survey_introduction', property_if_not_null($survey, 'introduction')), 'id="survey_introduction"'); ?>
+            <?= form_textarea('survey_introduction', set_value('survey_introduction', property_if_not_null($survey, 'introduction')), 'id="survey_introduction"' . $disabled_metadata); ?>
             <?= form_error('survey_introduction'); ?>
           </div>
         </fieldset>
