@@ -13,10 +13,10 @@
               <strong class="bttn-sector">Add Respondents</strong>
             </li>
             <li>
-              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="respondents_add_submit">Import</a>
+              <a href="<?= $survey->get_url_respondents(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
             </li>
             <li>
-              <a href="<?= $survey->get_url_respondents(); ?>" class="bttn bttn-default bttn-medium">Cancel</a>
+              <a href="#" class="bttn bttn-success bttn-medium" data-trigger-submit="respondents_add_submit">Import</a>
             </li>
           </ul>
         </nav>
