@@ -2,7 +2,6 @@
 
 /**
  * Call Task Entity
- * Base class for entities.
  */
 class Call_task_entity extends Entity {
   /********************************

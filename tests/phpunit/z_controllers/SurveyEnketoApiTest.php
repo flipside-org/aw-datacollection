@@ -16,6 +16,11 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     self::$CI->mongo_db->switchDb('mongodb://localhost:27017/aw_datacollection_test');
     self::$CI->config->set_item('aw_survey_files_location', ROOT_PATH . 'tests/test_resources/surveys/');
     
+    // Create temp directory.
+    $path = ROOT_PATH . 'tests/tmp/survey_results/';
+    if (!file_exists($path)) mkdir($path, 0777, true);
+    self::$CI->config->set_item('aw_survey_results_location', $path);
+    
     self::$CI->mongo_db->batchInsert('surveys', array(
       array(
         'sid' => increment_counter('survey_sid'),
@@ -486,7 +491,7 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
           )
         )
       )
-    );   
+    );
     // Adding Discard status to an already resolved call task
     $_POST = array(
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
@@ -505,12 +510,11 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     /*************************************************************************/
     
     // Submitting data for an already resolved call task.
-    // TODO: Review once implemented data save method.
     $_POST = array(
       'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
       'respondent' => array(
         'ctid' => 1006,
-        'form_data' => 'the data'
+        'form_data' => '<valid><tag/></valid>'
       )
     );
     self::$CI->api_survey_enketo_form_submit($working_survey);
@@ -649,6 +653,128 @@ class SurveyEnketoApiTest extends PHPUnit_Framework_TestCase {
     
     /*************************************************************************/
     
+  }
+
+  public function test_api_survey_enketo_form_submit_data_logged_in() {
+    // Login user.
+    // User 3 is our call center agent.
+    self::$CI->session->set_userdata(array('user_uid' => 3));
+    // Force user reloading.
+    current_user(TRUE);
+    
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1007,
+        'number' => "110070000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 3,
+        'survey_sid' => 1,
+        'activity' => array()
+      )
+    );
+    // Submitting invalid data.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1007,
+        'form_data' => '<invalid xml data'
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid data.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    self::$CI->mongo_db->insert('call_tasks', array(
+        'ctid' => 1008,
+        'number' => "110080000000",
+        'created' => Mongo_db::date(),
+        'updated' => Mongo_db::date(),
+        'assigned' => Mongo_db::date(),
+        'author' => 1,
+        'assignee_uid' => 3,
+        'survey_sid' => 1,
+        'activity' => array()
+      )
+    );
+    // Submitting xml bomb. Just because it funny.
+    $_POST = array(
+      'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+      'respondent' => array(
+        'ctid' => 1008,
+        'form_data' => '<?xml version="1.0"?>
+          <!DOCTYPE lolz [
+           <!ENTITY lol "lol">
+           <!ELEMENT lolz (#PCDATA)>
+           <!ENTITY lol1 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+           <!ENTITY lol2 "&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;">
+           <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+           <!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
+           <!ENTITY lol5 "&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;">
+           <!ENTITY lol6 "&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;">
+           <!ENTITY lol7 "&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;">
+           <!ENTITY lol8 "&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;">
+           <!ENTITY lol9 "&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;">
+          ]>
+          <lolz>&lol9;</lolz>'
+      )
+    );
+    self::$CI->api_survey_enketo_form_submit(1);
+    $result = json_decode(self::$CI->output->get_output(), TRUE);
+    $this->assertEquals(array('code' => 500, 'message' => 'Invalid data.'), $result['status']);
+    
+    /*************************************************************************/
+    
+    // Test with different examples.
+    $enketo_data_example = file_get_contents(ROOT_PATH . 'tests/test_resources/survey_data_enketo_submit');
+    $enketo_data_example = explode(str_repeat('=', 60), $enketo_data_example);
+    
+    // Drop the survey result collection and reset the counter to 
+    // ensure consistency.
+    self::$CI->mongo_db->dropCollection('aw_datacollection_test', Survey_result_model::COLLECTION);
+    reset_counter(Survey_result_model::COUNTER_COLLECTION);
+    
+    foreach($enketo_data_example as $key => $enketo_example) {
+      self::$CI->mongo_db->insert('call_tasks', array(
+          'ctid' => 1010 + $key,
+          'number' => "11000000000" . $key,
+          'created' => Mongo_db::date(),
+          'updated' => Mongo_db::date(),
+          'assigned' => Mongo_db::date(),
+          'author' => 1,
+          'assignee_uid' => 3,
+          'survey_sid' => 1,
+          'activity' => array()
+        )
+      );
+      // Submitting valid data.
+      $_POST = array(
+        'csrf_aw_datacollection' => self::$CI->security->get_csrf_hash(),
+        'respondent' => array(
+          'ctid' => 1010 + $key,
+          'form_data' => $enketo_example
+        )
+      );
+      self::$CI->api_survey_enketo_form_submit(1);
+      $result = json_decode(self::$CI->output->get_output(), TRUE);
+      $this->assertEquals(array('code' => 200, 'message' => 'Ok!'), $result['status'], 'Failed on item ' . $key);
+      
+      // Verify data in the database.
+      // The counter was reset we can assume $key + 1.
+      $survey_result = self::$CI->survey_result_model->get($key + 1);
+      // Test
+      $this->assertEquals(3, $survey_result->author);
+      $this->assertEquals(1010 + $key, $survey_result->call_task_ctid);
+      $this->assertEquals(1, $survey_result->survey_sid);
+      // Filename pattern survey_result_[srid]_[ctid]_[sid].xml
+      $filename = sprintf('survey_result_%d_%d_%d.xml', $key + 1, $survey_result->call_task_ctid, 1);
+      $this->assertEquals($filename, $survey_result->files['xml']);
+    }
+    
+    /*************************************************************************/
   }
 }
 
