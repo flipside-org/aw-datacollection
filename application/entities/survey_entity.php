@@ -188,9 +188,7 @@ class Survey_entity extends Entity {
     Survey_entity::STATUS_OPEN => array(
       Survey_entity::STATUS_CLOSED, Survey_entity::STATUS_CANCELED
     ),
-    Survey_entity::STATUS_CLOSED => array(
-      Survey_entity::STATUS_CANCELED
-    ),
+    Survey_entity::STATUS_CLOSED => array(),
     Survey_entity::STATUS_CANCELED => array(),
   );
   
