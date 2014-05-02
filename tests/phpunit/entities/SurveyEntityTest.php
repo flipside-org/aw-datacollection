@@ -130,6 +130,50 @@ class Survey_entity_test extends PHPUnit_Framework_TestCase
     $this->assertFalse($survey->unassign_agent(4));
   }
   
+  public function test_status_restrictions() {
+    // Local vars
+    $draft = Survey_entity::STATUS_DRAFT;
+    $open = Survey_entity::STATUS_OPEN;
+    $closed = Survey_entity::STATUS_CLOSED;
+    $canceled = Survey_entity::STATUS_CANCELED;
+
+    $mock_restrictions = array(
+      'restriction 1' => array($draft, $open),
+      'restriction 2' => array($draft, $open, $closed),
+      'restriction 3' => array($draft, $canceled),
+      'restriction 4' => array($open)
+    );
+
+    $mock_draft = array('status' => $draft);
+    $survey_draft = new Survey_entity($mock_draft);
+    $survey_draft->set_status_restrictions_array($mock_restrictions);
+    
+    $this->assertTrue($survey_draft->status_allows('restriction 1'));
+    $this->assertTrue($survey_draft->status_allows('restriction 2'));
+    $this->assertTrue($survey_draft->status_allows('restriction 3'));
+    $this->assertFalse($survey_draft->status_allows('restriction 4'));
+
+
+    $mock_open = array('status' => $open);
+    $survey_open = new Survey_entity($mock_open);
+    $survey_open->set_status_restrictions_array($mock_restrictions);
+    
+    $this->assertTrue($survey_open->status_allows('restriction 1'));
+    $this->assertTrue($survey_open->status_allows('restriction 2'));
+    $this->assertFalse($survey_open->status_allows('restriction 3'));
+    $this->assertTrue($survey_open->status_allows('restriction 4'));
+
+
+    $mock_canceled = array('status' => $canceled);
+    $survey_canceled = new Survey_entity($mock_canceled);
+    $survey_canceled->set_status_restrictions_array($mock_restrictions);
+    
+    $this->assertFalse($survey_canceled->status_allows('restriction 1'));
+    $this->assertFalse($survey_canceled->status_allows('restriction 2'));
+    $this->assertTrue($survey_canceled->status_allows('restriction 3'));
+    $this->assertFalse($survey_canceled->status_allows('restriction 4'));
+  }
+  
 }
 
 ?>

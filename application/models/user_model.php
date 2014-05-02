@@ -226,7 +226,10 @@ class User_model extends CI_Model {
       $result = $this->mongo_db
         ->set($prepared_data)
         ->where('uid', $entity->uid)
-        ->update(self::COLLECTION);
+        // The upsert is needed for the tests but the result of the save
+        // operation will always be FALSE because the way this mongo_db
+        // library works.
+        ->update(self::COLLECTION, array('upsert' => TRUE));
       
       return $result !== FALSE ? TRUE : FALSE;
     }

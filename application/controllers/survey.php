@@ -36,7 +36,7 @@ class Survey extends CI_Controller {
    * Route:
    * /surveys/(draft|open|closed|canceled)
    */
-  public function surveys_list($filter = NULL){    
+  public function surveys_list($filter = NULL){
     if (!has_permission('view survey list any') && !has_permission('view survey list assigned')) {
       show_403();
     }
@@ -104,14 +104,18 @@ class Survey extends CI_Controller {
     }
 
     $survey = $this->survey_model->get($sid);
-
     if (!$survey) {
       show_404();
     }
-    // TODO: Status restriction
-    if (!has_permission('view any survey page') && has_permission('view assigned survey page')) {
-      // Is assigned?
-      if (!$survey->is_assigned_agent(current_user()->uid)) {
+    
+    if (has_permission('view any survey page')) {
+      if (!$survey->status_allows('view survey page')) {
+        show_403();
+      }
+    }
+    else if (!has_permission('view any survey page') && has_permission('view assigned survey page')) {
+      // Must be assigned and correct status
+      if (!$survey->is_assigned_agent(current_user()->uid) || !$survey->status_allows('view assigned survey page')) {
         show_403();
       }
     }
@@ -288,7 +292,7 @@ class Survey extends CI_Controller {
    * @param Survey_entity $survey.
    *   If editing the survey is passed to the function.
    */
-  protected function _survey_form_handle($action = 'add', $survey = null) {
+  protected function _survey_form_handle($action = 'add', $survey = NULL) {
 
     // Config data for the file upload.
     $file_upload_config = array(
@@ -300,16 +304,33 @@ class Survey extends CI_Controller {
     // Load needed libraries
     $this->load->library('upload', $file_upload_config);
     $this->load->helper('pyxform');
-
-    // Set form validation rules.
-    $this->form_validation->set_rules('survey_title', 'Title', 'required');
-    $this->form_validation->set_rules('survey_client', 'Client', 'required');
-    $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
-    //  $this->form_validation->set_rules('survey_status', 'Status', 'required|callback__cb_survey_status_valid');
-    $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
-    $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
-    $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
     
+    // Check for status restrictions when editing a survey.
+    if ($action == 'edit') {
+      if ($survey->status_allows('edit any survey def file')) {
+        // Set form validation rules.
+        $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
+      }
+      if ($survey->status_allows('edit any survey metadata')) {
+        // Set form validation rules.
+        $this->form_validation->set_rules('survey_title', 'Title', 'required');
+        $this->form_validation->set_rules('survey_client', 'Client', 'required');
+        $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
+        $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
+        $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
+      }
+      
+    }
+    else {
+      // Set form validation rules.
+      $this->form_validation->set_rules('survey_title', 'Title', 'required');
+      $this->form_validation->set_rules('survey_client', 'Client', 'required');
+      $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
+      $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
+      $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
+      $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
+    }
+
     $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
 
     // If no data submitted show the form.
@@ -395,16 +416,21 @@ class Survey extends CI_Controller {
           break;
         case 'edit':
 
-          // Set data from form.
-          $survey->title = $this->input->post('survey_title', TRUE);
-          $survey->client = $this->input->post('survey_client', TRUE);
-          $survey->goal = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
-          //$survey->status = (int) $this->input->post('survey_status');
-          $survey->introduction = $this->input->post('survey_introduction', TRUE);
-          $survey->description = $this->input->post('survey_description', TRUE);
+          if ($survey->status_allows('edit any survey metadata')) {
+            // Set data from form.
+            $survey->title = $this->input->post('survey_title', TRUE);
+            $survey->client = $this->input->post('survey_client', TRUE);
+            $survey->goal = $this->input->post('survey_goal') ? (int) $this->input->post('survey_goal') : NULL;
+            $survey->introduction = $this->input->post('survey_introduction', TRUE);
+            $survey->description = $this->input->post('survey_description', TRUE);
+          }
+          
+          $file = FALSE;
+          if ($survey->status_allows('edit any survey def file')) {
+            // Handle uploaded file.
+            $file = $this->input->post('survey_file');
+          }
 
-          // Handle uploaded file.
-          $file = $this->input->post('survey_file');
           if ($file !== FALSE) {
             // If the user has uploaded a file we save the survey before
             // handling it. If the file conversion fails no ghost files
@@ -426,7 +452,6 @@ class Survey extends CI_Controller {
               Status_msg::error('An error occurred when saving the survey. Please try again.');
               redirect('surveys');
             }
-            
             
             // Now handle the file.
             $survey->save_xls($file);
@@ -477,6 +502,11 @@ class Survey extends CI_Controller {
     $survey = $this->survey_model->get($sid);
     if (!$survey) {
       show_404();
+    }
+    
+    // Status restriction.
+    if (!$survey->status_allows('delete any survey')) {
+      show_403();
     }
     
     if ($this->survey_model->delete($sid)) {
@@ -538,20 +568,28 @@ class Survey extends CI_Controller {
       case 'data_collection':
         $perm_any = 'enketo collect data any';
         $perm_assigned = 'enketo collect data assigned';
+        $status_restriction = 'enketo collect data';
         break;
 
       case 'testrun':
         $perm_any = 'enketo testrun any';
         $perm_assigned = 'enketo testrun assigned';
+        $status_restriction = 'enketo testrun';
         break;
     }
     
     if (!has_permission($perm_any) && !has_permission($perm_assigned)) {
       show_403();
-
-    }else if (!has_permission($perm_any) && has_permission($perm_assigned)) {
-      // Is assigned?
-      if (!$survey->is_assigned_agent(current_user()->uid)) {
+    }
+    else if (has_permission($perm_any)) {
+      // Correct status?
+      if (!$survey->status_allows($status_restriction)) {
+        show_403();
+      }
+    }
+    else if (!has_permission($perm_any) && has_permission($perm_assigned)) {
+      // Is assigned? Correct status?
+      if (!$survey->is_assigned_agent(current_user()->uid) || !$survey->status_allows($status_restriction)) {
         show_403();
       }
     }
@@ -642,14 +680,19 @@ class Survey extends CI_Controller {
     if (!$survey) {
       show_404();
     }
+    // Permissions and status check.
     else if (!has_permission('enketo collect data any') && !has_permission('enketo collect data assigned')) {
       show_403();
     }
     else if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
-      // Is assigned?
+      // Must be assigned and correct status
       if (!$survey->is_assigned_agent(current_user()->uid)) {
         show_403();
       }
+    }
+    
+    if (!$survey->status_allows('view call activity')) {
+      show_403();
     }
     
     switch ($filter) {
@@ -761,6 +804,10 @@ class Survey extends CI_Controller {
       show_404();
     }
     else if (!has_permission('manage respondents any survey')) {
+      show_403();
+    }
+    
+    if (!$survey->status_allows('import respondents any survey')) {
       show_403();
     }
     
@@ -1017,6 +1064,10 @@ class Survey extends CI_Controller {
         $with_data = 0;
         // Bulk action - delete.
         if ($this->input->post('respondent-delete') == 'respondent-delete') {
+          // Status restrictions to delete respondents.
+          if (!$survey->status_allows('delete respondents any survey')) {
+            show_403();
+          }
           
           if ($all_selected) {
             // Delete all.
@@ -1072,6 +1123,11 @@ class Survey extends CI_Controller {
         // Verify CSRF token in url.
         verify_csrf_get();
         
+        // Status restrictions to delete respondents.
+        if (!$survey->status_allows('delete respondents any survey')) {
+          show_403();
+        }
+        
         $call_task = $this->call_task_model->get($ctid);
         
         if ($call_task && $call_task->survey_sid == $sid) {
@@ -1098,6 +1154,33 @@ class Survey extends CI_Controller {
     redirect($survey->get_url_respondents());
   }
 
+  public function survey_change_status($sid, $status) {
+    verify_csrf_get();
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    else if (!has_permission('change status any survey')) {
+      show_403();
+    }
+
+    if (!$survey->is_allowed_status_change($status)) {
+      show_error('Invalid status.');
+    }
+    
+    $survey->status = (int) $status;
+    
+    // Save.
+    if ($this->survey_model->save($survey)) {
+      Status_msg::success('Status successfully changed.');
+    }
+    else {
+      Status_msg::error('An error occurred when saving the survey. Please try again.');
+    }
+    
+    redirect($survey->get_url_view());
+  }
+  
   /**
    * Enketo API
    * Converts the survey xml file to html for enketo to use
@@ -1117,10 +1200,12 @@ class Survey extends CI_Controller {
     if (!$survey) {
       return $this->api_output(404, 'Invalid survey.', array('xml_form' => NULL));
     }
-    else if (!$survey->has_xml()) {
+    
+    if (!$survey->has_xml()) {
       return $this->api_output(500, 'Xml file not present.', array('xml_form' => NULL));
     }
-    else if (!has_permission('enketo collect data any') && !has_permission('enketo testrun any')) {
+    
+    if (!has_permission('enketo collect data any') && !has_permission('enketo testrun any')) {
 
       if (!has_permission('enketo collect data assigned') && !has_permission('enketo testrun assigned')) {
         return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
@@ -1129,9 +1214,13 @@ class Survey extends CI_Controller {
       else if (!$survey->is_assigned_agent(current_user()->uid)) {
         return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
       }
-
     }
-    // TODO: Collect Data: Check for other restrictions (like status)
+
+    // Since the xslt transform is used both for testrun and collect
+    // there's no way to tell them apart.
+    if (!$survey->status_allows('enketo collect data') && !$survey->status_allows('enketo testrun')) {
+      return $this->api_output(403, 'Not allowed.', array('xml_form' => NULL));
+    }
 
     $this->load->helper('xslt_transformer');
 
@@ -1164,16 +1253,21 @@ class Survey extends CI_Controller {
     else if (!$survey->has_xml()) {
       return $this->api_output(500, 'Xml file not present.', array('xml_form' => NULL));
     }
+    // Permissions and status check.
     else if (!has_permission('enketo collect data any') && !has_permission('enketo collect data assigned')) {
       return $this->api_output(403, 'Not allowed.', array('respondents' => NULL));
     }
-    else if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
-      // Is assigned?
-      if (!$survey->is_assigned_agent(current_user()->uid)) {
+    else if (has_permission('enketo collect data any')) {
+      if (!$survey->status_allows('enketo collect data')) {
         return $this->api_output(403, 'Not allowed.', array('respondents' => NULL));
       }
     }
-    // TODO: Collect Data: Check for other restrictions (like status)
+    else if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
+      // Must be assigned and correct status
+      if (!$survey->is_assigned_agent(current_user()->uid) || !$survey->status_allows('enketo collect data')) {
+        return $this->api_output(403, 'Not allowed.', array('respondents' => NULL));
+      }
+    }
 
     // Max to reserve - from config.
     $max_to_reserve = $this->config->item('aw_enketo_call_tasks_reserve');
@@ -1233,8 +1327,20 @@ class Survey extends CI_Controller {
     else if (!$survey->has_xml()) {
       return $this->api_output(500, 'Xml file not present.', array('xml_form' => NULL));
     }
+    // Permissions and status check.
     else if (!has_permission('enketo collect data any') && !has_permission('enketo collect data assigned')) {
-      return $this->api_output(403, 'Not allowed.');
+      return $this->api_output(403, 'Not allowed.', array('respondents' => NULL));
+    }
+    else if (has_permission('enketo collect data any')) {
+      if (!$survey->status_allows('enketo collect data')) {
+        return $this->api_output(403, 'Not allowed.', array('respondents' => NULL));
+      }
+    }
+    else if (!has_permission('enketo collect data any') && has_permission('enketo collect data assigned')) {
+      // Must be assigned and correct status
+      if (!$survey->is_assigned_agent(current_user()->uid) || !$survey->status_allows('enketo collect data')) {
+        return $this->api_output(403, 'Not allowed.', array('respondents' => NULL));
+      }
     }
 
     $respondent = $this->input->post('respondent');
@@ -1287,8 +1393,6 @@ class Survey extends CI_Controller {
         return $this->api_output(403, 'Not allowed.');
       }
     }
-
-    // TODO: Collect Data: Check for other restrictions (like status)
 
     // Was the survey completed?
     // If there's a form_data it's finished
@@ -1383,7 +1487,7 @@ class Survey extends CI_Controller {
    * }
    */
   public function api_survey_manage_agents($sid) {
-    if (!has_permission('assign agents')) {
+    if (!has_permission('manage agents')) {
       return $this->api_output(403, 'Not allowed.');
     }
 
@@ -1394,13 +1498,19 @@ class Survey extends CI_Controller {
     if (!$survey) {
       return $this->api_output(500, 'Invalid survey.');
     }
-    // TODO : api_survey_assign_agents : additional checks (survey in right status, the user can be assigned | unassigned)
-
+    
+    // Status restriction.
+    if (!$survey->status_allows('manage agents')) {
+      return $this->api_output(403, 'Not allowed.');
+    }
+    
+    // Is the user to be managed valid?
     $user = $this->user_model->get($uid);
     if (!$user || !$user->is_active()) {
       return $this->api_output(500, 'Invalid user.');
     }
-
+    
+    // Is the user to be assigned an agent?
     if ($action == 'assign' && !$user->has_role(ROLE_CC_AGENT)) {
       return $this->api_output(500, 'User is not an agent.');
     }
@@ -1419,7 +1529,7 @@ class Survey extends CI_Controller {
       }
     }
 
-    // Only save if needed
+    // Only save if needed.
     if ($needs_saving && !$this->survey_model->save($survey)) {
       return $this->api_output(500, 'Failed saving the survey.');
     }

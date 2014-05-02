@@ -35,8 +35,9 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 <li><a href="<?= $survey->get_url_respondents() ?>">Respondents</a></li>
                 <?php endif; ?>
                 
-                <?php if ($show_actions_enketo_data_collection) :?>
-                <li><a href="<?= $survey->get_url_call_activity() ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Call activity</a></li>
+                <?php if ($show_actions_enketo_data_collection) : ?>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('view call activity') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_call_activity() ?>" class="<?= $disabled ?>">Call activity</a></li>
                 <?php endif; ?>
               </ul>
             </li>
@@ -60,7 +61,9 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 <?php endif; ?>
                 
                 <?php if (has_permission('delete any survey')) : ?>
-                <li><?= anchor_csrf($survey->get_url_delete(), 'Delete', array('class' => 'danger', 'data-confirm-action' => 'Are you sure you want to delete the survey: ' . $survey->title)); ?></li>
+                <?php $class = 'danger'; ?>
+                <?php $class .= !$survey->status_allows('delete any survey') ? ' disabled': ''; ?>
+                <li><?= anchor_csrf($survey->get_url_delete(), 'Delete', array('class' => $class, 'data-confirm-action' => 'Are you sure you want to delete the survey: ' . $survey->title)); ?></li>
                 <?php endif; ?>
               </ul>
             </li>
@@ -70,11 +73,13 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               <a href="" class="bttn bttn-success bttn-medium bttn-dropdown" data-dropdown="action-bttn">Run</a>
               <ul class="action-dropdown">
                 <?php if ($show_actions_enketo_testrun) :?>
-                <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Testrun</a></li>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('enketo testrun') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_survey_enketo('testrun') ?>" class="<?= $disabled; ?>">Testrun</a></li>
                 <?php endif; ?>
                 
                 <?php if ($show_actions_enketo_data_collection) :?>
-                <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Collect Data</a></li>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('enketo collect data') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_survey_enketo('collection') ?>" class="<?= $disabled; ?>">Collect Data</a></li>
                 <?php endif; ?>
               </ul>
             </li>
@@ -211,10 +216,12 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
       </div>
       
       <div class="columns small-6">
+        <?php if (has_permission('change status any survey') || has_permission('manage agents') || has_permission('download any survey files')) : ?>
         <section class="contained">
           <h1 class="visually-hidden">Settings</h1>
           <div class="contained-body">
             
+            <?php if (has_permission('change status any survey')) : ?>
             <article class="widget widget-bfc">
               <header class="widget-head">
                 <h1 class="hd-s">Status</h1>
@@ -222,24 +229,34 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               <div class="widget-body">
                 <ul class="bttn-toolbar">
                   <li>
-                    <a href="#" class="bttn bttn-default-light bttn-small bttn-dropdown status-open" data-dropdown="action-bttn">Draft</a>
+                    <?php $available_statuses = $survey->allowed_status_change();?>
+                    <a href="#" class="bttn bttn-default-light bttn-small bttn-dropdown <?= $survey->get_status_html_class() ?> <?= empty($available_statuses) ? 'disabled' : '' ?>" data-dropdown="action-bttn"><?= $survey->get_status_label() ?></a>
                     <ul class="action-dropdown for-bttn-small">
-                      <li><a href="#" class="status-open" data-confirm-action="Are you sure?" data-confirm-title="Title set by data attribute">Status 1</a></li>
-                      <li><a href="#" class="status-canceled" data-confirm-action="Are you sure?">Status 2</a></li>
+                      <?php foreach($available_statuses as $status_code) : ?>
+                      <li><?=
+                        anchor_csrf($survey->get_url_change_status($status_code), Survey_entity::status_label($status_code), array(
+                          'class' => Survey_entity::status_html_class($status_code),
+                          'data-confirm-action' => "Status changes are irreversible. Are you sure you want to change the status to <em>" . Survey_entity::status_label($status_code) . "</em>?",
+                          'data-confirm-title' => "Change survey status"
+                        ));
+                      ?></li>
+                      <?php endforeach; ?>
                     </ul>
                   </li>
                 </ul>
               </div>
             </article>
+            <?php endif; ?>
             
-            <?php if (has_permission('assign agents')) : ?>
+            <?php if (has_permission('manage agents')) : ?>
             <article class="widget widget-bfc">
               <header class="widget-head">
                 <h1 class="hd-s">Agents</h1>
               </header>
               <div class="widget-body">
                 <?= form_open($survey->get_url_manage_agents(), array('id' => 'assign-agents')); ?>
-                <select data-placeholder="Assign Call Center Agents" class="chosen-select" multiple>
+                <?php $disabled = !$survey->status_allows('manage agents') ? 'disabled' : ''; ?>
+                <select data-placeholder="Assign Call Center Agents" class="chosen-select" multiple <?= $disabled; ?>>
                   <option value=""></option>
                   <?php foreach ($agents as $agent) : ?>
                     <option value="<?= $agent['user']->uid ?>" <?= implode(' ', $agent['properties']) ?>><?= $agent['user']->name ?></option>
@@ -278,6 +295,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             
           </div>
         </section>
+        <?php endif; ?>
         
         <?php if (has_permission('view survey stats - call tasks full table')) : ?>
           <section class="contained">
