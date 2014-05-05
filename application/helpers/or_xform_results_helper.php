@@ -3,12 +3,23 @@
 /**
  * ORXFormResults
  */
-class ORXFormResults {
+class OR_xform_results {
   
-  private $preferred_language = 'English';
+  /**
+   * Language to use when parsing the file.
+   * To lighten the process, the data is returned in only one language
+   * defined by the preferred languages.
+   */
+  protected $preferred_language = 'English';
   
-  
+  /**
+   * Original SimpleXMLElement
+   */
   protected $xform = NULL;
+  
+  /**
+   * Existing languages.
+   */
   protected $languages = array();
   
   /**
@@ -27,6 +38,14 @@ class ORXFormResults {
    */
   protected $flat_xform = array();
   
+  /**
+   * Constructor function.
+   * Parses the xform with the questions and flattens it to allow
+   * result parsing later on.
+   * 
+   * @param string $xform_file
+   *   Path to the file.
+   */
   function __construct($xform_file) {
     // Load the survey definition file.
     $this->xform = simplexml_load_file($xform_file);
@@ -44,6 +63,21 @@ class ORXFormResults {
     $translation_nodes = $this->xform->xpath('//d:itext/d:translation');
     foreach ($translation_nodes as $node) {
       $this->languages[] = (string)$node['lang'];
+    }
+    
+    // Set preferred language.
+    // By default, English is the preferred language, however if
+    // it is not available, use the first one found.
+    if (!empty($this->languages)) {
+      if (in_array("English", $this->languages)) {
+        $this->preferred_language = "English";
+      }
+      else if (in_array("english", $this->languages)) {
+        $this->preferred_language = "english";
+      }
+      else {
+        $this->preferred_language = reset($this->languages);
+      }
     }
     
     // Get all questions by querying the bind tag.
@@ -91,12 +125,33 @@ class ORXFormResults {
     $this->flat_xform = $list;
   }
 
+  /**
+   * Set the language for the parsing.
+   * If there are multiple languages per file, the default will be
+   * English. If not available will be the first one found.
+   * @param string $language.
+   */
   public function set_language($language) {
     if (in_array($language, $this->languages)) {
       $this->preferred_language = $language;
     }
   }
-
+  
+  /**
+   * Parses the result file returning the data in the following format:
+   * 
+   * [index] =>
+   *   label => human readable label
+   *   machine_label => unique, machine readable label
+   *   value => human readable value
+   *   machine_value => answer key
+   * 
+   * In a case of an open ended question, the value and machine value will be
+   * the same.
+   * 
+   * @param string $result_file_path
+   *   Path to the file.
+   */
   public function parse_result_file($result_file_path) {
     // Load the result file.
     $result_file_sxe = simplexml_load_file($result_file_path);
@@ -156,7 +211,7 @@ class ORXFormResults {
                 foreach ($answer_pieces as $value) {
                   if (isset($question['items'][$value])) {
                     $norm['value'][] = $this->_get_question_item_translation($question, $value);
-                    $norm['machine_value'] = $value;
+                    $norm['machine_value'][] = $value;
                   }
                 }
               }
@@ -185,7 +240,15 @@ class ORXFormResults {
   }
 
   protected function _get_question_label_translation($question) {
-    return ($this->is_translated() && !$question['system']) ? $question['label'][$this->preferred_language] : $question['label'];
+    if (isset($question['system']) && $question['system']) {
+      return $question['label'];
+    }
+    else if ($this->is_translated()) {
+      return $question['label'][$this->preferred_language];
+    }
+    else {
+      return $question['label'];
+    }
   }
 
   protected function _get_question_item_translation($question, $item_key) {
@@ -240,7 +303,7 @@ class ORXFormResults {
    * Returns the xform after being flatten.
    * @return array
    */
-  public function get_result() {
+  public function get_flatten() {
     return $this->flat_xform;
   }
 }
