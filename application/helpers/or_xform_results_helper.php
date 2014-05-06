@@ -45,8 +45,16 @@ class OR_xform_results {
    * 
    * @param string $xform_file
    *   Path to the file.
+   * 
+   * @throws Exception
+   *   If the given file is does not exist or is not readable.
    */
   function __construct($xform_file) {
+    // Sanity check.
+    if (!is_readable($xform_file)) {
+      throw new Exception('The xform file does not exist or is not readable.');
+    }
+    
     // Load the survey definition file.
     $this->xform = simplexml_load_file($xform_file);
     // Namespaces are needed in order to do queries.
@@ -93,10 +101,10 @@ class OR_xform_results {
       $type = (string)$v['type'];
       
       $path_pieces = explode('/', $path);
-      $machine_name = end($path_pieces);
+      $machine_label = end($path_pieces);
       
       // Store the question's machine name.
-     $list[$path]['machine_name'] = $machine_name;
+     $list[$path]['machine_label'] = $machine_label;
       // Store the question's type
      $list[$path]['type'] = $type;
      
@@ -106,7 +114,7 @@ class OR_xform_results {
       if (!$question) {
         // The question was not found. Probably a system value 
         // like the start date. Set the label as the machine name.
-        $list[$path]['label'] = $machine_name;
+        $list[$path]['label'] = $machine_label;
         $list[$path]['system'] = TRUE;
       }
       else {
@@ -136,6 +144,34 @@ class OR_xform_results {
       $this->preferred_language = $language;
     }
   }
+
+  /**
+   * Returns the preferred language or false if it is not translated.
+   * @return mixed
+   */
+  public function get_preferred_language() {
+    if ($this->is_translated()) {
+      return $this->preferred_language;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Checks if the xform is multi-language.
+   * @return boolean
+   *   Whether there are multiple languages.
+   */
+  public function is_translated() {
+    return count($this->languages) > 0;
+  }
+  
+  /**
+   * Returns the xform after being flatten.
+   * @return array
+   */
+  public function get_flatten() {
+    return $this->flat_xform;
+  }
   
   /**
    * Parses the result file returning the data in the following format:
@@ -151,8 +187,15 @@ class OR_xform_results {
    * 
    * @param string $result_file_path
    *   Path to the file.
+   * @throws Exception
+   *   If result file does not exist or is not readable.
    */
   public function parse_result_file($result_file_path) {
+    // Sanity check.
+    if (!is_readable($result_file_path)) {
+      throw new Exception('The result file does not exist or is not readable.');
+    }
+    
     // Load the result file.
     $result_file_sxe = simplexml_load_file($result_file_path);
     return $this->_normalize_result_item($result_file_sxe);
@@ -187,7 +230,7 @@ class OR_xform_results {
           $norm = array();
           // Store label
           $norm['label'] = $this->_get_question_label_translation($question);
-          $norm['machine_label'] = $question['machine_name'];
+          $norm['machine_label'] = $question['machine_label'];
           
           // Check if question was answered.
           if ($item_data) {
@@ -254,15 +297,6 @@ class OR_xform_results {
   protected function _get_question_item_translation($question, $item_key) {
     return $this->is_translated() ? $question['items'][$item_key][$this->preferred_language] : $question['items'][$item_key];
   }
-
-  /**
-   * Checks if the xform is multi-language.
-   * @return boolean
-   *   Whether there are multiple languages.
-   */
-  public function is_translated() {
-    return count($this->languages) > 0;
-  }
   
   /**
    * Gets the translation for the given label.
@@ -297,14 +331,6 @@ class OR_xform_results {
     }
     
     return $translations;
-  }
-  
-  /**
-   * Returns the xform after being flatten.
-   * @return array
-   */
-  public function get_flatten() {
-    return $this->flat_xform;
   }
 }
 

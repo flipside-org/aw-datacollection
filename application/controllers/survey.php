@@ -1154,6 +1154,15 @@ class Survey extends CI_Controller {
     redirect($survey->get_url_respondents());
   }
 
+  /**
+   * Change the status of the surveys
+   * @param $sid
+   *   Survey sid
+   * @param $status
+   *  The survey new status.
+   *
+   * Route - /survey/:sid/change_status/:status
+   */
   public function survey_change_status($sid, $status) {
     verify_csrf_get();
     $survey = $this->survey_model->get($sid);
@@ -1179,6 +1188,108 @@ class Survey extends CI_Controller {
     }
     
     redirect($survey->get_url_view());
+  }
+  
+  /**
+   * Export the collected data to csv file.
+   * @param $sid
+   *   Survey sid
+   * @param $type
+   *  The type of export, if human readable of machine readable.
+   *
+   * Route - /survey/:sid/data_export/(csv_human|csv_machine)
+   */
+  public function survey_export_csv($sid, $type) {
+    if (!has_permission('export csv data any survey')) {
+      show_403();
+    }
+    
+    $survey = $this->survey_model->get($sid);
+    if (!$survey) {
+      show_404();
+    }
+    
+    if (!$survey->status_allows('export csv data any survey')) {
+      show_403();
+    }
+    
+    // Load stuff.
+    $this->load->model('survey_result_model');
+    $this->load->helper('or_xform_results');
+    
+    try {
+      $flattener = new OR_xform_results($survey->get_xml_full_path());
+    }
+    catch(Exception $e) {
+      // The xform file does not exist or is not readable.
+      show_404();
+    }
+    
+    // Load results.
+    $results = $this->survey_result_model->get_all($sid);
+    
+    // Type of export.
+    switch ($type) {
+      case 'csv_human':
+        $label_key = "label";
+        $value_key = "value";
+        $filename = sprintf('survey_results_%d_normalized.csv', $survey->sid);
+        break;
+      case 'csv_machine':
+        $label_key = "machine_label";
+        $value_key = "machine_value";
+        $filename = sprintf('survey_results_%d_raw.csv', $survey->sid);
+        break;
+    }
+    
+    // Compose header of csv file.
+    // The header is being created from the flat xfrom so if all the result
+    // files fail, we'll have an empty csv with an header.
+    $flat = $flattener->get_flatten();
+    $header = array();
+    foreach ($flat as $key => $value) {
+      if ($flattener->is_translated()) {
+        $header[] = $value[$label_key][$flattener->get_preferred_language()];
+      }
+      else {
+        $header[] = $value[$label_key];
+      }
+    }
+
+    // Headers.
+    header("Cache-Control: public");
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+    header("Content-Description: File Transfer");
+    header("Content-Disposition: attachment; filename=" . $filename);
+    header("Content-Type: application/octet-stream; "); 
+    header("Content-Transfer-Encoding: binary");
+    
+    // Open stream.
+    $output = fopen('php://output', 'w');
+    
+    // Put headers.
+    fputcsv($output, $header);
+    
+    // Compose data.
+    foreach ($results as $survey_result_entity) {
+      try {
+        $parsed_file = $flattener->parse_result_file($survey_result_entity->get_xml_full_path());
+      }
+      catch(Exception $e) {
+        // The file does not exist or is not readable. Skip.
+        continue;
+      }
+      
+      $fields = array();
+      foreach ($parsed_file as $data) {
+        $fields[] = is_array($data[$value_key]) ? implode(' ', $data[$value_key]) : $data[$value_key];
+      }
+      fputcsv($output, $fields);
+    }
+    
+    //Close stream.
+    fclose($output);
   }
   
   /**

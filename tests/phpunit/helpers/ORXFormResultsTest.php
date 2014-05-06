@@ -16,38 +16,38 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
     
     $expected_xform_flat = array(
       '/survey_no_lang/user_name' => array(
-        'machine_name' => "user_name",
+        'machine_label' => "user_name",
         'type' => "string",
         'label' => "What's your name?",
       ),
 
       '/survey_no_lang/a_integer' => array(
-        'machine_name' => "a_integer",
+        'machine_label' => "a_integer",
         'type' => "int",
         'label' => "Pick an integer:",
       ),
 
       '/survey_no_lang/a_decimal' => array(
-        'machine_name' => "a_decimal",
+        'machine_label' => "a_decimal",
         'type' => "decimal",
         'label' => "Pick a decimal:",
       ),
 
       '/survey_no_lang/calculate' => array(
-        'machine_name' => "calculate",
+        'machine_label' => "calculate",
         'type' => "string",
         'label' => "calculate",
         'system' => "1",
        ),
 
       '/survey_no_lang/required_text' => array(
-        'machine_name' => "required_text",
+        'machine_label' => "required_text",
         'type' => "string",
         'label' => "Required question",
        ),
 
       '/survey_no_lang/skip_example' => array(
-        'machine_name' => "skip_example",
+        'machine_label' => "skip_example",
         'type' => "select1",
         'label' => "Skip the next question?",
         'items' => array(
@@ -57,19 +57,19 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
       ),
 
       '/survey_no_lang/skipable_question' => array(
-        'machine_name' => "skipable_question",
+        'machine_label' => "skipable_question",
         'type' => "string",
         'label' => "Then enter something.",
        ),
 
       '/survey_no_lang/repeat_test/repeating_question' => array(
-        'machine_name' => "repeating_question",
+        'machine_label' => "repeating_question",
         'type' => "string",
         'label' => "This is a repeating question.",
        ),
 
       '/survey_no_lang/group_test/select_multiple' => array(
-        'machine_name' => "select_multiple",
+        'machine_label' => "select_multiple",
         'type' => "select",
         'label' => "Select multiple",
         'items' => array(
@@ -79,7 +79,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
       ),
 
       '/survey_no_lang/group_test/group_within_note/select_multiple_within' => array(
-        'machine_name' => "select_multiple_within",
+        'machine_label' => "select_multiple_within",
         'type' => "select",
         'label' => "Select multiple within a group",
         'items' => array(
@@ -293,7 +293,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
     
     $expected_xform_flat = array(
       '/survey_en_pt/user_name' => array(
-        'machine_name' => "user_name",
+        'machine_label' => "user_name",
         'type' => "string",
         'label' => array(
           'Portugues' => "Qual é o teu nome?",
@@ -302,7 +302,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
       ),
 
       '/survey_en_pt/a_integer' => array(
-        'machine_name' => "a_integer",
+        'machine_label' => "a_integer",
         'type' => "int",
         'label' => array(
           'Portugues' => "Escolhe um número inteiro:",
@@ -311,7 +311,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
       ),
 
       '/survey_en_pt/a_decimal' => array(
-        'machine_name' => "a_decimal",
+        'machine_label' => "a_decimal",
         'type' => "decimal",
         'label' => array(
           'Portugues' => "Escolhe um número decimal:",
@@ -320,14 +320,14 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
       ),
 
       '/survey_en_pt/calculate' => array(
-        'machine_name' => "calculate",
+        'machine_label' => "calculate",
         'type' => "string",
         'label' => "calculate",
         'system' => "1",
        ),
 
       '/survey_en_pt/required_text' => array(
-        'machine_name' => "required_text",
+        'machine_label' => "required_text",
         'type' => "string",
         'label' => array(
           'Portugues' => "Questão obrigatória:",
@@ -336,7 +336,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
        ),
 
       '/survey_en_pt/skip_example' => array(
-        'machine_name' => "skip_example",
+        'machine_label' => "skip_example",
         'type' => "select1",
         'label' => array(
           'Portugues' => "Saltar a próxima questão?",
@@ -355,7 +355,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
       ),
 
       '/survey_en_pt/skipable_question' => array(
-        'machine_name' => "skipable_question",
+        'machine_label' => "skipable_question",
         'type' => "string",
         'label' => array(
           'Portugues' => "Então escreve alguma coisa.",
@@ -364,7 +364,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
        ),
 
       '/survey_en_pt/repeat_test/repeating_question' => array(
-        'machine_name' => "repeating_question",
+        'machine_label' => "repeating_question",
         'type' => "string",
         'label' => array(
           'Portugues' => "Esta é uma questão repetível.",
@@ -373,7 +373,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
        ),
 
       '/survey_en_pt/group_test/select_multiple' => array(
-        'machine_name' => "select_multiple",
+        'machine_label' => "select_multiple",
         'type' => "select",
         'label' => array(
           'Portugues' => "Escolha múltipla",
@@ -392,7 +392,7 @@ class or_xform_results_helper_test extends PHPUnit_Framework_TestCase {
       ),
 
       '/survey_en_pt/group_test/group_within_note/select_multiple_within' => array(
-        'machine_name' => "select_multiple_within",
+        'machine_label' => "select_multiple_within",
         'type' => "select",
         'label' => array(
           'Portugues' => "Escolha múltipla dentro de um grupo.",
