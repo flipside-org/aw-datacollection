@@ -42,12 +42,20 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
               </ul>
             </li>
             
-            <?php if (has_permission('download any survey files')) : ?>
+            <?php if (has_permission('download any survey files') || has_permission('export csv data any survey')) : ?>
             <li>
               <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Export</a>
               <ul class="action-dropdown">
+                <?php if (has_permission('export csv data any survey')) : ?>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('export csv data any survey') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_data_export_csv('csv_human'); ?>" class="<?= $disabled; ?>">Results</a></li>
+                <li><a href="<?= $survey->get_url_data_export_csv('csv_machine'); ?>" class="<?= $disabled; ?>">Results (Raw)</a></li>
+                <?php endif; ?>
+                
+                <?php if (has_permission('download any survey files')) : ?>
                 <li><a href="<?= $survey->get_url_file('xls'); ?>" class="<?= !$survey->has_xls() ? 'disabled' : ''; ?>">Definition file (XLS)</a></li>
                 <li><a href="<?= $survey->get_url_file('xml'); ?>" class="<?= !$survey->has_xml() ? 'disabled' : ''; ?>">Definition file (XML)</a></li>
+                <?php endif; ?>
               </ul>
             </li>
             <?php endif; ?>
@@ -122,7 +130,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                   </ul>
                 </div>
                 <ul class="progress-bar-legend">
-                  <li class="success">Success: <strong><?= $call_tasks_status_bar['success']; ?></strong> (<?= $per_success; ?>%)</li>
+                  <li class="success">Success: <strong><?= $call_tasks_status_bar['success']; ?></strong> (<?= round($per_success, 2); ?>%)</li>
                   <li class="summary-alt">Goal: <strong><?= $survey->goal; ?></strong></li>
                 </ul>
                 

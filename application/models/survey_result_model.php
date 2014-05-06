@@ -44,6 +44,27 @@ class Survey_result_model extends CI_Model {
       return FALSE;
     }
   }
+  
+  /**
+   * Returns all the survey results of a given survey.
+   *  
+   * @param int $sid
+   *  Since all the survey results are bound to a survey its id is needed.
+   * 
+   * @return array of Survey_result_entity
+   */
+  public function get_all($sid) {
+    $result = $this->mongo_db
+      ->where('survey_sid', (int) $sid)
+      ->get(self::COLLECTION);
+      
+    $survey_results = array();
+    foreach ($result as $value) {
+      $survey_results[] = Survey_result_entity::build($value);
+    }
+    
+    return $survey_results;
+  }
 
   /**
    * Saves a survey result to the database.
