@@ -452,6 +452,18 @@ class Survey_entity extends Entity {
   }
 
   /**
+   * Returns the url to export data to csv.
+   * @access public
+   * @return string
+   */
+  public function get_url_data_export_csv($type) {
+    if ($this->sid == NULL) {
+      throw new Exception("Trying to get link for a nonexistent survey.");
+    }
+    return base_url('survey/' . $this->sid . '/data_export/' . $type) ;
+  }
+
+  /**
    * Saves the survey file to disk
    *
    * @access public

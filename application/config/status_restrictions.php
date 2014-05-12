@@ -46,4 +46,6 @@ $config['status_restrictions'] = array(
   
   'edit any survey metadata' => array($draft, $open),
   'edit any survey def file' => array($draft),
+  
+  'export csv data any survey' => array($closed),
 );

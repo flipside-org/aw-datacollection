@@ -6,12 +6,6 @@ class Index extends CI_Controller {
     parent::__construct();
   }
   
-  public function test() {
-    $this->load->view('base/html_start');
-    $this->load->view('frontend');
-    $this->load->view('base/html_end');
-  }
-
 	public function index() {
 	  if (!is_logged()) {
 	    redirect('login');

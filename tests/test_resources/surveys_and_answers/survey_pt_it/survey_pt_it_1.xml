@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<survey_pt_it id="survey_pt_it">
+          <user_name>Riccardo Casseri</user_name>
+          <ex_note/>
+          <a_integer>3</a_integer>
+          <a_decimal>1.4153</a_decimal>
+          <calculate>4.4153</calculate>
+          <calculate_test_output/>
+          <required_text>Va bene.</required_text>
+          <skip_example>yes</skip_example>
+          <skipable_question/>
+          <repeat_test>
+            <repeating_question>Ripetizione</repeating_question>
+          </repeat_test>
+          <group_test>
+            <select_multiple>yes</select_multiple>
+            <group_within_note>
+              <group_within_note/>
+              <select_multiple_within>banana pear kiwi tomato</select_multiple_within>
+            </group_within_note>
+          </group_test>
+          <meta>
+            <instanceID>uuid:ecc05e77-777a-4048-a27a-fde4258f9b47</instanceID>
+          </meta>
+        </survey_pt_it>

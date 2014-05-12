@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<survey_no_lang id="survey_no_lang">
+          <user_name>John Doe</user_name>
+          <ex_note/>
+          <a_integer>1</a_integer>
+          <a_decimal>0.555</a_decimal>
+          <calculate>1.5550000000000002</calculate>
+          <calculate_test_output/>
+          <required_text>Required</required_text>
+          <skip_example>yes</skip_example>
+          <skipable_question/>
+          <repeat_test>
+            <repeating_question/>
+          </repeat_test>
+          <group_test>
+            <select_multiple>yes no</select_multiple>
+            <group_within_note>
+              <group_within_note/>
+              <select_multiple_within>banana pear kiwi apple passion_fruit tomato</select_multiple_within>
+            </group_within_note>
+          </group_test>
+          <meta>
+            <instanceID>uuid:82bcb897-272c-4f98-b0e6-fb2061174201</instanceID>
+          </meta>
+        </survey_no_lang>

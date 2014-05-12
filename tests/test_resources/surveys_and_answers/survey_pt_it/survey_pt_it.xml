@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>survey_pt_it</h:title>
+    <model>
+      <itext>
+        <translation lang="Portugues">
+          <text id="/survey_pt_it/a_decimal:label">
+            <value>Escolhe um número decimal:</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/pear:label">
+            <value>Pera</value>
+          </text>
+          <text id="/survey_pt_it/skip_example/no:label">
+            <value>Não</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within:label">
+            <value>Escolha múltipla dentro de um grupo.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/tomato:label">
+            <value>Tomate</value>
+          </text>
+          <text id="/survey_pt_it/repeat_test/repeating_question:label">
+            <value>Esta é uma questão repetível.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/apple:label">
+            <value>Maçã</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/passion_fruit:label">
+            <value>Maracujá</value>
+          </text>
+          <text id="/survey_pt_it/a_integer:label">
+            <value>Escolhe um número inteiro:</value>
+          </text>
+          <text id="/survey_pt_it/user_name:hint">
+            <value>Também podes ficar anónimo.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note:label">
+            <value>Um grupo dentro de um grupo.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/select_multiple/no:label">
+            <value>Não</value>
+          </text>
+          <text id="/survey_pt_it/group_test/select_multiple:label">
+            <value>Escolha múltipla</value>
+          </text>
+          <text id="/survey_pt_it/required_text:hint">
+            <value>Escreve algo para continuar.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/group_within_note:label">
+            <value>Apenas uma nota num grupo dentro de um grupo!</value>
+          </text>
+          <text id="/survey_pt_it/skipable_question:label">
+            <value>Então escreve alguma coisa.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/select_multiple/yes:label">
+            <value>Sim</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/kiwi:label">
+            <value>Kiwi</value>
+          </text>
+          <text id="/survey_pt_it/skip_example:label">
+            <value>Saltar a próxima questão?</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/banana:label">
+            <value>Banana</value>
+          </text>
+          <text id="/survey_pt_it/skip_example/yes:label">
+            <value>Sim</value>
+          </text>
+          <text id="/survey_pt_it/ex_note:label">
+            <value>Chegaste a este ponto. Boa.</value>
+          </text>
+          <text id="/survey_pt_it/a_decimal:hint">
+            <value>O número decimal tem de ser menos que o inteiro.</value>
+          </text>
+          <text id="/survey_pt_it/user_name:label">
+            <value>Qual é o teu nome?</value>
+          </text>
+          <text id="/survey_pt_it/group_test:label">
+            <value>Um grupo</value>
+          </text>
+          <text id="/survey_pt_it/calculate_test_output:label">
+            <value>Resultado: <output value=" /survey_pt_it/calculate "/></value></text>
+          <text id="/survey_pt_it/required_text:label">
+            <value>Questão obrigatória:</value>
+          </text>
+          <text id="/survey_pt_it/repeat_test:label">
+            <value>Repetições</value>
+          </text>
+        </translation>
+        <translation lang="Italiano">
+          <text id="/survey_pt_it/a_decimal:label">
+            <value>Scegli un numero decimale:</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/pear:label">
+            <value>Pera</value>
+          </text>
+          <text id="/survey_pt_it/skip_example/no:label">
+            <value>No</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within:label">
+            <value>Risposta multipla dentro di un gruppo</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/tomato:label">
+            <value>Pomodoro</value>
+          </text>
+          <text id="/survey_pt_it/repeat_test/repeating_question:label">
+            <value>Questa è una domanda ripetibile.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/apple:label">
+            <value>Mela</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/passion_fruit:label">
+            <value>Frutto della passione</value>
+          </text>
+          <text id="/survey_pt_it/a_integer:label">
+            <value>Scegli un numero intero:</value>
+          </text>
+          <text id="/survey_pt_it/user_name:hint">
+            <value>Puoi anche essere anonimo.</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note:label">
+            <value>Un gruppo dentro di un gruppo</value>
+          </text>
+          <text id="/survey_pt_it/group_test/select_multiple/no:label">
+            <value>No</value>
+          </text>
+          <text id="/survey_pt_it/group_test/select_multiple:label">
+            <value>Risposta multipla</value>
+          </text>
+          <text id="/survey_pt_it/required_text:hint">
+            <value>Scrivi qualcosa per continuare</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/group_within_note:label">
+            <value>Un appunto in un gruppo dentro di un gruppo.</value>
+          </text>
+          <text id="/survey_pt_it/skipable_question:label">
+            <value>Allora scrivi qualcosa</value>
+          </text>
+          <text id="/survey_pt_it/group_test/select_multiple/yes:label">
+            <value>Si</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/kiwi:label">
+            <value>Kiwi</value>
+          </text>
+          <text id="/survey_pt_it/skip_example:label">
+            <value>Ignorare la prossima doamnda?</value>
+          </text>
+          <text id="/survey_pt_it/group_test/group_within_note/select_multiple_within/banana:label">
+            <value>Banana</value>
+          </text>
+          <text id="/survey_pt_it/skip_example/yes:label">
+            <value>Si</value>
+          </text>
+          <text id="/survey_pt_it/ex_note:label">
+            <value>Sei arrivato ao questo punto. Bravo</value>
+          </text>
+          <text id="/survey_pt_it/a_decimal:hint">
+            <value>Il numero decimale deve essere inferiore all'intero.</value>
+          </text>
+          <text id="/survey_pt_it/user_name:label">
+            <value>Qual'è il tuo nome?</value>
+          </text>
+          <text id="/survey_pt_it/group_test:label">
+            <value>Un gruppo</value>
+          </text>
+          <text id="/survey_pt_it/calculate_test_output:label">
+            <value>Risultato: <output value=" /survey_pt_it/calculate "/></value></text>
+          <text id="/survey_pt_it/required_text:label">
+            <value>Domanda obbligatoria:</value>
+          </text>
+          <text id="/survey_pt_it/repeat_test:label">
+            <value>Ripetizioni</value>
+          </text>
+        </translation>
+      </itext>
+      <instance>
+        <survey_pt_it id="survey_pt_it">
+          <user_name>Anonymous</user_name>
+          <ex_note/>
+          <a_integer/>
+          <a_decimal/>
+          <calculate/>
+          <calculate_test_output/>
+          <required_text/>
+          <skip_example/>
+          <skipable_question/>
+          <repeat_test jr:template="">
+            <repeating_question/>
+          </repeat_test>
+          <group_test>
+            <select_multiple/>
+            <group_within_note>
+              <group_within_note/>
+              <select_multiple_within/>
+            </group_within_note>
+          </group_test>
+          <meta>
+            <instanceID/>
+          </meta>
+        </survey_pt_it>
+      </instance>
+      <bind nodeset="/survey_pt_it/user_name" type="string"/>
+      <bind nodeset="/survey_pt_it/ex_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_pt_it/a_integer" type="int"/>
+      <bind constraint=". &lt;  /survey_pt_it/a_integer " nodeset="/survey_pt_it/a_decimal" type="decimal"/>
+      <bind calculate=" /survey_pt_it/a_integer + /survey_pt_it/a_decimal " nodeset="/survey_pt_it/calculate" type="string"/>
+      <bind nodeset="/survey_pt_it/calculate_test_output" readonly="true()" type="string"/>
+      <bind nodeset="/survey_pt_it/required_text" required="true()" type="string"/>
+      <bind nodeset="/survey_pt_it/skip_example" required="true()" type="select1"/>
+      <bind nodeset="/survey_pt_it/skipable_question" relevant="selected( /survey_pt_it/skip_example , 'no')" required="true()" type="string"/>
+      <bind nodeset="/survey_pt_it/repeat_test/repeating_question" type="string"/>
+      <bind nodeset="/survey_pt_it/group_test/select_multiple" type="select"/>
+      <bind nodeset="/survey_pt_it/group_test/group_within_note/group_within_note" readonly="true()" type="string"/>
+      <bind nodeset="/survey_pt_it/group_test/group_within_note/select_multiple_within" type="select"/>
+      <bind calculate="concat('uuid:', uuid())" nodeset="/survey_pt_it/meta/instanceID" readonly="true()" type="string"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/survey_pt_it/user_name">
+      <label ref="jr:itext('/survey_pt_it/user_name:label')"/>
+      <hint ref="jr:itext('/survey_pt_it/user_name:hint')"/>
+    </input>
+    <input ref="/survey_pt_it/ex_note">
+      <label ref="jr:itext('/survey_pt_it/ex_note:label')"/>
+    </input>
+    <input ref="/survey_pt_it/a_integer">
+      <label ref="jr:itext('/survey_pt_it/a_integer:label')"/>
+    </input>
+    <input ref="/survey_pt_it/a_decimal">
+      <label ref="jr:itext('/survey_pt_it/a_decimal:label')"/>
+      <hint ref="jr:itext('/survey_pt_it/a_decimal:hint')"/>
+    </input>
+    <input ref="/survey_pt_it/calculate_test_output">
+      <label ref="jr:itext('/survey_pt_it/calculate_test_output:label')"/>
+    </input>
+    <input ref="/survey_pt_it/required_text">
+      <label ref="jr:itext('/survey_pt_it/required_text:label')"/>
+      <hint ref="jr:itext('/survey_pt_it/required_text:hint')"/>
+    </input>
+    <select1 ref="/survey_pt_it/skip_example">
+      <label ref="jr:itext('/survey_pt_it/skip_example:label')"/>
+      <item>
+        <label ref="jr:itext('/survey_pt_it/skip_example/yes:label')"/>
+        <value>yes</value>
+      </item>
+      <item>
+        <label ref="jr:itext('/survey_pt_it/skip_example/no:label')"/>
+        <value>no</value>
+      </item>
+    </select1>
+    <input ref="/survey_pt_it/skipable_question">
+      <label ref="jr:itext('/survey_pt_it/skipable_question:label')"/>
+    </input>
+    <group ref="/survey_pt_it/repeat_test">
+      <label ref="jr:itext('/survey_pt_it/repeat_test:label')"/>
+      <repeat nodeset="/survey_pt_it/repeat_test">
+        <input ref="/survey_pt_it/repeat_test/repeating_question">
+          <label ref="jr:itext('/survey_pt_it/repeat_test/repeating_question:label')"/>
+        </input>
+      </repeat>
+    </group>
+    <group ref="/survey_pt_it/group_test">
+      <label ref="jr:itext('/survey_pt_it/group_test:label')"/>
+      <select ref="/survey_pt_it/group_test/select_multiple">
+        <label ref="jr:itext('/survey_pt_it/group_test/select_multiple:label')"/>
+        <item>
+          <label ref="jr:itext('/survey_pt_it/group_test/select_multiple/yes:label')"/>
+          <value>yes</value>
+        </item>
+        <item>
+          <label ref="jr:itext('/survey_pt_it/group_test/select_multiple/no:label')"/>
+          <value>no</value>
+        </item>
+      </select>
+      <group ref="/survey_pt_it/group_test/group_within_note">
+        <label ref="jr:itext('/survey_pt_it/group_test/group_within_note:label')"/>
+        <input ref="/survey_pt_it/group_test/group_within_note/group_within_note">
+          <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/group_within_note:label')"/>
+        </input>
+        <select ref="/survey_pt_it/group_test/group_within_note/select_multiple_within">
+          <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/select_multiple_within:label')"/>
+          <item>
+            <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/select_multiple_within/banana:label')"/>
+            <value>banana</value>
+          </item>
+          <item>
+            <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/select_multiple_within/pear:label')"/>
+            <value>pear</value>
+          </item>
+          <item>
+            <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/select_multiple_within/kiwi:label')"/>
+            <value>kiwi</value>
+          </item>
+          <item>
+            <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/select_multiple_within/apple:label')"/>
+            <value>apple</value>
+          </item>
+          <item>
+            <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/select_multiple_within/passion_fruit:label')"/>
+            <value>passion_fruit</value>
+          </item>
+          <item>
+            <label ref="jr:itext('/survey_pt_it/group_test/group_within_note/select_multiple_within/tomato:label')"/>
+            <value>tomato</value>
+          </item>
+        </select>
+      </group>
+    </group>
+  </h:body>
+</h:html>

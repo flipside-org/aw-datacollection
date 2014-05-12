@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<survey_no_lang id="survey_no_lang">
+          <user_name>Anonymous</user_name>
+          <ex_note/>
+          <a_integer>10</a_integer>
+          <a_decimal>1.5</a_decimal>
+          <calculate>11.5</calculate>
+          <calculate_test_output/>
+          <required_text>This is required</required_text>
+          <skip_example>no</skip_example>
+          <skipable_question>Something</skipable_question>
+          <repeat_test>
+            <repeating_question>Repeat 1</repeating_question>
+          </repeat_test><repeat_test>
+            <repeating_question>Repeat 2</repeating_question>
+          </repeat_test>
+          <group_test>
+            <select_multiple>no</select_multiple>
+            <group_within_note>
+              <group_within_note/>
+              <select_multiple_within>banana pear kiwi apple</select_multiple_within>
+            </group_within_note>
+          </group_test>
+          <meta>
+            <instanceID>uuid:d4173abe-50e3-479b-a822-ca02ab649225</instanceID>
+          </meta>
+        </survey_no_lang>
