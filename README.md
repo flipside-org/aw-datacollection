@@ -1,9 +1,16 @@
-# Airwolf data-collection app
+# Airwolf data-collection
+The Airwolf data collection app is built to support the data collection efforts by [Text to Change's](http://texttochange.com) call center. The application uses the Openrosa Xform standard and relies on [Enketo](https://github.com/MartijnR/enketo) for the webform capabilities. For more information, please see [the blog post on flipside.org](http://flipside.org/notes/data-collection-for-call-centers/).
 
-The Airwolf application that handles data collection.
+![aw-survey](https://cloud.githubusercontent.com/assets/751330/2946564/d98970ee-d9ec-11e3-9781-ff9e27067c64.png)
+
 Built using [Codeigniter](http://ellislab.com/codeigniter)
 
-## Local Machine
+## Team
+Daniel da Silva - [Github](https://github.com/danielfdsilva)  
+Ricardo Mestre - [Github](https://github.com/ricardomestre)  
+Olaf Veerman - [Github](https://github.com/olafveerman)
+
+## Development environment
 ### Requirements
 - Node & Npm
 - Grunt ( $ npm install -g grunt-cli )
