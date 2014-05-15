@@ -70,7 +70,7 @@
                   <td>
                     <ul class="bttn-toolbar">
                       <li>
-                        <a href="<?= $call_task_entity->get_url_single_data_collection() ?>" class="bttn bttn-success bttn-small <?= $disabled; ?>">Collect data</a>
+                        <a href="<?= $call_task_entity->get_url_single_data_collection() ?>" class="bttn bttn-success bttn-small bttn-icon-run <?= $disabled; ?>">Collect data</a>
                       </li>
                     </ul>
                 </tr>

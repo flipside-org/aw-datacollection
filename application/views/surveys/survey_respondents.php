@@ -18,7 +18,7 @@
 
             <?php if (has_permission('manage respondents any survey')) : ?>
             <li>
-              <?php $class = 'bttn bttn-primary bttn-medium bttn-dropdown'; ?>
+              <?php $class = 'bttn bttn-primary bttn-medium bttn-dropdown bttn-icon-add'; ?>
               <?php $class .= !$survey->status_allows('import respondents any survey') ? ' disabled': ''; ?>
               <a href="#" class="<?= $class; ?>" data-dropdown="action-bttn">Add new</a>
               <ul class="action-dropdown">
@@ -49,7 +49,7 @@
               <h1 class="hd-s visually-hidden">Respondents</h1>
               <ul class="bttn-toolbar">
                 <li>
-                  <a href="#" class="bttn bttn-default bttn-small bttn-dropdown" data-dropdown="action-bttn">Bulk edit</a>
+                  <a href="#" class="bttn bttn-default bttn-small bttn-dropdown bttn-icon-edit" data-dropdown="action-bttn">Bulk edit</a>
                   <ul class="action-dropdown for-bttn-small">
                     <?php $class = 'danger'; ?>
                     <?php $class .= !$survey->status_allows('delete respondents any survey') ? ' disabled': ''; ?>
@@ -90,7 +90,7 @@
                     <td>
                       <ul class="bttn-toolbar">
                         <li>
-                          <a href="#" class="bttn bttn-primary bttn-small bttn-dropdown" data-dropdown="action-bttn">Edit</a>
+                          <a href="#" class="bttn bttn-primary bttn-small bttn-dropdown bttn-icon-edit" data-dropdown="action-bttn">Edit</a>
                           <ul class="action-dropdown for-bttn-small">
                             <?php
                               $class = 'danger';

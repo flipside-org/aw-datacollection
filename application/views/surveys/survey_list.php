@@ -11,7 +11,7 @@
           <ul class="bttn-toolbar">
             <?php if (has_permission('create survey')) : ?>
             <li>
-              <a href="<?= base_url('survey/add'); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
+              <a href="<?= base_url('survey/add'); ?>" class="bttn bttn-primary bttn-medium bttn-icon-add">Add new</a>
             </li>
             <?php endif; ?>
           </ul>
@@ -71,7 +71,7 @@
                     <?php if (has_permission('edit any survey') || has_permission('delete any survey')) : ?>
                     <ul class="bttn-toolbar">
                       <li>
-                        <a href="#" class="bttn bttn-primary bttn-small bttn-dropdown" data-dropdown="action-bttn">Edit</a>
+                        <a href="#" class="bttn bttn-primary bttn-small bttn-dropdown bttn-icon-edit" data-dropdown="action-bttn">Edit</a>
                         <ul class="action-dropdown for-bttn-small">
                           <?php if (has_permission('edit any survey')) : ?>
                           <li><?= anchor($survey_entity->get_url_edit(), 'Modify'); ?></li>
