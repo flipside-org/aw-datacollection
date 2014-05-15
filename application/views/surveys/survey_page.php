@@ -44,7 +44,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             
             <?php if (has_permission('download any survey files') || has_permission('export csv data any survey')) : ?>
             <li>
-              <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Export</a>
+              <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown bttn-icon-export" data-dropdown="action-bttn">Export</a>
               <ul class="action-dropdown">
                 <?php if (has_permission('export csv data any survey')) : ?>
                 <?php $disabled = !$survey->has_xml() || !$survey->status_allows('export csv data any survey') ? 'disabled' : ''; ?>
@@ -62,7 +62,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             
             <?php if (has_permission('edit any survey') || has_permission('delete any survey')) : ?>
             <li>
-              <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown" data-dropdown="action-bttn">Edit</a>
+              <a href="" class="bttn bttn-primary bttn-medium bttn-dropdown bttn-icon-edit" data-dropdown="action-bttn">Edit</a>
               <ul class="action-dropdown">
                 <?php if (has_permission('edit any survey')) : ?>
                 <li><a href="<?= $survey->get_url_edit(); ?>">Modify</a></li>
@@ -78,7 +78,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
             <?php endif; ?>
             
             <li>
-              <a href="" class="bttn bttn-success bttn-medium bttn-dropdown" data-dropdown="action-bttn">Run</a>
+              <a href="" class="bttn bttn-success bttn-medium bttn-dropdown bttn-icon-run" data-dropdown="action-bttn">Run</a>
               <ul class="action-dropdown">
                 <?php if ($show_actions_enketo_testrun) :?>
                 <?php $disabled = !$survey->has_xml() || !$survey->status_allows('enketo testrun') ? 'disabled' : ''; ?>

@@ -72,7 +72,7 @@ a, button {
   display: inline-block;
   padding: rem-calc(0 12);
   border-radius: rem-calc(4);
-  font-weight: $body-font-bold;
+  font-weight: $body-font-bold !important;
   text-align: center;
   
   &:link,
@@ -355,3 +355,46 @@ a, button {
   top: 44px;
 }
 /* // Dropdown for button size */
+
+/* Button icons */
+
+%bttn-icon {
+  margin-right: rem-calc(8);
+}
+
+.bttn-icon-edit {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-pencil;
+  }
+}
+.bttn-icon-add {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-s-add;
+  }
+}
+.bttn-icon-run {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-circle-play;
+  }
+}
+.bttn-icon-export {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-download;
+  }
+}
+.bttn-icon-save {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-s-tick;
+  }
+}
+.bttn-icon-cancel {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-s-cancel;
+  }
+}

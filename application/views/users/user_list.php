@@ -11,7 +11,7 @@
           <ul class="bttn-toolbar">
             <?php if (has_permission('create account')) : ?>
             <li>
-              <a href="<?= base_url('user/add'); ?>" class="bttn bttn-primary bttn-medium">Add new</a>
+              <a href="<?= base_url('user/add'); ?>" class="bttn bttn-primary bttn-medium bttn-icon-add">Add new</a>
             </li>
             <?php endif; ?>
           </ul>
@@ -61,7 +61,7 @@
                     <?php if (has_permission('edit any account') || has_permission('delete any account')) : ?>
                     <ul class="bttn-toolbar">
                       <li>
-                        <a href="#" class="bttn bttn-primary bttn-small bttn-dropdown" data-dropdown="action-bttn">Edit</a>
+                        <a href="#" class="bttn bttn-primary bttn-small bttn-dropdown bttn-icon-edit" data-dropdown="action-bttn">Edit</a>
                         <ul class="action-dropdown for-bttn-small">
                           <?php if (has_permission('edit any account')) : ?>
                           <li><?= anchor($user_entity->get_url_edit(), 'Modify'); ?></li>
