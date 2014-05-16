@@ -20,7 +20,9 @@ class Survey extends CI_Controller {
     $this->load->model('survey_model');
     $this->load->model('call_task_model');
     load_entity('call_task');
-    // this is neede
+    
+    // Some data can't be stored on codeigniter session.
+    // Start a regular php session.
     session_start();
   }
 
