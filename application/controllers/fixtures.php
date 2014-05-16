@@ -7,14 +7,61 @@ class Fixtures extends CI_Controller {
     $this->_env_check();
     $this->load->helper('password_hashing');
   }
+  
+  /**
+   * Check environment. Fixtures are only allowed during development
+   */
+  private function _env_check() {
+    if (ENVIRONMENT != 'development') {
+      show_error('Not allowed. Only available during development');
+    }
+  }
+  
+  /**
+   * Drop database.
+   * Start with clean slate.
+   */
+  private function _tear_down() {
+    $this->mongo_db->dropDb('aw_datacollection');
+  }
+  
+  /**
+   * Setup the base status of the application.
+   * These are not fixtures. This is needed data for the app
+   * to work.
+   */
+  public function setup() {
+    $this->_tear_down();
+    
+    // Create needed folders.
+    if (!is_dir('files/surveys')) {
+      mkdir('files/surveys', 0777, TRUE);
+    }
+    
+    if (!is_dir('files/survey_results')) {
+      mkdir('files/survey_results', 0777, TRUE);
+    }
+    
+    $admin = new User_entity(array(
+      'email' => 'admin@localhost.dev',
+      'name' => 'Admin',
+      'username' => 'admin',
+      'author' => 0,
+    ));
+    
+    $admin->set_password(hash_password('admin'))
+      ->set_status(User_entity::STATUS_ACTIVE)
+      ->set_roles(array(ROLE_ADMINISTRATOR));
+      
+    $this->user_model->save($admin);
+    
+    redirect('/login');
+  }
 
   public function index() {
-
-    echo '<h1>Set fixtures:<h1>';
-    echo anchor('fixtures/all', 'All') . '<br/>';
-    echo anchor('fixtures/surveys', 'Surveys') . '<br/>';
-    echo anchor('fixtures/users', 'Users') . '<br/>';
-    echo anchor('fixtures/call_tasks', 'Call tasks') . '<br/>';
+    echo '<h1>Fixtures:<h1>';
+    echo anchor('fixtures/all', 'Setup fixtures') . '<br/><br/>';
+    echo anchor('fixtures/setup', 'Live (Only admin user is created)');
   }
   
   public function switch_user($uid) {
@@ -23,12 +70,6 @@ class Fixtures extends CI_Controller {
     // Force user reloading.
     current_user(TRUE);
     redirect($this->input->get('current'));
-  }
-
-  private function _env_check() {
-    if (ENVIRONMENT != 'development') {
-      show_error('Not allowed. Only available during development');
-    }
   }
 
   /**
@@ -42,32 +83,6 @@ class Fixtures extends CI_Controller {
     $this->_fix_users();
     $this->_fix_call_tasks();
     redirect('/');
-  }
-
-  public function surveys() {
-    $this->mongo_db->dropCollection('aw_datacollection', 'surveys');
-    $this->_fix_surveys();
-    redirect('/');
-  }
-
-  public function users() {
-    $this->mongo_db->dropCollection('aw_datacollection', 'users');
-    $this->_fix_users();
-    redirect('/');
-  }
-
-  public function call_tasks() {
-    $this->mongo_db->dropCollection('aw_datacollection', 'call_tasks');
-    $this->_fix_call_tasks();
-    redirect('/');
-  }
-
-  /**
-   * Drop database.
-   * Start with clean slate.
-   */
-  private function _tear_down() {
-    $this->mongo_db->dropDb('aw_datacollection');
   }
 
   /**
