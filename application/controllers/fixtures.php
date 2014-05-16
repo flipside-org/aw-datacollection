@@ -382,7 +382,7 @@ class Fixtures extends CI_Controller {
         'number' => (string)(2000000000000 + $r),
         'assigned' => Mongo_db::date(),
         'author' => 1, // Admin
-        'assignee_uid' => 3, // The Agent
+        ///'assignee_uid' => NULL // Not assigned
         'survey_sid' => 2, // Handlebars vs somthing else
       ));
 
