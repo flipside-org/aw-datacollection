@@ -387,6 +387,18 @@
   }
 }
 
+/* Styles for the modal-wrapper.
+ * They are heavily based and use classes of the confirm-box.
+ * In the future this should be fixed. 
+ */
+.modal-wrapper {
+  @extend .confirm-box-wrapper;
+  
+  .confirm-box {
+    min-width: rem-calc(640);
+  }
+}
+
 .table-nested-4-col {
   /* Remove border from second tr inside tbody */
   tbody tr:nth-child(2) {

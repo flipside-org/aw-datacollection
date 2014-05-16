@@ -398,3 +398,15 @@ a, button {
     @extend .icon-s-cancel;
   }
 }
+.bttn-icon-halt {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-circle-stop;
+  }
+}
+.bttn-icon-proceed {
+  &:before  {
+    @extend %bttn-icon;
+    @extend .icon-circle-next ;
+  }
+}

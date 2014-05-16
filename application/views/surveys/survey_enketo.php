@@ -1,27 +1,197 @@
-<!-- START debug data -->
-<div id="debug_data" class="">
-  <div class="row">
-    <div class="small-12 columns">
-      <h2>Debug</h2>
-      <span class="connection-status label alert">Offline</span>
-      <a href="#" class="button tiny success allow-submission">Allow one submission</a>
+<main id="site-body">
+  <section class="row">
+    <header id="page-head">
+      <div class="inner">
+        
+        <div class="heading">
+          <h1 class="hd-xl <?= $survey->get_status_html_class('indicator-'); ?>"><?= $survey->title ?></h1>
+        </div>
+        
+        <nav id="secondary" role="navigation">
+          <ul class="bttn-toolbar">
+            <li class="sector-switcher">
+              <strong class="bttn-sector">Collect data</strong>
+              <em class="respondent-number">00351232381004</em>
+            </li>
+            
+            <li>
+              <a href="#" class="bttn bttn-danger bttn-medium bttn-icon-halt">Halt</a>
+            </li>
+            
+            <li>
+              <a href="#" class="bttn bttn-primary bttn-medium bttn-icon-proceed">Proceed</a>
+            </li>
+            
+          </ul>
+        </nav>
+        
+      </div>
+    </header>
+
+    <div class="content">
+      
+      <!-- START debug data -->
+      <div class="debug" id="debug_data">
+        <div class="columns small-6">
+          <section class="contained">
+            <h1 class="hd-s">Queue respondents</h1>
+            <p><em>Respondents received from the server since page loading:</em></p>
+            <div class="queue-resp"></div>
+          </section>
+        </div>
+        <div class="columns small-6">
+          <section class="contained">
+            <h1 class="hd-s">Queue submit</h1>
+            <a href="#" class="bttn bttn-success bttn-small allow-submission">Allow one submission</a>
+            <p><em>Respondents with data ready to be submitted:</em></p>
+            <div class="queue-submit"></div>
+          </section>
+        </div>
+        <hr />
+      </div>
+      <!-- END debug data -->
+      
+      
+      <div class="columns small-6">
+        <section class="contained">
+          <header class="contained-head">
+            <h1 class="hd-s">Call activity</h1>
+          </header>
+          <div class="contained-body">
+            <table class="fancy-cb-group">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>No reply</strong>
+                    <p><em>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum viverra ornare orci malesuada.</em></p>
+                  </td>
+                  <td>18 Mar, 2014 at 14:00</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>No reply</strong>
+                    <p><em>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum viverra ornare orci malesuada.</em></p>
+                  </td>
+                  <td>18 Mar, 2014 at 14:00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="widget-empty">
+            <p>There is no call activity for this respondent.</p>
+          </div>
+        </section>
+      </div>
+      
+      <div class="columns small-6">
+        <section class="contained">
+          <h1 class="hd-s">Survey introduction</h1>
+          <?php if ($survey->introduction) : ?>
+            <p><?= nl2br_except_pre($survey->introduction) ?></p> 
+          <?php else: ?>
+            <p>There's no introduction text.</p>
+          <?php endif; ?>
+        </section>
+      </div>
+      
+      <div>
+        
+        <?php $visibility = $enketo_action == 'data_collection' ? 'hide' : ''; ?>
+        <div id="aw-enketo-wrapper" class="columns small-12">
+          <div class="main enketo-container">
+            <article class="paper">
+              <header class="form-header clearfix">
+                <span class="form-language-selector"><span>Choose Language</span></span>
+              </header>
+              
+              <div id="enketo-form"><!-- Enketo form location --></div>
+              
+              <!-- <?php if ($enketo_action == 'testrun'): ?>
+                <button id="validate-form" class="btn btn-primary btn-large" ><i class="glyphicon glyphicon-ok"></i> Validate</button>
+              <?php else : ?>
+                <button id="submit-form" class="btn btn-primary btn-large" ><i class="glyphicon glyphicon-ok"></i> Submit</button>
+              <?php endif; ?> -->
+              
+              <div class="enketo-power">Powered by <a href="http://enketo.org" title="enketo.org website"><img src="https://enketo.org/images/enketo_bare_100x37.png" alt="enketo logo" /></a>
+              </div>
+            </article>
+          </div>        
+      </div>
+      
     </div>
-  </div>
-  <div class="row">
-    <div class="small-6 columns">
-      <h4>Queue Respondents</h4>
-      <p>Respondents received from the server since page loading:</p>
-      <div class="queue-resp"></div>
-    </div>
-    <div class="small-6 columns">
-      <h4>Queue Submit</h4>
-      <p>Respondents with data ready to be submitted:</p>
-      <div class="queue-submit"></div>
-    </div>
-  </div>
-<hr />
+
+  </section>
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="modal-wrapper">
+  <section class="confirm-box">
+    <?php form_open(); ?>
+    <header class="confirm-box-head">
+      <h1 class="hd-s confirm-title">Halt</h1>
+      <a href="#" class="confirm-close confirm-icon-close"><span class="visually-hidden">Close</span></a>
+    </header>
+    <fieldset class="confirm-box-body">
+      <div class="form-control">
+        <?php
+          $labels = Call_task_status::$labels;
+          // Remove success status.
+          unset($labels[Call_task_status::SUCCESSFUL]);
+          // Add a "Select status" option.
+          $labels = array('--' => '-- Select status --') + $labels;
+        ?>
+        <?= form_label('Reason <small>Required</small>', 'call_task_status_code'); ?>
+        <?= form_dropdown('call_task_status_code', $labels) ?>
+        <small class="error">The reason is required.</small>
+      </div>
+      
+      <div class="form-control">
+        <?= form_label('Additional notes', 'call_task_status_msg'); ?>
+        <?= form_textarea('call_task_status_msg'); ?>
+        <p class="help-text">You can provide additional notes if needed.</p>
+      </div>
+    </fieldset>
+    <footer class="confirm-box-foot">
+      <ul class="bttn-toolbar">
+        <li><button id="call-task-status-submit" class="bttn bttn-medium bttn-default confirm-cancel">Cancel</button></li>
+        <li><button id="call-task-status-cancel" class="bttn bttn-medium bttn-success confirm-accept">Confirm</button></li>
+      </ul>
+    </footer>
+    <?php form_close() ?>
+  </section>
 </div>
-<!-- END debug data -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -29,8 +199,6 @@
 <div class="row">
   <div class="small-12 columns">
     <h2>Number: <small id="respondent_number">Waiting for number...</small></h2>
-    
-    <div class="intro-text"><?= nl2br_except_pre($survey->introduction) ?></div>
     
     <div class="call-actions hide" style="margin-top: 20px">
       <button id="proceed-collection" class="button success tiny">Proceed</button>
@@ -70,21 +238,3 @@
 </div>
 <?php endif; ?>
 
-<?php $vidibility = $enketo_action == 'data_collection' ? 'hide' : ''; ?>
-<div class="main enketo-container <?= $vidibility ?>">
-  <article class="paper">
-    <header class="form-header clearfix">
-      <span class="form-language-selector"><span>Choose Language</span></span>
-    </header>
-    <!-- this is where the form will go -->
-    
-    <?php if ($enketo_action == 'testrun'): ?>
-      <button id="validate-form" class="btn btn-primary btn-large" ><i class="glyphicon glyphicon-ok"></i> Validate</button>
-    <?php else : ?>
-      <button id="submit-form" class="btn btn-primary btn-large" ><i class="glyphicon glyphicon-ok"></i> Submit</button>
-    <?php endif; ?>
-    
-    <div class="enketo-power">Powered by <a href="http://enketo.org" title="enketo.org website"><img src="https://enketo.org/images/enketo_bare_100x37.png" alt="enketo logo" /></a>
-    </div>
-  </article>
-</div>
