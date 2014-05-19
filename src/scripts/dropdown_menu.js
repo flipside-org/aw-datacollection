@@ -18,9 +18,6 @@ $(document).ready(function(){
     }, 150);
     
     $dropdown.data('hide_timeout', hide_timeout);
-  })
-  .click(function() {
-    window.location = $(this).attr('href');
   });
   
   $('.action-dropdown-primary').mouseenter(function() {
