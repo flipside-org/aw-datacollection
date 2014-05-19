@@ -1652,13 +1652,14 @@ class Survey extends CI_Controller {
 
   }
 
-  // TODO: Survey. Delete delay function.
+  /*
   public function delay($sec) {
     sleep($sec);
     $this->output
     ->set_content_type('text')
     ->set_output('OK from server');
   }
+  */
 
   /********************************
    ********************************

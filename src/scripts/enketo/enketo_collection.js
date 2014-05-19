@@ -1,3 +1,4 @@
+/*
 var always_fail = true;
 $(document).ready(function(){
   $('.allow-submission').click(function(e) {
@@ -5,6 +6,7 @@ $(document).ready(function(){
     always_fail = false;
   });
 });
+*/
 
 // Enketo uses its own jquery, but for the toast
 // we need the one used across the website.
@@ -216,7 +218,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       // A GUI controller is only needed if the file was successfully loaded.
       GUI = {
         // Whether to show debug data.
-        debug : true,
+        debug : false,
       
         // Original text on the #respondent-number
         respondent_number_text : '',
