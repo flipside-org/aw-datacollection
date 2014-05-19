@@ -6,10 +6,26 @@ $(document).ready(function(){
   });
 });
 
+// Enketo uses its own jquery, but for the toast
+// we need the one used across the website.
+// In this way we avoid conflicts.
+$jQuery = $;
+/**
+ * Show a toast with defined message.
+ */
+function showToast(msg, type, sticky) {
+  $jQuery().toastmessage('showToast', {
+    sticky   : sticky,
+    text     : msg,
+    type     : type,
+    inEffectDuration : 100,
+    position : 'bottom-right',
+  });
+}
+
 /**
  * Require Js configuration for enketo.
  * Coming from enketo core.
- * TODO: baseUrl should come from server.
  */
 requirejs.config({
   baseUrl : Aw.settings.base_url + "assets/libs/enketo-core/lib",
@@ -124,6 +140,8 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   var submission_queue;
   // Current respondent.
   var current_respondent;
+  // GUI controller.
+  var GUI;
   
   // Perform request for form. Form will be returned in xml.
   $.get(Connection.URL_XSLT_TRANSFORM, function(response) {
@@ -193,178 +211,292 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       // Insert form.
       $('#enketo-form').append(formStr);
       
-      // Initialize form.
-      init();
       
-      // Proceed with data collection and show the enketo form.
-      $('#proceed-collection').click(function(e) {
-        e.preventDefault();
-        $('.call-actions').addClass('hide');
-        $('.enketo-container').removeClass('hide');
-      });
+      // Define gui controller.
+      // A GUI controller is only needed if the file was successfully loaded.
+      GUI = {
+        // Whether to show debug data.
+        debug : true,
       
-      // Show the form to set the call status.
-      $('#halt-collection').click(function(e) {
-        e.preventDefault();
-        $('.call-actions').addClass('hide');
-        $('.call-status').removeClass('hide');
-      });
-  
-      // Submit enketo form.
-      $('#submit-form').on('click', function() {
-        console.log('validate-form click event');
-        form.validate();
-        if (!form.isValid()) {
-          alert('Form contains errors. Please see fields marked in red.');
-        } else {
-          if (whatsGoingOn.block_submission) {
-            alert('There are no numbers available. The form can not be submitted.');
+        // Original text on the #respondent-number
+        respondent_number_text : '',
+        
+        // Intit function.
+        // Sets click listeners and prepares the page.
+        init : function() {
+          if (GUI.debug) {
+            $('#debug-data').show();
           }
-          else {
-            // Form is valid. Get the data.
-            current_respondent.form_data = form.getDataStr();
+          
+          GUI.respondent_number_text = $('.respondent-number').text();
+          
+          ///////////////////////////////////////////////////////////
+          //  START Modal controls                                 //
+          ///////////////////////////////////////////////////////////
+          var $modal = $('#modal');
+          // Extend modal object with a reset function.
+          $.extend($modal, {
+            resetModal : function() {
+              // Reset values.
+              $('[name=call_task_status_code]', this).val('--');
+              $('[name=call_task_status_msg]', this).val('');
+              // Hide error
+              $('.error', this).hide();
+              // Hide modal.
+              $(this).removeClass('revealed');
+            }
+          });
+          // Close button.
+          $('.confirm-close', $modal).click(function(e) {
+            e.preventDefault();
+            $modal.resetModal();
+          });
+          // Cancel button
+          $('.confirm-cancel', $modal).click(function(e) {
+            e.preventDefault();
+            $modal.resetModal();
+          });
+          // Accept button.
+          $('.confirm-accept', $modal).click(function(e) {
+            e.preventDefault();
+            // Safety check.
+            if (whatsGoingOn.block_submission) {
+              alert('There are no numbers available. The form can not be submitted.');
+              return false;
+            }
+            
+            // Get values.
+            var call_task_status_code = $('[name=call_task_status_code]', $modal).val();
+            var call_task_status_msg = $('[name=call_task_status_msg]', $modal).val();
+            console.log('Call task status CODE: ' + call_task_status_code);
+            console.log('Call task status MSG: ' + call_task_status_msg);
+            
+            // Check if values are valid.
+            if (call_task_status_code == '--') {
+              // Show error
+              $('.error', $modal).show();
+              return false;
+            }
+            
+            // Add data to respondent object.
+            current_respondent.new_status = {
+              code : call_task_status_code,
+              msg : call_task_status_msg,
+            };
+            
             // Add the respondent to the submission queue.
             submission_queue.add(current_respondent);
+            // Show message to user.
+            showToast("Data submitted. New number loaded. Please proceed.", 'success', false);
             // Reset the form.
             form.resetView();
-            // Initialize again.
-            init();
+            // Initialise again.
+            GUI.step1();
+            // Clean modal fields and hide it.
+            $modal.resetModal();
+          });
+          ///////////////////////////////////////////////////////////
+          //  END Modal controls                                   //
+          ///////////////////////////////////////////////////////////
+          
+          ///////////////////////////////////////////////////////////
+          //  START Navigation bar controls                        //
+          ///////////////////////////////////////////////////////////
+          // Halt button to show modal.
+          $('#enketo-halt').click(function(e) {
+            e.preventDefault();
+            if (whatsGoingOn.block_submission) {
+              return false;
+            }
+              
+            $modal.resetModal();
+            $modal.addClass('revealed');
+          });
+          
+          // Proceed with data collection and show the enketo form.
+          $('#enketo-proceed').click(function(e) {
+            e.preventDefault();
+            GUI.step2();
+          });
+          ///////////////////////////////////////////////////////////
+          //  END Navigation bar controls                          //
+          ///////////////////////////////////////////////////////////
+          
+          // Submit enketo form.
+          $('#enketo-save').on('click', function(e) {
+            e.preventDefault();
+            console.log('enketo-save click event');
+            
+            form.validate();
+            if (!form.isValid()) {
+              showToast("Form contains errors. Please see fields marked in red.", 'error', true);
+            } else {
+              if (whatsGoingOn.block_submission) {
+                alert('There are no numbers available. The form can not be submitted.');
+              }
+              else {
+                // Form is valid. Get the data.
+                current_respondent.form_data = form.getDataStr();
+                // Add the respondent to the submission queue.
+                submission_queue.add(current_respondent);
+                // Show message to user.
+                showToast("Data submitted. New number loaded. Please proceed.", 'success', false);
+                // Reset the form.
+                form.resetView();
+                // Initialize again.
+                GUI.step1();
+              }
+            }
+          });
+          
+          // Show connection indicator.
+          $('#connection-status').show();
+        },
+        
+        // Reset everything to the default. A.K.A step0
+        // Hide all the steps, disable alt button and show loading text.
+        reset : function() {
+          // Reset number.
+          $('.respondent-number').text('Loading number...');
+          // Hide step1 which consists of the proceed button and metadata.
+          $('.step1').removeClass('revealed');
+          // Show step2 which is the save button and the enketo form.
+          $('.step2').removeClass('revealed');
+          // Set the halt to its disabled status. It will be enabled in step1..
+          $('#enketo-halt').addClass('disabled');
+        },
+        
+        // Prepares the enketo form and gets the next number.
+        // If the number is not available shows a message.
+        prepareForm : function() {
+          // Unblock for submission. It could be blocked if the numbers
+          // were exhausted at some point.
+          whatsGoingOn.block_submission = false;
+          
+          // Check if there are more respondents.
+          if (!resp_queue.hasNextResp()) {
+            // Numbers are exhausted. Block the form until further action is taken.
+            whatsGoingOn.block_submission = true;
+            
+            //alert('Numbers exhausted.');
+            
+            // Find out why
+            if (whatsGoingOn.bootstrapping) {
+              // Brief explanation. Check the whatsGoingOn Object for more info.
+              // The page has just been loaded and this is the first time the form
+              // is initialized. The numbers fetched from the server are all in
+              // the submission queue.
+              whatsGoingOn.numbers.exhausted_bootstrapping = true;
+              //alert('BOOTSTRAPPING: Your queue is full. Wait for it to submit.');
+              showToast('Please wait. Submitting previous survey data.', 'notice', true);
+            }
+            else if (!con.isOnline()) {
+              // Brief explanation. Check the whatsGoingOn Object for more info.
+              // The user is offline and it's not possible to fetch numbers.
+              whatsGoingOn.numbers.offline = true;
+              //alert("You are offline. It was not possible to fetch more numbers. Please wait.");
+              showToast("Unable to load new numbers. Please wait for the internet connection to come back.", 'warning', true);
+            }
+            else if (con.isOnline()) {
+              // Brief explanation. Check the whatsGoingOn Object for more info.
+              // Probably numbers are over and data collection is over, however it
+              // could be a false positive.
+              whatsGoingOn.numbers.complete_confirm = true;
+              //alert("There are no more numbers in your queue. Please wait while your system fetches more.");
+              showToast("Checking for new numbers. Please wait.", 'notice', true);
+            }
+            else {
+              // This should never happens, but if it does, we got it covered.
+              alert("This is embarrassing.\nAn error occurred. Please refresh the page.");
+            }
+            // Return
+            return false;
           }
+          
+          // Get the next respondent.
+          current_respondent = resp_queue.getNextResp();
+          // Initialise the form.
+          form = new Form('form.or:eq(0)', modelStr);
+          // For debugging.
+          //window.form = form;
+          // Initialise form and check for load errors.
+          loadErrors = form.init();
+          if (loadErrors.length > 0) {
+            // TODO: Find out what kind of errors.
+            console.log('loadErrors: ' + loadErrors.join(', '));
+          }
+          
+          return true;
+        },
+        
+        // Step1 of data collection. Shows call activity and survey introduction.
+        step1 : function() {
+          GUI.reset();
+          // GUI.prepareForm() will return true and prepare the form if the
+          // following is true.
+          // !whatsGoingOn.numbers.exhausted_bootstrapping &&
+          // !whatsGoingOn.numbers.complete_confirm &&
+          // !whatsGoingOn.numbers.offline)
+          if (GUI.prepareForm()) {            
+            // Enable Halt button
+            $('#enketo-halt').removeClass('disabled');
+            // Set respondent number in place.
+            $('.respondent-number').text(current_respondent.number);
+            
+            // Prepare call activity table.
+            var call_activity_header = '<header class="contained-head"><h1 class="hd-s">Call activity</h1></header>';
+            var call_activity_empty = '<div class="widget-empty"><p>There is no call activity for this respondent.</p></div>';
+            
+            var call_activity_table_open = '<div class="contained-body">table><thead><tr><th>Status</th><th>Date</th></tr></thead><tbody>';
+            var call_activity_table_close = '</tbody></table></div>';
+            
+            /*
+            <tr>
+              <td>
+                <strong>No reply</strong>
+                <p><em>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum viverra ornare orci malesuada.</em></p>
+              </td>
+              <td>18 Mar, 2014 at 14:00</td>
+            </tr>
+            */
+         
+            if (current_respondent.activity.length === 0) {
+              $('#call-activity').html(call_activity_header + call_activity_empty);
+            }
+            
+            // Show step1.
+            $('.step1').addClass('revealed');          
+          }
+        },
+        
+        // Step2 of data collection. Shows the enketo form.
+        step2 : function() {
+          // Hide step1 which consists of the proceed button and metadata.
+          $('.step1').removeClass('revealed');
+          // Show step2 which is the save button and the enketo form.
+          $('.step2').addClass('revealed');
         }
-      });
+      };
       
-      // Submit call status form.
-      $('#call-task-status-submit').click(function(e) {
-        e.preventDefault();
-        if (whatsGoingOn.block_submission) {
-          alert('There are no numbers available. The form can not be submitted.');
-          return false;
-        }
-        var call_task_status_code = $('.call-status [name=call_task_status_code]').val();
-        var call_task_status_msg = $('.call-status [name=call_task_status_msg]').val();
-        console.log('Call task status CODE: ' + call_task_status_code);
-        console.log('Call task status MSG: ' + call_task_status_msg);
-        
-        if (call_task_status_code == '--') {
-          alert('Please select a valid status.');
-          return false;
-        }
-        
-        // Do something with the data.
-        current_respondent.new_status = {
-          code : call_task_status_code,
-          msg : call_task_status_msg,
-        };
-        
-        // Add the respondent to the submission queue.
-        submission_queue.add(current_respondent);
-        
-        // Reset the form.
-        form.resetView();
-        // Initialize again.
-        init();
-      });
-      
-      $('#call-task-status-cancel').click(function(e) {
-        e.preventDefault();
-        $('.call-actions').removeClass('hide');
-        $('.call-status').addClass('hide');
-      });
-      
+      // Prepare click listeners, modal, etc.
+      GUI.init();
+      // Start.
+      GUI.step1();
       // Bootstrap finished.
       whatsGoingOn.bootstrapping = false;
       
+      // On before load action.
+      window.onbeforeunload = function() {
+        // Right now the fastest way to know if data is being submitted
+        // is by checking the beacon status.
+        var $beacon = $('#connection-status .beacon');
+        if ($beacon.hasClass('working')) {
+          return 'Not all survey data was submitted. Are you sure you want to leave the page?';
+        }
+      };
+      
     });
   }, 'json');
-  
-  function init() {
-    initializeForm();
-    initializeGUI();
-  }
-  
-  /**
-   * Always after initializeForm();
-   */
-  function initializeGUI() {
-    // Show connection indicator.
-    $('#connection-status').show();
-    
-    $('.call-actions').removeClass('hide');
-    // Clean call task
-    $('.call-status').addClass('hide');
-    $('.call-status [name=call_task_status_code]').val('--');
-    $('.call-status [name=call_task_status_msg]').val('');
-    
-    $('.enketo-container').addClass('hide');
-    
-    $('#respondent_number').text('');
-    if (!whatsGoingOn.numbers.exhausted_bootstrapping && !whatsGoingOn.numbers.complete_confirm && !whatsGoingOn.numbers.offline) {
-      $('#respondent_number').text(current_respondent.number);
-    }
-  }
-  
-  /**
-   * Initialize the form.
-   */
-  // TODO: initializeForm() - Replace alerts with proper messages.
-  function initializeForm() {
-    // Unblock for submission. It could be blocked if the numbers
-    // were exhausted at some point.
-    whatsGoingOn.block_submission = false;
-    
-    // Check if there are more respondents.
-    if (!resp_queue.hasNextResp()) {
-      // Numbers are exhausted. Block the form until further action is taken.
-      whatsGoingOn.block_submission = true;
-      
-      alert('Numbers exhausted.');
-      
-      // Find out why
-      if (whatsGoingOn.bootstrapping) {
-        // Brief explanation. Check the whatsGoingOn Object for more info.
-        // The page has just been loaded and this is the first time the form
-        // is initialized. The numbers fetched from the server are all in
-        // the submission queue.
-        whatsGoingOn.numbers.exhausted_bootstrapping = true;
-        alert('BOOTSTRAPPING: Your queue is full. Wait for it to submit.');
-      }
-      else if (!con.isOnline()) {
-        // Brief explanation. Check the whatsGoingOn Object for more info.
-        // The user is offline and it's not possible to fetch numbers.
-        whatsGoingOn.numbers.offline = true;
-        alert("You are offline. It was not possible to fetch more numbers.\nWait");
-      }
-      else if (con.isOnline()) {
-        // Brief explanation. Check the whatsGoingOn Object for more info.
-        // Probably numbers are over and data collection is over, however it
-        // could be a false positive.
-        whatsGoingOn.numbers.complete_confirm = true;
-        alert("There are no more numbers in your queue. Please wait while your system fetches more.");
-      }
-      else {
-        // This should never happens, but if it does, we got it covered.
-        alert("This is embarrassing.\nAn error occurred. Please refresh the page.");
-      }
-      // Return
-      return false;
-    }
-    
-    // Get the next respondent.
-    current_respondent = resp_queue.getNextResp();
-    
-    // Initialize the form.
-    form = new Form('form.or:eq(0)', modelStr);
-    // For debugging.
-    window.form = form;
-    // Initialize form and check for load errors.
-    loadErrors = form.init();
-    if (loadErrors.length > 0) {
-      // TODO: Find out what kind of errors.
-      alert('loadErrors: ' + loadErrors.join(', '));
-    }
-    
-    return true;
-  }
 
 
 
@@ -373,7 +505,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   // To ease usage of enketo, the objects involved in making queues work
   // trigger events. These need to be captured inside the requirejs 
   // function die to variable scope, and because they are only needed
-  // if the form is correctly initialized.
+  // if the form is correctly initialised.
   
   // EVENT submission_queue_submit_success
   // This event is triggered by the SubmissionQueue object when there's a
@@ -386,11 +518,6 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
       // Update the respondent queue using the numbers received from the server.
       resp_queue = RespondentQueue.prepareQueue(respondents, resp_queue);
       
-      // TODO: submission_queue_submit_success - Handle equal ifs.
-      // Right now the instructions are the same for every condition. Check if
-      // this is correct and improve code.
-      // TODO: submission_queue_submit_success - Use proper messages instead of alert().
-      
       // When the numbers are exhausted the user has to wait for a submission.
       // Upon submission, new numbers are requested and the user can be notified.
       // The user will either be able to continue data collection or be done
@@ -402,11 +529,13 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         // the submission queue.
         whatsGoingOn.numbers.exhausted_bootstrapping = false;
         if (resp_queue.hasNextResp()){
-          alert("Turns out there are more respondents.\nInitialize the form again!");
-          init();
+          //alert("Turns out there are more respondents.<br/>Initialize the form again!");
+          showToast("New number loaded. Please proceed.", 'success', true);
+          GUI.step1();
         }
         else {
-          alert("There are no more respondents.\nData collection is over.");
+          //alert("There are no more respondents.<br/>Data collection is over.");
+          showToast("No more numbers available. Please check if all data was processed before leaving the page.", 'success', true);
         }
       }
       else if (whatsGoingOn.numbers.complete_confirm) {
@@ -415,11 +544,13 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         // could be a false positive.
         whatsGoingOn.numbers.complete_confirm = false;
         if (resp_queue.hasNextResp()){
-          alert("Turns out there are more respondents.\nInitialize the form again!");
-          init();
+          //alert("Turns out there are more respondents.<br/>Initialize the form again!");
+          showToast("New number loaded. Please proceed.", 'success', true);
+          GUI.step1();
         }
         else {
-          alert("There are no more respondents.\nData collection is over.");
+          //alert("There are no more respondents.<br/>Data collection is over.");
+          showToast("No more numbers available. Please check if all data was processed before leaving the page.", 'success', true);
         }
       }
       else if (whatsGoingOn.numbers.offline) {
@@ -427,11 +558,13 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
         // The user is offline and it's not possible to fetch numbers.
         whatsGoingOn.numbers.offline = false;
         if (resp_queue.hasNextResp()){
-          alert("Turns out there are more respondents.\nInitialize the form again!");
-          init();
+          //alert("Turns out there are more respondents.<br/>Initialize the form again!");
+          showToast("New number loaded. Please proceed.", 'success', true);
+          GUI.step1();
         }
         else {
-          alert("There are no more respondents.\nData collection is over.");
+          //alert("There are no more respondents.<br/>Data collection is over.");
+          showToast("No more numbers available. Please check if all data was processed before leaving the page.", 'success', true);
         }
       }
       
@@ -442,12 +575,12 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   // EVENT submission_queue_change
   // This event is triggered every time the submission queue changes.
   // Adding and/or removing respondents form the queue will trigger the event.
-  // This event is also triggered after the submission queue initialization
+  // This event is also triggered after the submission queue initialisation
   // even if the submission queue is empty.
   $(window).on('submission_queue_change', function(event, sub_queue) {
     console.log('EVENT: submission_queue_change');
     
-    var $container = $('#debug_data .queue-submit');
+    var $container = $('#debug-data .queue-submit');
     $container.html('');
     var queue = sub_queue.getQueue();
     for (var i in queue) {
@@ -465,7 +598,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   $(window).on('respondent_queue_change', function(event, resp_queue) {
     console.log('EVENT: respondent_queue_change');
     
-    var $container = $('#debug_data .queue-resp');
+    var $container = $('#debug-data .queue-resp');
     $container.html('');
     var all_respondents = resp_queue.getQueue();
     for (var i in all_respondents) {
@@ -481,7 +614,6 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
   $(window).on('connection_status_change', function(event, connection) {
     console.log('EVENT: connection_status_change');
     
-    // TEMP
     var $beacon = $('#connection-status .beacon');
     if (connection.isOnline()) {
       $beacon.addClass('online');
@@ -490,9 +622,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     else {
       $beacon.removeClass('online');
       $beacon.find('span').text('Online');
-    }
-    // /TEMP
-    
+    }    
     
     // When the system is back online try to submit.
     if (connection.isOnline()){

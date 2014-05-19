@@ -1,7 +1,23 @@
+// Enketo uses its own jquery, but for the toast
+// we need the one used across the website.
+// In this way we avoid conflicts.
+$jQuery = $;
+/**
+ * Show a toast with defined message.
+ */
+function showToast(msg, type, sticky) {
+  $jQuery().toastmessage('showToast', {
+    sticky   : sticky,
+    text     : msg,
+    type     : type,
+    inEffectDuration : 100,
+    position : 'bottom-right',
+  });
+}
+
 /**
  * Require Js configuration for enketo.
  * Coming from enketo core.
- * TODO: baseUrl should come from server.
  */
 requirejs.config({
   baseUrl : Aw.settings.base_url + "assets/libs/enketo-core/lib",
@@ -56,35 +72,40 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
     modelStr = (new XMLSerializer() ).serializeToString($data.find( 'model:eq(0)' )[0]);
     
     // Insert form.
-    $('#validate-form').before(formStr);
+    $('#enketo-form').append(formStr);
     
-    // Initialize form.
+    // Initialise form.
     initializeForm();
+    
+    // Show enketo form. The testrun is a variation of the data collection file.
+    $('.step2').addClass('revealed'); 
 
     //validate handler for validate button
-    $('#validate-form').on('click', function() {
+    $('#enketo-validate').on('click', function(e) {
+      e.preventDefault();
+      
       form.validate();
       if (!form.isValid()) {
-        alert('Form contains errors. Please see fields marked in red.');
+        showToast('Form contains errors. Please see fields marked in red.', 'error', true);
       } else {
-        alert('The form was correctly filled but since this is a test run, no data will be collected.');
+        showToast('The form was correctly filled but since this is a testrun, no data will be collected.', 'success', true);
       }
-    });      
+    });
   }, 'json');
   
   /**
-   * Initialize the form.
+   * Initialise the form.
    */
-  function initializeForm() {    
-    // Initialize the form.
+  function initializeForm() {
+    // Initialise the form.
     form = new Form('form.or:eq(0)', modelStr);
     // For debugging.
-    window.form = form;
-    // Initialize form and check for load errors.
+    //window.form = form;
+    // Initialise form and check for load errors.
     loadErrors = form.init();
     if (loadErrors.length > 0) {
       // TODO: Find out what kind of errors.
-      alert('loadErrors: ' + loadErrors.join(', '));
+      console.log('loadErrors: ' + loadErrors.join(', '));
     }
   }
 });

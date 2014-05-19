@@ -454,6 +454,25 @@
   }
 }
 
+#enketo-halt,
+#enketo-proceed,
+#enketo-save {
+  display: none;
+  
+  &.revealed {
+    display: inline-block;
+  }
+}
+
+.step1,
+.step2 {
+  display: none;
+  
+  &.revealed {
+    display: block;
+  }
+}
+
 /* Hide form title on enketo */
 #aw-enketo-wrapper { 
   #form-title {
@@ -463,5 +482,9 @@
   .main .paper {
     @extend .contained;
     border: none;
+  }
+  
+  fieldset legend {
+    background: none;
   }
 }

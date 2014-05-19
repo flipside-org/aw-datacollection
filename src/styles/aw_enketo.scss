@@ -1048,7 +1048,7 @@ output {
   color: #555555;
 }
 
-.form-control {
+.form-control, input:not([type=radio]):not([type=checkbox]), select, textarea {
   display: block;
   width: 100%;
   height: 34px;
@@ -1065,31 +1065,31 @@ output {
   -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
-.form-control:focus {
+.form-control:focus, input:focus:not([type=radio]):not([type=checkbox]), select:focus, textarea:focus {
   border-color: #66afe9;
   outline: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
-.form-control:-moz-placeholder {
+.form-control:-moz-placeholder, input:-moz-placeholder:not([type=radio]):not([type=checkbox]), select:-moz-placeholder, textarea:-moz-placeholder {
   color: #999999;
 }
-.form-control::-moz-placeholder {
+.form-control::-moz-placeholder, input:not([type=checkbox]):not([type=radio])::-moz-placeholder, select::-moz-placeholder, textarea::-moz-placeholder {
   color: #999999;
   opacity: 1;
 }
-.form-control:-ms-input-placeholder {
+.form-control:-ms-input-placeholder, input:-ms-input-placeholder:not([type=radio]):not([type=checkbox]), select:-ms-input-placeholder, textarea:-ms-input-placeholder {
   color: #999999;
 }
-.form-control::-webkit-input-placeholder {
+.form-control::-webkit-input-placeholder, input:not([type=checkbox]):not([type=radio])::-webkit-input-placeholder, select::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
   color: #999999;
 }
-.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+.form-control[disabled], input[disabled]:not([type=radio]):not([type=checkbox]), select[disabled], textarea[disabled], .form-control[readonly], input[readonly]:not([type=radio]):not([type=checkbox]), select[readonly], textarea[readonly], fieldset[disabled] .form-control, fieldset[disabled] input:not([type=radio]):not([type=checkbox]), fieldset[disabled] select, fieldset[disabled] textarea {
   cursor: not-allowed;
   background-color: #eeeeee;
 }
 
-textarea.form-control {
+textarea.form-control, textarea {
   height: auto;
 }
 
@@ -1159,7 +1159,7 @@ input[type="checkbox"],
   cursor: not-allowed;
 }
 
-.input-sm, .input-group-sm > .form-control,
+.input-sm, .input-group-sm > .form-control, .input-group-sm > input:not([type=radio]):not([type=checkbox]), .input-group-sm > select, .input-group-sm > textarea,
 .input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .btn {
   height: 30px;
@@ -1169,20 +1169,20 @@ input[type="checkbox"],
   border-radius: 3px;
 }
 
-select.input-sm, .input-group-sm > select.form-control,
+select.input-sm, .input-group-sm > select,
 .input-group-sm > select.input-group-addon,
 .input-group-sm > .input-group-btn > select.btn {
   height: 30px;
   line-height: 30px;
 }
 
-textarea.input-sm, .input-group-sm > textarea.form-control,
+textarea.input-sm, .input-group-sm > textarea,
 .input-group-sm > textarea.input-group-addon,
 .input-group-sm > .input-group-btn > textarea.btn {
   height: auto;
 }
 
-.input-lg, .input-group-lg > .form-control,
+.input-lg, .input-group-lg > .form-control, .input-group-lg > input:not([type=radio]):not([type=checkbox]), .input-group-lg > select, .input-group-lg > textarea,
 .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn {
   height: 46px;
@@ -1192,14 +1192,14 @@ textarea.input-sm, .input-group-sm > textarea.form-control,
   border-radius: 6px;
 }
 
-select.input-lg, .input-group-lg > select.form-control,
+select.input-lg, .input-group-lg > select,
 .input-group-lg > select.input-group-addon,
 .input-group-lg > .input-group-btn > select.btn {
   height: 46px;
   line-height: 46px;
 }
 
-textarea.input-lg, .input-group-lg > textarea.form-control,
+textarea.input-lg, .input-group-lg > textarea,
 .input-group-lg > textarea.input-group-addon,
 .input-group-lg > .input-group-btn > textarea.btn {
   height: auto;
@@ -1208,7 +1208,7 @@ textarea.input-lg, .input-group-lg > textarea.form-control,
 .has-feedback {
   position: relative;
 }
-.has-feedback .form-control {
+.has-feedback .form-control, .has-feedback input:not([type=radio]):not([type=checkbox]), .has-feedback select, .has-feedback textarea {
   padding-right: 42.5px;
 }
 .has-feedback .form-control-feedback {
@@ -1230,12 +1230,12 @@ textarea.input-lg, .input-group-lg > textarea.form-control,
 .has-warning .checkbox-inline {
   color: #8a6d3b;
 }
-.has-warning .form-control {
+.has-warning .form-control, .has-warning input:not([type=radio]):not([type=checkbox]), .has-warning select, .has-warning textarea {
   border-color: #8a6d3b;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-.has-warning .form-control:focus {
+.has-warning .form-control:focus, .has-warning input:focus:not([type=radio]):not([type=checkbox]), .has-warning select:focus, .has-warning textarea:focus {
   border-color: #66512c;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
@@ -1257,12 +1257,12 @@ textarea.input-lg, .input-group-lg > textarea.form-control,
 .has-error .checkbox-inline {
   color: #a94442;
 }
-.has-error .form-control {
+.has-error .form-control, .has-error input:not([type=radio]):not([type=checkbox]), .has-error select, .has-error textarea {
   border-color: #a94442;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-.has-error .form-control:focus {
+.has-error .form-control:focus, .has-error input:focus:not([type=radio]):not([type=checkbox]), .has-error select:focus, .has-error textarea:focus {
   border-color: #843534;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
@@ -1284,12 +1284,12 @@ textarea.input-lg, .input-group-lg > textarea.form-control,
 .has-success .checkbox-inline {
   color: #3c763d;
 }
-.has-success .form-control {
+.has-success .form-control, .has-success input:not([type=radio]):not([type=checkbox]), .has-success select, .has-success textarea {
   border-color: #3c763d;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-.has-success .form-control:focus {
+.has-success .form-control:focus, .has-success input:focus:not([type=radio]):not([type=checkbox]), .has-success select:focus, .has-success textarea:focus {
   border-color: #2b542c;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
@@ -1320,7 +1320,7 @@ textarea.input-lg, .input-group-lg > textarea.form-control,
     margin-bottom: 0;
     vertical-align: middle;
   }
-  .form-inline .form-control, .navbar-form .form-control {
+  .form-inline .form-control, .navbar-form .form-control, .form-inline input:not([type=radio]):not([type=checkbox]), .navbar-form input:not([type=radio]):not([type=checkbox]), .form-inline select, .navbar-form select, .form-inline textarea, .navbar-form textarea {
     display: inline-block;
     width: auto;
     vertical-align: middle;
@@ -2870,7 +2870,7 @@ input[type="button"].btn-block {
   padding-left: 0;
   padding-right: 0;
 }
-.input-group .form-control {
+.input-group .form-control, .input-group input:not([type=radio]):not([type=checkbox]), .input-group select, .input-group textarea {
   float: left;
   width: 100%;
   margin-bottom: 0;
@@ -2878,12 +2878,18 @@ input[type="button"].btn-block {
 
 .input-group-addon,
 .input-group-btn,
-.input-group .form-control {
+.input-group .form-control,
+.input-group input:not([type=radio]):not([type=checkbox]),
+.input-group select,
+.input-group textarea {
   display: table-cell;
 }
 .input-group-addon:not(:first-child):not(:last-child),
 .input-group-btn:not(:first-child):not(:last-child),
-.input-group .form-control:not(:first-child):not(:last-child) {
+.input-group .form-control:not(:first-child):not(:last-child),
+.input-group input:not(:first-child):not(:last-child):not([type=radio]):not([type=checkbox]),
+.input-group select:not(:first-child):not(:last-child),
+.input-group textarea:not(:first-child):not(:last-child) {
   border-radius: 0;
 }
 
@@ -2905,14 +2911,14 @@ input[type="button"].btn-block {
   border: 1px solid #cccccc;
   border-radius: 4px;
 }
-.input-group-addon.input-sm,
+.input-group-addon.input-sm, .input-group-sm > input.input-group-addon:not([type=radio]):not([type=checkbox]),
 .input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .input-group-addon.btn {
   padding: 5px 10px;
   font-size: 12px;
   border-radius: 3px;
 }
-.input-group-addon.input-lg,
+.input-group-addon.input-lg, .input-group-lg > input.input-group-addon:not([type=radio]):not([type=checkbox]),
 .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .input-group-addon.btn {
   padding: 10px 16px;
@@ -2924,7 +2930,7 @@ input[type="button"].btn-block {
   margin-top: 0;
 }
 
-.input-group .form-control:first-child,
+.input-group .form-control:first-child, .input-group input:first-child:not([type=radio]):not([type=checkbox]), .input-group select:first-child, .input-group textarea:first-child,
 .input-group-addon:first-child,
 .input-group-btn:first-child > .btn,
 .input-group-btn:first-child > .btn-group > .btn,
@@ -2939,7 +2945,7 @@ input[type="button"].btn-block {
   border-right: 0;
 }
 
-.input-group .form-control:last-child,
+.input-group .form-control:last-child, .input-group input:last-child:not([type=radio]):not([type=checkbox]), .input-group select:last-child, .input-group textarea:last-child,
 .input-group-addon:last-child,
 .input-group-btn:last-child > .btn,
 .input-group-btn:last-child > .btn-group > .btn,
@@ -4730,16 +4736,22 @@ body {
 }
 
 body {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
 }
 
 strong {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: bold;
+  font-style: normal;
 }
 
 h2, h3, h4, .question.or-appearance-list-nolabel ~ .note, .question.or-appearance-label ~ .note {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: bold;
-  color: #252525;
+  font-style: normal;
+  color: #ce4f07;
   text-align: center;
 }
 
@@ -4760,7 +4772,9 @@ h4, .question.or-appearance-list-nolabel ~ .note, .question.or-appearance-label 
 
 /** hints **/
 .or-hint.active {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
   color: #888888;
   display: block;
   line-height: 16px;
@@ -4786,7 +4800,7 @@ h4, .question.or-appearance-list-nolabel ~ .note, .question.or-appearance-label 
 }
 
 .or-repeat {
-  background-color: #b1b1b1;
+  background-color: #fef5ef;
   margin: 0 0 3px 0;
   padding: 10px 10px 10px 10px;
 }
@@ -4794,7 +4808,7 @@ h4, .question.or-appearance-list-nolabel ~ .note, .question.or-appearance-label 
   height: 2em;
   display: block;
   float: right;
-  color: #252525;
+  color: #ce4f07;
 }
 .or-repeat .repeat-number + .or-group {
   border-top: none;
@@ -4813,7 +4827,9 @@ h4, .question.or-appearance-list-nolabel ~ .note, .question.or-appearance-label 
 }
 
 .question {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: bold;
+  font-style: normal;
   display: block;
   margin: 0 0 9px 0;
   padding-top: 15px;
@@ -4832,11 +4848,13 @@ h4, .question.or-appearance-list-nolabel ~ .note, .question.or-appearance-label 
 }
 
 .trigger, .note {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
   color: black;
-  background: #eeeeee;
-  border: 1px solid #aaaaaa;
-  border-radius: 4px;
+  background: white;
+  border: 2px solid #d4d4d4;
+  border-radius: 0;
   display: block;
   padding: 7px 12px;
   margin: 15px 0;
@@ -4859,13 +4877,13 @@ h4, .question.or-appearance-list-nolabel ~ .note, .question.or-appearance-label 
   margin-top: 0;
 }
 .note + .note.last-of-class {
-  border-bottom: 1px solid #aaaaaa;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-bottom: 2px solid #d4d4d4;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 label, legend, .trigger, .note {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .or img, .or audio, .or video {
@@ -4888,7 +4906,9 @@ legend > span {
 }
 
 .option-wrapper > label {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
   display: block;
   margin: 0;
   padding: 4px 0 4px 0;
@@ -4897,7 +4917,7 @@ legend > span {
   padding: 0;
 }
 .option-wrapper > label:hover {
-  background-color: #a5a5a5;
+  background-color: #fee5d6;
 }
 .option-wrapper > label .active {
   margin-left: 5px;
@@ -4930,7 +4950,7 @@ legend > span {
   margin-left: 15px;
 }
 .touch .question:not(.or-appearance-compact):not(.or-appearance-quickcompact):not(.or-appearance-label):not(.or-appearance-list-nolabel):not(.or-appearance-likert) .option-wrapper > label:focus, .touch .question:not(.or-appearance-compact):not(.or-appearance-quickcompact):not(.or-appearance-label):not(.or-appearance-list-nolabel):not(.or-appearance-likert) .option-wrapper > label:hover, .touch .question:not(.or-appearance-compact):not(.or-appearance-quickcompact):not(.or-appearance-label):not(.or-appearance-list-nolabel):not(.or-appearance-likert) .option-wrapper > label:active, .touch .question:not(.or-appearance-compact):not(.or-appearance-quickcompact):not(.or-appearance-label):not(.or-appearance-list-nolabel):not(.or-appearance-likert) .option-wrapper > label[data-checked] {
-  background-color: #a5a5a5;
+  background-color: #fee5d6;
 }
 .touch input:not([type="radio"]):not([type="checkbox"]), .touch textarea, .touch select {
   border-radius: 2px;
@@ -4977,7 +4997,7 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
 
 .required {
   margin-left: 3px;
-  color: #252525;
+  color: #ce4f07;
 }
 
 .required-subtle {
@@ -5060,7 +5080,9 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
 }
 .bootstrap-select .dropdown-toggle {
   min-width: 130px;
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   text-align: left;
 }
@@ -5068,10 +5090,12 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
   margin-left: 10px;
 }
 .bootstrap-select .dropdown-toggle ~ .dropdown-menu .option-wrapper label {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
   padding-top: 0px;
   padding-left: 0px;
-  font-size: 16px;
+  font-size: 15px;
 }
 .bootstrap-select .dropdown-toggle ~ .dropdown-menu .option-wrapper label input[type="checkbox"] {
   margin: 0 10px 1px 0;
@@ -5120,7 +5144,7 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
   width: 100%;
   height: 100%;
 }
-.geopoint .search-bar .form-control {
+.geopoint .search-bar .form-control, .geopoint .search-bar input:not([type=radio]):not([type=checkbox]), .geopoint .search-bar select, .geopoint .search-bar textarea {
   margin-top: 0;
 }
 .geopoint button {
@@ -5144,7 +5168,9 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
   width: 50%;
 }
 .geopoint label.geo {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
   display: block;
   border: none;
   padding: 0;
@@ -5172,7 +5198,7 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
 }
 .geopoint label.geo:nth-of-type(3), .geopoint label.geo:nth-of-type(4) {
   line-height: 50px;
-  font-size: 12px;
+  font-size: 11.25px;
 }
 .geopoint input[name="lat"], .geopoint input[name="long"] {
   float: none;
@@ -5287,8 +5313,8 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
   border-radius: 4px;
   direction: ltr;
   /*.dow {
-		border-top: 1px solid #ddd !important;
-	}*/
+    border-top: 1px solid #ddd !important;
+  }*/
 }
 
 .datepicker-inline {
@@ -6010,10 +6036,10 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
   border: 2px solid transparent;
 }
 .or-appearance-compact input ~ img:hover, .or-appearance-quickcompact input ~ img:hover {
-  border-color: #727272;
+  border-color: #faa474;
 }
 .or-appearance-compact input:checked ~ img, .or-appearance-compact input:checked ~ img:hover, .or-appearance-quickcompact input:checked ~ img, .or-appearance-quickcompact input:checked ~ img:hover {
-  border-color: #252525;
+  border-color: #ce4f07;
 }
 
 .with-media > input[type="radio"] ~ span.active:not(.or-hint):not(.or-constraint-msg), .with-media > input[type="checkbox"] ~ span.active:not(.or-hint):not(.or-constraint-msg) {
@@ -6022,7 +6048,9 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
 }
 
 .file-feedback, .file-preview {
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
 }
 
 .or-appearance-likert .option-wrapper {
@@ -6077,7 +6105,9 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
   padding-top: 15px;
   border-top: 3px solid #ccc;
   font-size: 12px;
+  font-family: 'OpenSans', Arial, sans-serif;
   font-weight: normal;
+  font-style: normal;
 }
 .or-appearance-likert .option-wrapper > label:first-of-type .option-label::after {
   content: '';
@@ -6105,7 +6135,7 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
 
 .or-repeat .or-appearance-likert .option-wrapper > label:first-of-type .option-label::after, .or-repeat .or-appearance-likert .option-wrapper > label:last-of-type .option-label::after,
 .or-repeat .or-appearance-likert .option-wrapper > label input[type=radio], .or-repeat .or-appearance-likert .option-wrapper > label input[type=checkbox] {
-  background-color: #b1b1b1;
+  background-color: #fef5ef;
 }
 
 @media screen and (max-width: 720px) {
@@ -6180,6 +6210,72 @@ input:not([type="radio"]):not([type="checkbox"]), textarea {
   .form-header .form-language-selector {
     border-right: none;
   }
+}
+/* fancy radio buttons / checkboxes */
+legend ~ .option-wrapper > label .active {
+  margin-left: 45px;
+  display: block;
+}
+
+.option-wrapper input[type=radio], .option-wrapper input[type=checkbox] {
+  background: url("../../images/checkradio.png") no-repeat;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-background-position-x: -9999px -9999px !important;
+  -moz-background-position-y: -9999px -9999px !important;
+  -ms-background-position-x: -9999px !important;
+  -ms-background-position-y: -9999px !important;
+  float: left;
+  border: none;
+  width: 20px;
+  height: 20px;
+  margin: 0 10px 1px 10px;
+  outline: 0;
+}
+
+.option-wrapper input[type=checkbox] {
+  background-position: 0 0;
+}
+.option-wrapper input[type=checkbox]:checked {
+  background-position: -22px 0;
+}
+
+.question:disabled .option-wrapper input[type=checkbox], .option-wrapper input[type=checkbox]:disabled {
+  cursor: default;
+  background-position: -44px 0;
+}
+.question:disabled .option-wrapper input[type=checkbox]:checked, .option-wrapper input[type=checkbox]:disabled:checked {
+  background-position: -66px 0;
+}
+
+.option-wrapper input[type=radio] {
+  background-position: -88px 0;
+}
+.option-wrapper input[type=radio]:checked {
+  background-position: -110px 0;
+}
+
+.question:disabled input[type=radio], .option-wrapper input[type=radio]:disabled {
+  cursor: default;
+  background-position: -132px 0;
+}
+.question:disabled input[type=radio]:checked, .option-wrapper input[type=radio]:disabled:checked {
+  background-position: -154px 0;
+}
+
+/** apply bootstrap .form-control class by default **/
+.or-group {
+  border-top: none;
+}
+
+.note, .trigger {
+  border-left: none;
+  border-right: none;
+  padding: 15px 0;
+}
+
+.btn-reset .glyphicon-trash {
+  vertical-align: bottom;
 }
 
 }
