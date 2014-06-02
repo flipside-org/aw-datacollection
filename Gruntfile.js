@@ -114,6 +114,9 @@ module.exports = function(grunt) {
             'src/vendor/morris/morris.css',
             'src/temp/path_override.css',
             'src/temp/main.css'
+          ],
+          'assets/styles/aw_enketo.css' : [
+            'src/temp/aw_enketo.css'
           ]
         }
       },

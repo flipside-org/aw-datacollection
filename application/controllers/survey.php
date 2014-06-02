@@ -20,7 +20,9 @@ class Survey extends CI_Controller {
     $this->load->model('survey_model');
     $this->load->model('call_task_model');
     load_entity('call_task');
-    // this is neede
+    
+    // Some data can't be stored on codeigniter session.
+    // Start a regular php session.
     session_start();
   }
 
@@ -643,9 +645,10 @@ class Survey extends CI_Controller {
       // - Call task is assigned to current user
       // - Call task is not resolved but it was started (unresolved).
       if ($call_task->is_assigned(current_user()->uid) && $call_task->is_unresolved()) {
-        // Needed urls.
         $settings = array(
           'single_call_task' => $call_task,
+          'call_task_status' => Call_task_status::$labels,
+          // Needed urls.
           'url' => array(
             'request_csrf' => base_url('api/survey/request_csrf_token'),
             'xslt_transform' => base_url('api/survey/' . $sid . '/xslt_transform'),
@@ -1649,13 +1652,14 @@ class Survey extends CI_Controller {
 
   }
 
-  // TODO: Survey. Delete delay function.
+  /*
   public function delay($sec) {
     sleep($sec);
     $this->output
     ->set_content_type('text')
     ->set_output('OK from server');
   }
+  */
 
   /********************************
    ********************************

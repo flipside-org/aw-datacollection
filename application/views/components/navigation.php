@@ -38,6 +38,7 @@
         </li>
         <?php endif; ?>
         
+        <?php if (ENVIRONMENT == 'development') : ?>
         <!-- Dev option to switch between users -->
         <li>
           <a href="#" class="user-switch-dev" data-dropdown="action-bttn-primary"><span class="visually-hidden">Users</span></a>
@@ -50,6 +51,7 @@
           </ul>
         </li>
         <!-- //END Dev option to switch between users -->
+        <?php endif; ?>
         
         <?php if (is_logged()) : ?>
         <li>

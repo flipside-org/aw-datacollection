@@ -103,7 +103,7 @@ class Survey_entity extends Entity {
   public $client;
 
   /**
-   * Survey Gaol.
+   * Survey Goal.
    * The number of complete call tasks needed to consider the survey done.
    * It merely informative. There're no logical implications.
    * @var int

@@ -170,7 +170,7 @@ SubmissionQueue.prototype.submit = function() {
     // Notify that submission started.
     $(window).trigger('submission_queue_submit_start');
     
-    // TODO: SubmissionQueue.prototype.submit - Remove MOCK
+    /*
     ///////////////////////MOCK
     // Simulate errors
     if (always_fail) {
