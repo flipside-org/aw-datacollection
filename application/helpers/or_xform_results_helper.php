@@ -233,7 +233,7 @@ class OR_xform_results {
           $norm['machine_label'] = $question['machine_label'];
           
           // Check if question was answered.
-          if ($item_data) {
+          if ((string)$item_data != '') {
             
             // Check if is a question with items.
             if (isset($question['items'])) {
