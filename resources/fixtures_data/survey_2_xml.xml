@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>survey_2_xls</h:title>
+    <model>
+      <instance>
+        <survey_2_xls id="survey_2_xls">
+          <name/>
+          <age/>
+          <gender/>
+          <knowledge_level/>
+          <coffee_types/>
+          <meta>
+            <instanceID/>
+          </meta>
+        </survey_2_xls>
+      </instance>
+      <bind nodeset="/survey_2_xls/name" required="true()" type="string"/>
+      <bind constraint=" /survey_2_xls/age  &gt; 0 and  /survey_2_xls/age  &lt; 120" jr:constraintMsg="That's not a valid age!" nodeset="/survey_2_xls/age" required="true()" type="int"/>
+      <bind nodeset="/survey_2_xls/gender" required="true()" type="select1"/>
+      <bind nodeset="/survey_2_xls/knowledge_level" required="true()" type="select1"/>
+      <bind nodeset="/survey_2_xls/coffee_types" required="true()" type="select"/>
+      <bind calculate="concat('uuid:', uuid())" nodeset="/survey_2_xls/meta/instanceID" readonly="true()" type="string"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/survey_2_xls/name">
+      <label>What's your name?</label>
+    </input>
+    <input ref="/survey_2_xls/age">
+      <label>How old are you?</label>
+    </input>
+    <select1 ref="/survey_2_xls/gender">
+      <label>Gender</label>
+      <item>
+        <label>Male</label>
+        <value>male</value>
+      </item>
+      <item>
+        <label>Female</label>
+        <value>female</value>
+      </item>
+    </select1>
+    <select1 ref="/survey_2_xls/knowledge_level">
+      <label>What's your knowledge level of Handlebars?</label>
+      <item>
+        <label>Poor</label>
+        <value>1</value>
+      </item>
+      <item>
+        <label>Median</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>Good</label>
+        <value>3</value>
+      </item>
+    </select1>
+    <select ref="/survey_2_xls/coffee_types">
+      <label>What are your favorite coffee types?</label>
+      <item>
+        <label>expresso</label>
+        <value>1</value>
+      </item>
+      <item>
+        <label>macchiato</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>americano</label>
+        <value>3</value>
+      </item>
+      <item>
+        <label>latte</label>
+        <value>4</value>
+      </item>
+      <item>
+        <label>cappuccino</label>
+        <value>5</value>
+      </item>
+      <item>
+        <label>Caffe Latte</label>
+        <value>6</value>
+      </item>
+    </select>
+  </h:body>
+</h:html>
