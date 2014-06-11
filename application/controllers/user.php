@@ -210,6 +210,8 @@ class User extends CI_Controller {
     $this->form_validation->set_rules('user_new_password', 'Password', 'trim|required|min_length[8]');
     $this->form_validation->set_rules('user_roles', 'Roles', 'callback__cb_check_roles');
     $this->form_validation->set_rules('user_status', 'Status', 'callback__cb_check_status');
+    // To be picked up by the validation object needs a rule, even if empty.
+    $this->form_validation->set_rules('user_notify', 'Notify');
     
     $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
     

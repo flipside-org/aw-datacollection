@@ -110,7 +110,7 @@
             <?php foreach ($this->config->item('roles') as $key => $role_name): ?>
               <?php $checked_role = isset($user) ? $user->has_role($key) : FALSE; ?>
               <label class="inline-label">
-              <?= form_checkbox('user_roles[]', $key, set_value('user_roles', $checked_role)); ?> <?= $role_name; ?>
+              <?= form_checkbox('user_roles[]', $key, set_select('user_roles', $key, $checked_role)); ?> <?= $role_name; ?>
               </label>
             <?php endforeach; ?>
             <?= form_error('user_roles'); ?>
@@ -129,7 +129,7 @@
         <fieldset class="contained">
           <div class="form-control">
             <label class="inline-label">
-            <?= form_checkbox('user_notify', 'notify'); ?> Notify user about account creation.
+            <?= form_checkbox('user_notify', 'notify', set_checkbox('user_notify', 'notify', FALSE)); ?> Notify user about account creation.
             </label>
             <p class="help-text">If checked an email will be sent to the user with the login data.</p>
           </div>
@@ -137,11 +137,6 @@
         <?php endif; ?>
       </div>
       <?php endif; ?>
-        
-        
-        
-        
-        
         
       <?= form_button(array(
         'type' => 'submit',
