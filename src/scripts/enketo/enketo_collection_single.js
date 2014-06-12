@@ -384,7 +384,7 @@ requirejs(['jquery', 'Modernizr', 'enketo-js/Form'], function($, Modernizr, Form
               var hour = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
               var min = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
               // Format 18 Mar, 2014 at 14:00
-              var status_date = d.getDay() + ' ' + months[d.getMonth()] + ', ' + d.getFullYear() + ' at ' + hour + ':' + min;
+              var status_date = d.getDate() + ' ' + months[d.getMonth()] + ', ' + d.getFullYear() + ' at ' + hour + ':' + min;
               
               call_activity_table_data += '<tr>' + 
                 '<td>' + 
