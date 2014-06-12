@@ -637,6 +637,10 @@ class Survey extends CI_Controller {
         show_403();
       }
     }
+    
+    if (!$survey->status_allows('enketo collect data')) {
+      show_403();
+    }
 
     $call_task = $this->call_task_model->get($ctid);
     $survey = $this->survey_model->get($sid);
@@ -1251,10 +1255,14 @@ class Survey extends CI_Controller {
     $flat = $flattener->get_flatten();
     $header = array();
     foreach ($flat as $key => $value) {
-      if ($flattener->is_translated()) {
-        $header[] = $value[$label_key][$flattener->get_preferred_language()];
+      // The language only matters when we're exporting a non system
+      // question in a normalised format.
+      if ($type == 'csv_human' && !isset($value['system']) && $flattener->is_translated()) {
+        $header[] = $value['label'][$flattener->get_preferred_language()];
       }
       else {
+        // Machine labels are never translated and human label behave the
+        // same way if there's no translation.
         $header[] = $value[$label_key];
       }
     }
@@ -1267,7 +1275,7 @@ class Survey extends CI_Controller {
     header("Content-Disposition: attachment; filename=" . $filename);
     header("Content-Type: application/octet-stream; "); 
     header("Content-Transfer-Encoding: binary");
-    
+
     // Open stream.
     $output = fopen('php://output', 'w');
     

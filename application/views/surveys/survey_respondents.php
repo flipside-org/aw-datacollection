@@ -1,3 +1,12 @@
+<?php
+$show_actions_enketo_data_collection = FALSE;
+if (has_permission('enketo collect data any')) {
+  $show_actions_enketo_data_collection = TRUE;
+}
+else if (has_permission('enketo collect data assigned') && $survey->is_assigned_agent(current_user()->uid)){
+  $show_actions_enketo_data_collection = TRUE;
+}
+?>
 <main id="site-body">
   <section class="row">
     <header id="page-head">
@@ -13,6 +22,11 @@
               <a class="bttn-sector bttn-dropdown" href="#" data-dropdown="action-bttn"><strong>Respondents</strong></a>
               <ul class="action-dropdown">
                 <li><a href="<?= $survey->get_url_view() ?>">Summary</a></li>
+                
+                <?php if ($show_actions_enketo_data_collection) : ?>
+                <?php $disabled = !$survey->has_xml() || !$survey->status_allows('view call activity') ? 'disabled' : ''; ?>
+                <li><a href="<?= $survey->get_url_call_activity() ?>" class="<?= $disabled ?>">Call activity</a></li>
+                <?php endif; ?>
               </ul>
             </li>
 

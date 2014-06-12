@@ -128,7 +128,7 @@ class OR_xform_results {
             $list[$path]['items'][(string)$item->value] = $this->_label_translation($item->label);
           }
         }
-      }  
+      }
     }
     $this->flat_xform = $list;
   }
@@ -251,6 +251,7 @@ class OR_xform_results {
                 // Split by space and search each term.
                 $answer_pieces = explode(' ', $answer_key);
                 $norm['value'] = array();
+                $norm['machine_value'] = array();
                 foreach ($answer_pieces as $value) {
                   if (isset($question['items'][$value])) {
                     $norm['value'][] = $this->_get_question_item_translation($question, $value);
@@ -272,7 +273,6 @@ class OR_xform_results {
             $norm['value'] = NULL;
             $norm['machine_value'] = NULL;
           }
-          
           $normalised[] = $norm;
         }
         // else skip
