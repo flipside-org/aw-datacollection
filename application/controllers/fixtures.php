@@ -4,20 +4,10 @@ class Fixtures extends CI_Controller {
   
   function __construct() {
     parent::__construct();
-    $this->_env_check();
     $this->load->helper('password_hashing');
     $this->load->model('survey_model');
     $this->load->model('call_task_model');
     $this->load->model('survey_result_model');
-  }
-  
-  /**
-   * Check environment. Fixtures are only allowed during development
-   */
-  private function _env_check() {
-    if (ENVIRONMENT != 'development') {
-      show_error('Not allowed. Only available during development');
-    }
   }
   
   /**
@@ -56,6 +46,10 @@ class Fixtures extends CI_Controller {
    * Development helper to switch between users.
    */
   public function switch_user($uid) {
+    if (ENVIRONMENT != 'development') {
+      show_error('Not allowed. Only available during development');
+    }
+    
     // Login user.
     $this->session->set_userdata(array('user_uid' => $uid));
     // Force user reloading.
@@ -69,6 +63,10 @@ class Fixtures extends CI_Controller {
    * to work.
    */
   public function live_setup() {
+    if (ENVIRONMENT != 'development') {
+      show_error('Not allowed. Only available during development');
+    }
+    
     $this->_tear_down();
     
     // Create needed folders.
@@ -101,6 +99,10 @@ class Fixtures extends CI_Controller {
   }
 
   public function index() {
+    if (ENVIRONMENT != 'development') {
+      show_error('Not allowed. Only available during development');
+    }
+    
     echo '<h1>Fixtures:<h1>';
     echo anchor('fixtures/all', 'Setup fixtures') . '<br/><br/>';
     echo anchor('fixtures/live_setup', 'Live (Only admin user is created)');
@@ -109,7 +111,17 @@ class Fixtures extends CI_Controller {
   /**
    * Populate db.
    */
-  public function all() {
+  public function all($key = NULL) {
+    if (ENVIRONMENT != 'development' && ENVIRONMENT != 'demo'){
+        show_error('Not allowed. Only available during development');
+    }
+    else if (ENVIRONMENT == 'demo') {
+      $demo_key = @file_get_contents('reset.demo.key');
+      
+      if (!$demo_key || $demo_key != $key) {
+        show_error('Wrong or missing key.');
+      }      
+    }
     // Down with the DB.
     $this->_tear_down();
     

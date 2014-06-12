@@ -16,7 +16,7 @@
     'client' => 'Flipside',
     'goal' => 3,
     'status' => Survey_entity::STATUS_CLOSED,
-    'introduction' => 'Hello, my name is ____ and I am calling on behalf of W3C. We would like to ask you a few questions about HTML. It won\'t take more than 10 minutes.',
+    'introduction' => 'Hello, my name is ____ and I am calling on behalf of Flipside. We would like to ask you a few questions about HTML. It won\'t take more than 10 minutes.',
     'description' => 'This survey will focus on the understanding of HTML in the local community.',
     'files' => array(
       'xls' => "survey_3_xls.xls",
