@@ -66,7 +66,7 @@
                   <td><a href="#" class="expand-link" data-expand="ct-<?= $call_task_entity->ctid; ?>"><strong class="highlight"><?= $call_task_entity->number ?></strong></a></td>
                   <?php $last_call = end($call_task_entity->activity); ?>
                   <td><?= date('d M, Y', $last_call->created->sec) ?> <small>Last call placed</small></td>
-                  <?php $disabled = $call_task_entity->is_resolved() ? 'disabled' : ''; ?>
+                  <?php $disabled = $call_task_entity->is_resolved() || !$survey->status_allows('enketo collect data') ? 'disabled' : ''; ?>
                   <td>
                     <ul class="bttn-toolbar">
                       <li>

@@ -637,6 +637,10 @@ class Survey extends CI_Controller {
         show_403();
       }
     }
+    
+    if (!$survey->status_allows('enketo collect data')) {
+      show_403();
+    }
 
     $call_task = $this->call_task_model->get($ctid);
     $survey = $this->survey_model->get($sid);
