@@ -30,6 +30,10 @@ class Fixtures extends CI_Controller {
       'files/survey_results/'
     );
     foreach($dir_to_empty as $dir) {
+      if (!is_dir($dir)) {
+        continue;
+      }
+            
       $contents = scandir($dir);
       // remove ./
       array_shift($contents);
