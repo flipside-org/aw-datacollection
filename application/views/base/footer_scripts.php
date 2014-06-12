@@ -23,27 +23,6 @@
 <?php endif; ?>
 
 <?php if (ENVIRONMENT == 'demo' && defined('RESET_SECONDS_LEFT')) : ?>
-  <style>
-    #reset-timer-counter {
-      position: fixed;
-      z-index: 999;
-      top: 4px;
-      left: 50%;
-      margin-left: -70px;
-      background-color: #DA454A;
-      color: #FFFFFF;
-      width: 140px;
-      text-align: center;
-      border-radius: 4px;
-      padding: 8px 0;
-    }
-    #reset-timer-counter .time {
-      font-weight: bold;
-    }
-    #reset-timer-counter .label {
-      font-size: 14px;
-    }
-  </style>
   <script type="text/javascript">
     var seconds_left = <?= RESET_SECONDS_LEFT ?>;
     
@@ -70,8 +49,22 @@
     setInterval(function() { display_reset_timer(--seconds_left); }, 1000);
     
     // First run.
-    $('body').append('<div id="reset-timer-counter"><span class="label">reset in</span> <span class="time"></span></div>');
-    display_reset_timer(seconds_left);
+    var reset_timer_counter = $('<div id="reset-timer-counter">');
+    // Add time container.
+    reset_timer_counter.html('<span class="label">reset in</span> <span class="time"></span>');
+  
+    // Append to body.
+    $('body').append(reset_timer_counter);
+    $('body').append('<div id="reset-timer-info">This is a demo version of Airwolf. When time runs outs the system will be reset to its defaults. Any entered information will be deleted.</div>');
     
+    // Mouse listeners.
+    reset_timer_counter.mouseenter(function() {
+      $('#reset-timer-info').addClass('revealed');
+    })
+    .mouseleave(function() {
+      $('#reset-timer-info').removeClass('revealed');
+    });
+  
+    display_reset_timer(seconds_left);
   </script>
 <?php endif; ?>

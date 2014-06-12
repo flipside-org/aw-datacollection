@@ -1,6 +1,6 @@
 <?php if (!defined('ENVIRONMENT') && ENVIRONMENT == 'demo') exit('No direct script access allowed');
 
-  $minutes_between_resets = 30000;
+  $minutes_between_resets = 30;
   $control_file = 'reset.demo.last';
   $key_file = 'reset.demo.key';
 
