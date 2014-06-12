@@ -129,6 +129,15 @@ class Fixtures extends CI_Controller {
     // Down with the DB.
     $this->_tear_down();
     
+    // Create needed folders.
+    if (!is_dir('files/surveys')) {
+      mkdir('files/surveys', 0777, TRUE);
+    }
+    
+    if (!is_dir('files/survey_results')) {
+      mkdir('files/survey_results', 0777, TRUE);
+    }
+    
     // Users.
     require_once(APPPATH . 'fixtures_data/users.fix.php');
     
