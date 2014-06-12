@@ -43,6 +43,7 @@
       <?= form_open(); ?>
       <div class="columns small-6">
         <fieldset class="contained">
+          
           <div class="form-control">
           <?= form_label('Name <small>Required</small>', 'user_name'); ?>
           <?= form_input('user_name', set_value('user_name', property_if_not_null($user, 'name')), 'id="user_name"'); ?>
@@ -59,6 +60,21 @@
             <div class="form-control">
             <?= form_label('Email <small>Required</small>', 'user_email'); ?>
             <?= form_input(array('type' => 'email', 'name' => 'user_email'), set_value('user_email'), 'id="user_email"'); ?>
+            <?= form_error('user_email'); ?>
+            </div>
+          
+          <?php endif; ?>
+          
+          <?php if ($action == 'edit_own' || $action == 'edit_other'): ?>
+            <div class="form-control">
+            <?= form_label('Username', 'user_username'); ?>
+            <?= form_input('user_username', $user->username, 'id="user_username" disabled'); ?>
+            <?= form_error('user_username'); ?>
+            </div>
+            
+            <div class="form-control">
+            <?= form_label('Email', 'user_email'); ?>
+            <?= form_input(array('type' => 'email', 'name' => 'user_email'), $user->email, 'id="user_email" disabled'); ?>
             <?= form_error('user_email'); ?>
             </div>
           

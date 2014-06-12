@@ -46,6 +46,7 @@
                 <tr>
                   <th>Status</th>
                   <th>Name</th>
+                  <th>Username</th>
                   <th>Roles</th>
                   <th></th>
                 </tr>
@@ -55,6 +56,7 @@
                 <tr>
                   <td><strong class="status <?= $user_entity->get_status_html_class(); ?>"><?= $user_entity->get_status_label(); ?></strong></td>
                   <td><strong class="highlight"><?= $user_entity->name; ?></strong></td>
+                  <td><?= $user_entity->username ?></td>
                   <td><?= implode(', ', $user_entity->get_roles_label()); ?></td>
                   <td>
                     
