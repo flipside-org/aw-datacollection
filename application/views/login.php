@@ -40,8 +40,21 @@
         <?= form_close(); ?>
       </div>
       
+      <?php if (ENVIRONMENT == 'demo') : ?>
+      <div id="demo-users">
+        <dl>
+        	<dt>agent</dt>
+        	<dd><span class="highlight">Password:</span> agent</dd>
+        </dl>
+        <dl>
+        	<dt>moderator</dt>
+        	<dd><span class="highlight">Password:</span> moderator</dd>
+        </dl>
+        More information can be found on the <a href="#">project's github page.</a>
+      </div>
+      <?php endif; ?>
+      
     </section>
-    
     </div>
   </div>
 </main>

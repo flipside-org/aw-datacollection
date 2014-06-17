@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<survey_3_xls id="survey_3_xls">
+          <name>Paula</name>
+          <age>22</age>
+          <gender>female</gender>
+          <where_html>school</where_html>
+          <where_html_other/>
+          <knowledge_level>3</knowledge_level>
+          <meta>
+            <instanceID>uuid:fcd0a098-93c7-4821-be9a-aa210e4636f2</instanceID>
+          </meta>
+        </survey_3_xls>

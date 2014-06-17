@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<survey_3_xls id="survey_3_xls">
+          <name>Bruce Wayne</name>
+          <age>35</age>
+          <gender>male</gender>
+          <where_html>home</where_html>
+          <where_html_other/>
+          <knowledge_level>3</knowledge_level>
+          <meta>
+            <instanceID>uuid:9637c04f-96be-46f0-adee-64a598416973</instanceID>
+          </meta>
+        </survey_3_xls>

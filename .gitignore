@@ -27,3 +27,7 @@ src/temp
 assets/styles
 assets/scripts
 assets/images/vendor
+
+#Demo files
+reset.demo.last
+reset.demo.key

@@ -1,0 +1,85 @@
+/* Countdown timer for demo */ 
+#reset-timer-counter {
+  position: fixed;
+  z-index: 999;
+  top: rem-calc(4);
+  left: 50%;
+  margin-left: rem-calc(-80);
+  background-color: #DA454A;
+  color: #FFFFFF;
+  width: rem-calc(160);
+  text-align: center;
+  border-radius: rem-calc(4);
+  padding: rem-calc(8 0);
+  
+  &:after {
+    @extend .icon-circle-question;
+    margin-left: rem-calc(8);
+    vertical-align: bottom;
+  }
+  
+  .time {
+    font-weight: bold;
+  }
+  .label {
+    font-size: 14px;
+  }
+}
+
+#reset-timer-info {
+  position: fixed;
+  z-index: 999;
+  top: rem-calc(53);
+  left: 50%;
+  width: rem-calc(300);
+  margin-left: rem-calc(-150);
+  line-height: 1.25;
+  @include border-radius(4px);
+  box-shadow: 0 0 0 2px rgba(palette(grey, dark), 0.1);
+  background-color: white;
+  color: #909598;
+  font-size: rem-calc(14);
+  padding: rem-calc(16);
+  
+  opacity: 0;
+  margin-top: rem-calc(-16);
+  visibility: hidden;
+  @include transition-property(opacity, margin, visibility);
+  @include transition-duration(0.1s, 0.1s, 0.1s);
+  @include transition-timing-function(ease, ease, linear);
+  @include transition-delay(0, 0, 0);
+  
+  &.revealed {
+    opacity: 1;
+    margin-top: 0;
+    visibility: visible;
+  }
+  
+  &:before {
+    @extend .icon-triangle-up;
+    position: absolute;
+    z-index: 15;
+    top: -11px;
+    left: 50%;
+    color: white;
+    font-size: 1rem;
+    text-shadow: 0 -2px rgba(palette(grey, dark), 0.1);
+    line-height: 1;
+    height: 1rem;
+    width: 1rem;
+    margin-left: rem-calc(-8);
+  }
+}
+
+#demo-users {
+  dl {
+    font-size: rem-calc(14);
+    
+    dd {
+      margin: 0;
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -35,6 +35,11 @@ if (defined('ENVIRONMENT'))
 		case 'development':
 			error_reporting(E_ALL);
 		break;
+    
+		case 'demo':
+      require_once('reset.demo.php');
+			error_reporting(0);
+		break;
 	
 		case 'testing':
 		case 'production':

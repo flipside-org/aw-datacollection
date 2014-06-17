@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>survey_3_xls</h:title>
+    <model>
+      <instance>
+        <survey_3_xls id="survey_3_xls">
+          <name/>
+          <age/>
+          <gender/>
+          <where_html/>
+          <where_html_other/>
+          <knowledge_level/>
+          <meta>
+            <instanceID/>
+          </meta>
+        </survey_3_xls>
+      </instance>
+      <bind nodeset="/survey_3_xls/name" required="true()" type="string"/>
+      <bind constraint=" /survey_3_xls/age  &gt; 0 and  /survey_3_xls/age  &lt; 120" jr:constraintMsg="That's not a valid age!" nodeset="/survey_3_xls/age" required="true()" type="int"/>
+      <bind nodeset="/survey_3_xls/gender" type="select1"/>
+      <bind nodeset="/survey_3_xls/where_html" required="true()" type="select1"/>
+      <bind nodeset="/survey_3_xls/where_html_other" relevant="selected( /survey_3_xls/where_html , 'other')" type="string"/>
+      <bind nodeset="/survey_3_xls/knowledge_level" relevant="not(selected( /survey_3_xls/where_html , 'none')) and not( /survey_3_xls/where_html  = '')" type="select1"/>
+      <bind calculate="concat('uuid:', uuid())" nodeset="/survey_3_xls/meta/instanceID" readonly="true()" type="string"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/survey_3_xls/name">
+      <label>What's your name?</label>
+    </input>
+    <input ref="/survey_3_xls/age">
+      <label>How old are you?</label>
+    </input>
+    <select1 ref="/survey_3_xls/gender">
+      <label>Gender</label>
+      <item>
+        <label>Male</label>
+        <value>male</value>
+      </item>
+      <item>
+        <label>Female</label>
+        <value>female</value>
+      </item>
+    </select1>
+    <select1 ref="/survey_3_xls/where_html">
+      <label>Where did you learn HTML?</label>
+      <item>
+        <label>With a friend</label>
+        <value>friend</value>
+      </item>
+      <item>
+        <label>At school</label>
+        <value>school</value>
+      </item>
+      <item>
+        <label>At home</label>
+        <value>home</value>
+      </item>
+      <item>
+        <label>What's HTML?</label>
+        <value>none</value>
+      </item>
+      <item>
+        <label>Other (specify)</label>
+        <value>other</value>
+      </item>
+    </select1>
+    <input ref="/survey_3_xls/where_html_other">
+      <label>Other</label>
+    </input>
+    <select1 ref="/survey_3_xls/knowledge_level">
+      <label>What's your knowledge level of HTML?</label>
+      <item>
+        <label>Poor</label>
+        <value>1</value>
+      </item>
+      <item>
+        <label>Median</label>
+        <value>2</value>
+      </item>
+      <item>
+        <label>Good</label>
+        <value>3</value>
+      </item>
+    </select1>
+  </h:body>
+</h:html>
