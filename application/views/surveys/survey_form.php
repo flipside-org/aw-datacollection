@@ -88,7 +88,7 @@
         </fieldset>
         <fieldset class="contained">
           <div class="form-control">
-            <?= form_label('Introductory text', 'survey_introduction'); ?>
+            <?= form_label('Survey introduction', 'survey_introduction'); ?>
             <?= form_textarea('survey_introduction', set_value('survey_introduction', property_if_not_null($survey, 'introduction')), 'id="survey_introduction"' . $disabled_metadata); ?>
             <p class="help-text">This introduction will be read by the agents to the respondents before proceeding with the actual survey questions.</p>
             <?= form_error('survey_introduction'); ?>
