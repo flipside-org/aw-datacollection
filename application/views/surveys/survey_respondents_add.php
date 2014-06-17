@@ -30,14 +30,15 @@
         <fieldset class="contained">
           <div class="form-control">
           <?php if ($import_type == 'direct') : ?>
-            <?= form_label('Direct import', 'survey_respondents_text'); ?>
+            <?= form_label('Direct input', 'survey_respondents_text'); ?>
             <?= form_textarea('survey_respondents_text', implode("\n", $invalid_respondents), 'id="survey_respondents_text"'); ?>
             <p class="help-text">Insert on number per line</p>
             <?= form_error('survey_respondents_text'); ?>
             
           <?php else: ?>
-            <?= form_label('File import', 'survey_respondents_file'); ?>
+            <?= form_label('Upload file', 'survey_respondents_file'); ?>
             <?= form_upload('survey_respondents_file', '', 'id="survey_respondents_file"'); ?>
+            <p class="help-text">Upload a csv file with one number per line. The column header must be <em>phone_number</em>.</p>
             <?= form_error('survey_respondents_file'); ?>
             
           <?php endif; ?>
