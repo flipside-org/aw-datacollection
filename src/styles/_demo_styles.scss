@@ -83,3 +83,25 @@
     }
   }
 }
+
+.ribbon {
+  position: fixed;
+  z-index: 101;
+  top: 2rem;
+  right: -3rem;
+  margin: 0;
+  overflow: hidden;
+  background-color: palette(blue);
+  box-shadow: 0 4px 0 0 rgba(69, 77, 83, 0.1);
+  transform: rotate(45deg);
+  white-space: nowrap;
+  
+  a {
+    color: #fff;
+    font-size: rem-calc(14);
+    display: block;
+    padding: 0.25rem 1rem;
+    text-align: center;
+    width: 12rem;
+  }
+}
