@@ -8,8 +8,8 @@
  
   $survey = new Survey_entity(array(
     // Sid will be 4 (auto increment)
-    'title' => 'Another survey',
-    'client' => 'The world',
+    'title' => 'Solar energy survey',
+    'client' => 'UNFAM',
     'status' => Survey_entity::STATUS_CANCELED,
   ));
   $survey->assign_agent(3);

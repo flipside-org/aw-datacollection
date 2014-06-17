@@ -8,10 +8,10 @@
   
   $survey = new Survey_entity(array(
     // Sid will be 1 (auto increment)
-    'title' => 'Meteor usage',
-    'client' => 'Flipside',
+    'title' => 'Household survey',
+    'client' => 'For a better world',
     'status' => Survey_entity::STATUS_DRAFT,
-    'introduction' => 'The text the user has to read.',
-    'description' => 'This survey will help us understand the reach of meteor.'
+    'introduction' => 'The text the agent has to read. To be submitted by John.',
+    'description' => 'A household survey in the Amazons among 400 indigenous families.'
   ));
   $this->survey_model->save($survey);

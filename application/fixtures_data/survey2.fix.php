@@ -13,12 +13,12 @@
   // Survey 2.
   $survey = new Survey_entity(array(
     // Sid will be 2 (auto increment)
-    'title' => 'Handlebars - Applied knowledge',
-    'client' => 'Flipside',
+    'title' => 'Handlebars',
+    'client' => 'Digital Dreams Inc',
     'status' => Survey_entity::STATUS_OPEN,
     'goal' => 20,
-    'introduction' => 'Hi, my name is ______ and I am calling on behalf of Handlebars. Handlebars is interested in learning more about you and your relation with it. You are being contacted because of your participation in the workshop held near your house. We would like to ask you some questions about your coffee consumption while using handlebars. Your participation is very important, because your responses will help us improve our framework and thus make it more usable. This survey will only take about 5 minutes of your time.',
-    'description' => 'This survey will help us understand how handlebars is used and how it can be improved.',
+    'introduction' => 'Hi, my name is ______ and I am calling on behalf of Digital Dreams. Handlebars is interested in learning more about you and your relation with it. You are being contacted because of your participation in the workshop held near your house. We would like to ask you some questions about your coffee consumption while using handlebars. Your participation is very important, because your responses will help us improve our framework and thus make it more usable. This survey will only take about 5 minutes of your time.',
+    'description' => 'This survey will help us understand how handlebars is used by developers and how it can be improved.',
     'files' => array(
       'xls' => "survey_2_xls.xls",
       'xml' => "survey_2_xml.xml",
