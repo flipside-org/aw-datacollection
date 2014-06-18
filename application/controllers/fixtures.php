@@ -107,9 +107,9 @@ class Fixtures extends CI_Controller {
       show_error('Not allowed. Only available during development');
     }
     
-    echo '<h1>Fixtures:<h1>';
-    echo anchor('fixtures/all', 'Setup fixtures') . '<br/><br/>';
-    echo anchor('fixtures/live_setup', 'Live (Only admin user is created)');
+    echo '<h1>Setup:<h1>';
+    echo anchor('fixtures/all', 'Development') . '<br/><br/>';
+    echo anchor('fixtures/live_setup', 'Live');
   }
 
   /**
