@@ -14,9 +14,9 @@ Ricardo Mestre - [Github](https://github.com/ricardomestre)
 ___
 
 ## Development environment
-To ease development everything was bundled in a vagrant box. To setup the vagrant box check out the [instructions in the wiki]().  
+To ease development everything was bundled in a vagrant box. To setup the vagrant box check out the [instructions in the wiki](https://github.com/flipside-org/aw-datacollection/wiki/Vagrant-box).  
 
-If you want to develop locally, without using the vagrant box, check the [local development section]() for the needed dependencies.
+If you want to develop locally, without using the vagrant box, check the [local development section](https://github.com/flipside-org/aw-datacollection/wiki/Local-development) for the needed dependencies.
 
 
 ## Requirements
@@ -27,10 +27,11 @@ These dependencies and setup are needed to build the app no matter the developme
 
 ### Setup
 
-Update git submodules:
+Initialize and update git submodules:
 ```
-$ git submodule update --recursive
+$ git submodule update --init --recursive
 ```
+Subsequent updates of git submodules must be done without the ```--init``` flag
 
 Install airwolf dependencies:
 ```
@@ -47,11 +48,20 @@ $ cd assets/libs/enketo-core
 $ npm install
 $ grunt
 ```
-Edit pyxform (xls2xform.py)
+Edit pyxform library (xls2xform.py)
 ```
 vim application/third_party/pyxform/pyxform/xls2xform.py
 ```
 On line ```22``` change ```validate=True``` to ```validate=False```
+
+Edit pyxform library (survey.py)
+```
+vim application/third_party/pyxform/pyxform/survey.py
+```
+On line ```13``` change ```from pyxform import constants``` to ``` import constants```
+
+
+
 ___
 
 ## Getting started
@@ -79,7 +89,7 @@ $ grunt prod
 ___
 
 ## First run
-To setup the application go to ```http://your-domain.com/fixtures``` or ```http://192.168.99.10/work/aw-datacollection/fixtures``` if you're using the vagrant box.  
+To setup the application go to ```http://your-domain.com/fixtures``` or ```http://192.168.99.10/work/aw-datacollection/fixtures``` if you're using the vagrant box.
 
 This will give you 2 options to setup the application:
 - **Live**
@@ -88,9 +98,14 @@ This will give you 2 options to setup the application:
 - **Development**
   - All the data present in the application will be replaced with dummy data.
   - This data includes surveys in various statuses and several users.
-  - @todo: add link with more info.
+  - Administrator: **admin** | admin
+  - Moderator: **moderator** | moderator
+  - Agent: **agent** | agent
+  - User with all roles: **all_roles** | all_roles
+
+After this setup, change the environment to *production* on ```index.php```
 ___
 
 ## Testing
-Testing is done using phpunit. To rn the tests you just need to run ```phpunit``` in the app root folder.  
+Testing is done using phpunit. To run the tests you just need to run ```phpunit``` in the app's root folder.  
 If you're using the Vagrant box environment be sure to do this inside the vagrant machine.
