@@ -24,6 +24,8 @@ These dependencies and setup are needed to build the app no matter the developme
 - Node & Npm
 - Grunt ( $ npm install -g grunt-cli )
 - Bower ($ npm install -g bower)
+- Sass
+- Compass (>= *1.0.0.alpha.19* ```$ sudo gem install compass -v 1.0.0.alpha.19 --pre```)
 
 ### Setup
 
@@ -42,13 +44,13 @@ $ npm install
 $ bower install
 ```
 
-The enketo library needs to be built. Change into its directory:
+The enketo library needs to be built:
 ```
 $ cd assets/libs/enketo-core
 $ npm install
 $ grunt
 ```
-Patch pyxform library:
+Patch pyxform library, from the app root folder:
 ```
 $ git apply --directory=application/third_party/pyxform/ pyxform_validate_and_constants.patch
 ```
@@ -79,7 +81,7 @@ $ grunt prod
 ___
 
 ## First run
-To setup the application go to ```http://your-domain.com/fixtures``` or ```http://192.168.99.10/work/aw-datacollection/fixtures``` if you're using the vagrant box.
+To setup the application go to ```http://your-domain.com/fixtures``` or ```http://192.168.99.10/airwolf/fixtures``` if you're using the vagrant box.
 
 This will give you 2 options to setup the application:
 - **Live**
