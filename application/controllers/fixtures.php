@@ -115,14 +115,14 @@ class Fixtures extends CI_Controller {
   /**
    * Populate db.
    */
-  public function all($key = NULL) {
+  public function all() {
     if (ENVIRONMENT != 'development' && ENVIRONMENT != 'demo'){
         show_error('Not allowed. Only available during development');
     }
     else if (ENVIRONMENT == 'demo') {
-      $demo_key = @file_get_contents('reset.demo.key');
+      $demo_key = trim(@file_get_contents('reset.demo.key'));
       
-      if (!$demo_key || $demo_key != $key) {
+      if (!$demo_key || $demo_key != $_GET['reset_key']) {
         show_error('Wrong or missing key.');
       }      
     }
@@ -150,7 +150,12 @@ class Fixtures extends CI_Controller {
     // Indexes.
     $this->mongo_db->addIndex('call_tasks', array('ctid' => 'asc'));
     
-    redirect('/');
+    if (ENVIRONMENT == 'development') {
+      redirect('/');
+    }
+    else {
+      print "Done";
+    }
   }
 }
 
