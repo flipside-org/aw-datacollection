@@ -27,7 +27,7 @@
     $demo_key = @file_get_contents($key_file);
     // Set reset time and Redirect.
     file_put_contents($control_file, serialize(new DateTime()));
-    header('Location: http://192.168.99.10/work/aw-datacollection/fixtures/all/' . $demo_key);
+    header('Location: http://192.168.99.10/airwolf/fixtures/all/' . $demo_key);
     exit;
   }
 ?>

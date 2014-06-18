@@ -13,6 +13,7 @@ tests/tmp
 #System files
 .project
 .DS_Store
+.vagrant
 
 # Other
 document-it

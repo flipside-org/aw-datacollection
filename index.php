@@ -15,6 +15,9 @@
  *     testing
  *     production
  *
+ *     demo - The demo requires the creation of a reset.demo.key file with
+ *       an alphanumeric string
+ *
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
