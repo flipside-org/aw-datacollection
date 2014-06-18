@@ -48,20 +48,10 @@ $ cd assets/libs/enketo-core
 $ npm install
 $ grunt
 ```
-Edit pyxform library (xls2xform.py)
+Patch pyxform library:
 ```
-vim application/third_party/pyxform/pyxform/xls2xform.py
+$ git apply --directory=application/third_party/pyxform/ pyxform_validate_and_constants.patch
 ```
-On line ```22``` change ```validate=True``` to ```validate=False```
-
-Edit pyxform library (survey.py)
-```
-vim application/third_party/pyxform/pyxform/survey.py
-```
-On line ```13``` change ```from pyxform import constants``` to ``` import constants```
-
-
-
 ___
 
 ## Getting started
