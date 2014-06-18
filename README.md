@@ -38,7 +38,6 @@ Subsequent updates of git submodules must be done without the ```--init``` flag
 Install airwolf dependencies:
 ```
 $ npm install
-
 ```
 ```
 $ bower install
