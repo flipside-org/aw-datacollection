@@ -55,7 +55,7 @@ Patch pyxform library, from the app root folder:
 $ git apply --directory=application/third_party/pyxform/ pyxform_validate_and_constants.patch
 ```
 
-Build the CSS and Javascript, from the root folder of the 
+Build the CSS and Javascript, from the root folder of the app:
 
 ```
 $ grunt build
