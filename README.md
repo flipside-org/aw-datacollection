@@ -7,20 +7,21 @@ Built using [Codeigniter](http://ellislab.com/codeigniter)
 
 ## Team
 Daniel da Silva - [Github](https://github.com/danielfdsilva)  
+Ricardo Mestre - [Github](https://github.com/ricardomestre)
 Olaf Veerman - [Github](https://github.com/olafveerman)  
 Nuno Veloso - [Github](https://github.com/nunoveloso)  
-Ricardo Mestre - [Github](https://github.com/ricardomestre)
 
 ___
 
 ## Development environment
-To ease development everything was bundled in a vagrant box. To setup the vagrant box check out the [instructions in the wiki](https://github.com/flipside-org/aw-datacollection/wiki/Vagrant-box).  
+To ease development, everything was bundled in a vagrant box. To set it up, simply run ```vagrant up``` from the root of the project. For more details about the Vagrant box and useful commands, check out the [instructions in the wiki](https://github.com/flipside-org/aw-datacollection/wiki/Vagrant-box).  
 
-If you want to develop locally, without using the vagrant box, check the [local development section](https://github.com/flipside-org/aw-datacollection/wiki/Local-development) for the needed dependencies.
+If you want to develop locally without using the vagrant box, check the [local development section](https://github.com/flipside-org/aw-datacollection/wiki/Local-development) for the needed dependencies.
 
 
-## Requirements
-These dependencies and setup are needed to build the app no matter the development environment you choose to use, and must be done on your machine.
+### Requirements
+These dependencies are needed to build the app no matter whether you use the Vagrant box or manually set up the environment:
+
 - Node & Npm
 - Grunt ( $ npm install -g grunt-cli )
 - Bower ($ npm install -g bower)
@@ -47,15 +48,41 @@ The enketo library needs to be built:
 ```
 $ cd assets/libs/enketo-core
 $ npm install
-$ grunt
+$ grunt --force
 ```
 Patch pyxform library, from the app root folder:
 ```
 $ git apply --directory=application/third_party/pyxform/ pyxform_validate_and_constants.patch
 ```
+
+Build the CSS and Javascript, from the root folder of the 
+
+```
+$ grunt build
+```
 ___
 
-## Getting started
+## First run
+To setup the application go to ```http://your-domain.com/fixtures``` or ```http://192.168.99.10/airwolf/fixtures``` if you're using the vagrant box.
+
+This will give you 2 options to setup the application:
+- **Live**
+  - All the data present in the application will be removed and a user will be added.
+  - Default credentials: **admin** | admin
+- **Development**
+  - All the data present in the application will be replaced with dummy data.
+  - This data includes surveys in various statuses and several users.
+  - Administrator: **admin** | admin
+  - Moderator: **moderator** | moderator
+  - Agent: **agent** | agent
+  - User with all roles: **all_roles** | all_roles
+
+After this setup, change the environment to *production* on ```index.php```
+___
+
+## Build automation
+Grunt is used for the build automation.
+
 ```
 $ grunt
 ```
@@ -77,24 +104,6 @@ Compile the compass files and javascripts prepared for production (minified, ugl
 ```
 $ grunt prod
 ```
-___
-
-## First run
-To setup the application go to ```http://your-domain.com/fixtures``` or ```http://192.168.99.10/airwolf/fixtures``` if you're using the vagrant box.
-
-This will give you 2 options to setup the application:
-- **Live**
-  - All the data present in the application will be removed and a user will be added.
-  - Default credentials: **admin** | admin
-- **Development**
-  - All the data present in the application will be replaced with dummy data.
-  - This data includes surveys in various statuses and several users.
-  - Administrator: **admin** | admin
-  - Moderator: **moderator** | moderator
-  - Agent: **agent** | agent
-  - User with all roles: **all_roles** | all_roles
-
-After this setup, change the environment to *production* on ```index.php```
 ___
 
 ## Testing
