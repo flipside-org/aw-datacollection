@@ -1,0 +1,26 @@
+diff --git a/pyxform/survey.py b/pyxform/survey.py
+index f2eee5f..7271432 100644
+--- a/pyxform/survey.py
++++ b/pyxform/survey.py
+@@ -10,7 +10,7 @@ import os
+ from odk_validate import check_xform
+ from survey_element import SurveyElement
+ from errors import PyXFormError
+-from pyxform import constants
++import constants
+ 
+ 
+ nsmap = {
+diff --git a/pyxform/xls2xform.py b/pyxform/xls2xform.py
+index 81263f3..8cfe48f 100644
+--- a/pyxform/xls2xform.py
++++ b/pyxform/xls2xform.py
+@@ -19,7 +19,7 @@ def xls2xform_convert():
+     # ODK Validate.
+     # This may be desirable since ODK Validate requires launching a subprocess
+     # that runs some java code.
+-    survey.print_xform_to_file(argv[2], validate=True, warnings=warnings)
++    survey.print_xform_to_file(argv[2], validate=False, warnings=warnings)
+ 
+     return warnings
+ 

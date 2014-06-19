@@ -12,7 +12,9 @@ tests/tmp
 
 #System files
 .project
+.pydevproject
 .DS_Store
+.vagrant
 
 # Other
 document-it
