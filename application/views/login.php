@@ -50,7 +50,7 @@
         	<dt>moderator</dt>
         	<dd><span class="highlight">Password:</span> moderator</dd>
         </dl>
-        More information can be found on the <a href="#">project's github page.</a>
+        More information can be found on the <a href="https://github.com/flipside-org/aw-datacollection/" title="View project on github.">project's github page.</a>
       </div>
       <?php endif; ?>
       
