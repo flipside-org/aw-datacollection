@@ -2,8 +2,11 @@ $(document).foundation();
 
 $('a.disabled').click(function(e) {
   e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
+  // Workaround for when links loads with disabled and later is removed.
+  if ($(this).hasClass('disabled')) {
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+  }
 });
 
 // Show shadow when content slides under the page header
