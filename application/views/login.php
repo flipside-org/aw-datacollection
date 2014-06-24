@@ -43,12 +43,12 @@
       <?php if (ENVIRONMENT == 'demo') : ?>
       <div id="demo-users">
         <dl>
-        	<dt>agent</dt>
-        	<dd><span class="highlight">Password:</span> agent</dd>
+        	<dt>User: agent</dt>
+        	<dd><span class="highlight">Pass:</span> agent</dd>
         </dl>
         <dl>
-        	<dt>moderator</dt>
-        	<dd><span class="highlight">Password:</span> moderator</dd>
+        	<dt>User: moderator</dt>
+        	<dd><span class="highlight">Pass:</span> moderator</dd>
         </dl>
         More information can be found on the <a href="https://github.com/flipside-org/aw-datacollection/" title="View project on github.">project's github page.</a>
       </div>
