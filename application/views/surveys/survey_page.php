@@ -49,7 +49,7 @@ else if (has_permission('enketo testrun assigned') && $survey->is_assigned_agent
                 <?php if (has_permission('export csv data any survey')) : ?>
                 <?php $disabled = !$survey->has_xml() || !$survey->status_allows('export csv data any survey') ? 'disabled' : ''; ?>
                 <li><a href="<?= $survey->get_url_data_export_csv('csv_human'); ?>" class="<?= $disabled; ?>">Results (CSV)</a></li>
-                <li><a href="<?= $survey->get_url_data_export_csv('csv_machine'); ?>" class="<?= $disabled; ?>">Results raw (CSV))</a></li>
+                <li><a href="<?= $survey->get_url_data_export_csv('csv_machine'); ?>" class="<?= $disabled; ?>">Results raw (CSV)</a></li>
                 <?php endif; ?>
                 
                 <?php if (has_permission('download any survey files')) : ?>
