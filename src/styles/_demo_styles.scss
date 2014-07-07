@@ -93,7 +93,7 @@
   overflow: hidden;
   background-color: palette(blue);
   box-shadow: 0 4px 0 0 rgba(69, 77, 83, 0.1);
-  transform: rotate(45deg);
+  @include transform(rotate(-45deg));
   white-space: nowrap;
   
   a {
