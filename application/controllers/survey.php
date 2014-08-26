@@ -322,6 +322,8 @@ class Survey extends CI_Controller {
         $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
       }
       
+      $this->form_validation->set_rules('survey_anonymize', 'Anonymize results');
+      
     }
     else {
       // Set form validation rules.
@@ -330,9 +332,10 @@ class Survey extends CI_Controller {
       $this->form_validation->set_rules('survey_goal', 'Goal', 'is_natural_no_zero');
       $this->form_validation->set_rules('survey_introduction', 'Introductory text', 'xss_clean');
       $this->form_validation->set_rules('survey_description', 'Description', 'xss_clean');
+      $this->form_validation->set_rules('survey_anonymize', 'Anonymize results');
       $this->form_validation->set_rules('survey_file', 'Definition file', 'callback__cb_survey_file_handle');
     }
-
+    // Anonymise can be changed regardless of state.
     $this->form_validation->set_error_delimiters('<small class="error">', '</small>');
 
     // If no data submitted show the form.
@@ -353,8 +356,9 @@ class Survey extends CI_Controller {
           //$survey_data['status'] = (int) $this->input->post('survey_status');
           $survey_data['status'] = Survey_entity::STATUS_DRAFT;
           $survey_data['introduction'] = $this->input->post('survey_introduction', TRUE);
+          $survey_data['anonymize'] = $this->input->post('survey_anonymize') == 'anonymize' ? TRUE : FALSE;
           $survey_data['description'] = $this->input->post('survey_description', TRUE);
-
+          
           // Construct survey.
           $new_survey = Survey_entity::build($survey_data);
 
@@ -426,6 +430,8 @@ class Survey extends CI_Controller {
             $survey->introduction = $this->input->post('survey_introduction', TRUE);
             $survey->description = $this->input->post('survey_description', TRUE);
           }
+          // Anonymise can be changed regardless of state.
+          $survey->anonymize = $this->input->post('survey_anonymize') == 'anonymize' ? TRUE : FALSE;
           
           $file = FALSE;
           if ($survey->status_allows('edit any survey def file')) {
@@ -1220,6 +1226,9 @@ class Survey extends CI_Controller {
       show_403();
     }
     
+    // Whether or not to anonymize results.
+    $anonymize_results = isset($survey->anonymize) ? $survey->anonymize : FALSE;
+    
     // Load stuff.
     $this->load->model('survey_result_model');
     $this->load->helper('or_xform_results');
@@ -1266,6 +1275,11 @@ class Survey extends CI_Controller {
         $header[] = $value[$label_key];
       }
     }
+    
+    // Add number column if needed.
+    if (!$anonymize_results) {
+      $header = array('number') + $header;
+    }
 
     // Headers.
     header("Cache-Control: public");
@@ -1284,15 +1298,22 @@ class Survey extends CI_Controller {
     
     // Compose data.
     foreach ($results as $survey_result_entity) {
+      $fields = array();
+      
       try {
         $parsed_file = $flattener->parse_result_file($survey_result_entity->get_xml_full_path());
+        // If the results are not to be anonymized, load the call task and
+        // add the mumber to the resutls.
+        if (!$anonymize_results) {
+          $call_task = $this->call_task_model->get($survey_result_entity->call_task_ctid);
+          $fields[] = $call_task->number;
+        }
       }
       catch(Exception $e) {
         // The file does not exist or is not readable. Skip.
         continue;
       }
       
-      $fields = array();
       foreach ($parsed_file as $data) {
         $fields[] = is_array($data[$value_key]) ? implode(' ', $data[$value_key]) : $data[$value_key];
       }

@@ -112,6 +112,14 @@ class Survey_entity extends Entity {
   public $goal;
 
   /**
+   * Survey Anonymize.
+   * Whether to anonymize the results when exporting.
+   * @var boolean
+   * @access public
+   */
+  public $anonymize = FALSE;
+
+  /**
    * Survey files.
    * This will be a sub document on mongo.
    * @var array

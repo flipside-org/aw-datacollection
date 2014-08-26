@@ -72,6 +72,18 @@
             <p class="help-text">A brief introduction that will help other users understand this survey's purpose.</p>
             <?= form_error('survey_description'); ?>
           </div>
+          
+          <div class="form-control">
+            <label class="inline-label">
+            <?= form_checkbox(array(
+              'name' => 'survey_anonymize',
+              'value' => 'anonymize',
+              'checked' => set_checkbox('survey_anonymize', 'anonymize', property_if_not_null($survey, 'anonymize'))
+            )); ?> Anonymize survey results.
+            </label>
+            <p class="help-text">If checked the survey results will be anonymized when the data is exported.</p>
+          </div>
+          
         </fieldset>
       </div>
       
